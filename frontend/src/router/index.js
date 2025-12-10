@@ -104,6 +104,12 @@ const router = createRouter({
       name: 'carrier-surcharges',
       component: () => import('@/views/carrier/CarrierSurchargesView.vue'),
       meta: { requiresAuth: true, requiresRole: 'carrier' }
+    },
+    {
+      path: '/carrier/settings',
+      name: 'carrier-settings',
+      component: () => import('@/views/carrier/CarrierSettingsView.vue'),
+      meta: { requiresAuth: true, requiresRole: 'carrier' }
     }
   ]
 })

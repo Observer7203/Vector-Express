@@ -8,7 +8,10 @@ import {
   TrendingUp,
   Package,
   CheckCircle,
-  ChevronRight
+  ChevronRight,
+  Settings,
+  Truck,
+  AlertCircle
 } from 'lucide-vue-next'
 import AppHeader from '@/components/AppHeader.vue'
 
