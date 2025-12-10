@@ -33,6 +33,12 @@ const router = createRouter({
       meta: { requiresAuth: true }
     },
     {
+      path: '/profile',
+      name: 'profile',
+      component: () => import('@/views/profile/ProfileView.vue'),
+      meta: { requiresAuth: true }
+    },
+    {
       path: '/shipments',
       name: 'shipments',
       component: () => import('@/views/shipments/ShipmentsListView.vue'),
@@ -67,6 +73,37 @@ const router = createRouter({
       name: 'orders-detail',
       component: () => import('@/views/orders/OrderDetailView.vue'),
       meta: { requiresAuth: true }
+    },
+    // Carrier routes
+    {
+      path: '/carrier',
+      name: 'carrier-dashboard',
+      component: () => import('@/views/carrier/CarrierDashboardView.vue'),
+      meta: { requiresAuth: true, requiresRole: 'carrier' }
+    },
+    {
+      path: '/carrier/zones',
+      name: 'carrier-zones',
+      component: () => import('@/views/carrier/CarrierZonesView.vue'),
+      meta: { requiresAuth: true, requiresRole: 'carrier' }
+    },
+    {
+      path: '/carrier/terminals',
+      name: 'carrier-terminals',
+      component: () => import('@/views/carrier/CarrierTerminalsView.vue'),
+      meta: { requiresAuth: true, requiresRole: 'carrier' }
+    },
+    {
+      path: '/carrier/rates',
+      name: 'carrier-rates',
+      component: () => import('@/views/carrier/CarrierRatesView.vue'),
+      meta: { requiresAuth: true, requiresRole: 'carrier' }
+    },
+    {
+      path: '/carrier/surcharges',
+      name: 'carrier-surcharges',
+      component: () => import('@/views/carrier/CarrierSurchargesView.vue'),
+      meta: { requiresAuth: true, requiresRole: 'carrier' }
     }
   ]
 })

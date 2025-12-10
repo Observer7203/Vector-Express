@@ -1,0 +1,1056 @@
+<script setup>
+import { onMounted, ref, computed } from 'vue'
+import { RouterLink } from 'vue-router'
+import { useAuthStore } from '@/stores/auth'
+import api from '@/api/axios'
+import {
+  DollarSign,
+  Plus,
+  Edit2,
+  Trash2,
+  Search,
+  Filter,
+  X,
+  Save,
+  ChevronDown
+} from 'lucide-vue-next'
+
+const iconStrokeWidth = 1.2
+
+const authStore = useAuthStore()
+
+const rateCards = ref([])
+const zones = ref([])
+const loading = ref(true)
+const searchQuery = ref('')
+const showAddModal = ref(false)
+const editingRateCard = ref(null)
+
+const filterTransportType = ref('')
+const filterOriginZone = ref('')
+const filterDestZone = ref('')
+
+const newRateCard = ref({
+  origin_zone_id: '',
+  destination_zone_id: '',
+  transport_type: 'road',
+  weight_min: 0,
+  weight_max: null,
+  rate_per_kg: 0,
+  currency: 'USD',
+  transit_days_min: 1,
+  transit_days_max: 7
+})
+
+const transportTypes = [
+  { value: 'air', label: 'Авиа' },
+  { value: 'road', label: 'Авто' },
+  { value: 'rail', label: 'ЖД' },
+  { value: 'sea', label: 'Морские' }
+]
+
+const filteredRateCards = computed(() => {
+  let result = rateCards.value
+
+  if (searchQuery.value) {
+    const query = searchQuery.value.toLowerCase()
+    result = result.filter(
+      (r) =>
+        r.originZone?.zone_name?.toLowerCase().includes(query) ||
+        r.destinationZone?.zone_name?.toLowerCase().includes(query)
+    )
+  }
+
+  if (filterTransportType.value) {
+    result = result.filter((r) => r.transport_type === filterTransportType.value)
+  }
+
+  if (filterOriginZone.value) {
+    result = result.filter((r) => r.origin_zone_id == filterOriginZone.value)
+  }
+
+  if (filterDestZone.value) {
+    result = result.filter((r) => r.destination_zone_id == filterDestZone.value)
+  }
+
+  return result
+})
+
+onMounted(async () => {
+  await Promise.all([loadRateCards(), loadZones()])
+})
+
+async function loadZones() {
+  try {
+    const response = await api.get('/carrier/zones')
+    zones.value = response.data.data || response.data || []
+  } catch (error) {
+    console.error('Failed to load zones:', error)
+    zones.value = [
+      { id: 1, zone_code: 'Z1', zone_name: 'Казахстан' },
+      { id: 2, zone_code: 'Z2', zone_name: 'Россия' },
+      { id: 3, zone_code: 'Z3', zone_name: 'Китай' }
+    ]
+  }
+}
+
+async function loadRateCards() {
+  loading.value = true
+  try {
+    const response = await api.get('/carrier/rate-cards')
+    rateCards.value = response.data.data || response.data || []
+  } catch (error) {
+    console.error('Failed to load rate cards:', error)
+    // Mock data
+    rateCards.value = [
+      {
+        id: 1,
+        origin_zone_id: 1,
+        destination_zone_id: 2,
+        originZone: { id: 1, zone_code: 'Z1', zone_name: 'Казахстан' },
+        destinationZone: { id: 2, zone_code: 'Z2', zone_name: 'Россия' },
+        transport_type: 'air',
+        weight_min: 0,
+        weight_max: 5,
+        rate_per_kg: 15.5,
+        currency: 'USD',
+        transit_days_min: 3,
+        transit_days_max: 5
+      },
+      {
+        id: 2,
+        origin_zone_id: 1,
+        destination_zone_id: 2,
+        originZone: { id: 1, zone_code: 'Z1', zone_name: 'Казахстан' },
+        destinationZone: { id: 2, zone_code: 'Z2', zone_name: 'Россия' },
+        transport_type: 'air',
+        weight_min: 5,
+        weight_max: 20,
+        rate_per_kg: 12.0,
+        currency: 'USD',
+        transit_days_min: 3,
+        transit_days_max: 5
+      },
+      {
+        id: 3,
+        origin_zone_id: 1,
+        destination_zone_id: 3,
+        originZone: { id: 1, zone_code: 'Z1', zone_name: 'Казахстан' },
+        destinationZone: { id: 3, zone_code: 'Z3', zone_name: 'Китай' },
+        transport_type: 'road',
+        weight_min: 0,
+        weight_max: 100,
+        rate_per_kg: 4.5,
+        currency: 'USD',
+        transit_days_min: 10,
+        transit_days_max: 14
+      }
+    ]
+  } finally {
+    loading.value = false
+  }
+}
+
+function openAddModal() {
+  editingRateCard.value = null
+  newRateCard.value = {
+    origin_zone_id: '',
+    destination_zone_id: '',
+    transport_type: 'road',
+    weight_min: 0,
+    weight_max: null,
+    rate_per_kg: 0,
+    currency: 'USD',
+    transit_days_min: 1,
+    transit_days_max: 7
+  }
+  showAddModal.value = true
+}
+
+function openEditModal(rateCard) {
+  editingRateCard.value = rateCard.id
+  newRateCard.value = {
+    origin_zone_id: rateCard.origin_zone_id,
+    destination_zone_id: rateCard.destination_zone_id,
+    transport_type: rateCard.transport_type,
+    weight_min: rateCard.weight_min,
+    weight_max: rateCard.weight_max,
+    rate_per_kg: rateCard.rate_per_kg,
+    currency: rateCard.currency || 'USD',
+    transit_days_min: rateCard.transit_days_min,
+    transit_days_max: rateCard.transit_days_max
+  }
+  showAddModal.value = true
+}
+
+function closeModal() {
+  showAddModal.value = false
+  editingRateCard.value = null
+}
+
+async function saveRateCard() {
+  try {
+    if (editingRateCard.value) {
+      await api.put(`/carrier/rate-cards/${editingRateCard.value}`, newRateCard.value)
+    } else {
+      await api.post('/carrier/rate-cards', newRateCard.value)
+    }
+    closeModal()
+    await loadRateCards()
+  } catch (error) {
+    console.error('Failed to save rate card:', error)
+    // For development
+    const originZone = zones.value.find((z) => z.id == newRateCard.value.origin_zone_id)
+    const destZone = zones.value.find((z) => z.id == newRateCard.value.destination_zone_id)
+
+    if (editingRateCard.value) {
+      const index = rateCards.value.findIndex((r) => r.id === editingRateCard.value)
+      if (index !== -1) {
+        rateCards.value[index] = {
+          ...rateCards.value[index],
+          ...newRateCard.value,
+          originZone,
+          destinationZone: destZone
+        }
+      }
+    } else {
+      rateCards.value.push({
+        id: Date.now(),
+        ...newRateCard.value,
+        originZone,
+        destinationZone: destZone
+      })
+    }
+    closeModal()
+  }
+}
+
+async function deleteRateCard(rateCardId) {
+  if (!confirm('Вы уверены, что хотите удалить этот тариф?')) return
+
+  try {
+    await api.delete(`/carrier/rate-cards/${rateCardId}`)
+    await loadRateCards()
+  } catch (error) {
+    console.error('Failed to delete rate card:', error)
+    rateCards.value = rateCards.value.filter((r) => r.id !== rateCardId)
+  }
+}
+
+function getTransportLabel(type) {
+  const t = transportTypes.find((tt) => tt.value === type)
+  return t ? t.label : type
+}
+
+function formatWeight(min, max) {
+  if (max === null || max === undefined) {
+    return `${min}+ кг`
+  }
+  return `${min}-${max} кг`
+}
+
+function clearFilters() {
+  filterTransportType.value = ''
+  filterOriginZone.value = ''
+  filterDestZone.value = ''
+  searchQuery.value = ''
+}
+
+async function handleLogout() {
+  await authStore.logout()
+}
+</script>
+
+<template>
+  <div class="carrier-rates">
+    <header class="dashboard-header">
+      <div class="container">
+        <div class="header-content">
+          <div class="header-info">
+            <RouterLink to="/" class="logo">Vector Express</RouterLink>
+            <span class="role-badge">Перевозчик</span>
+          </div>
+          <nav class="header-nav">
+            <RouterLink to="/carrier" class="nav-link">Панель управления</RouterLink>
+            <RouterLink to="/carrier/zones" class="nav-link">Зоны</RouterLink>
+            <RouterLink to="/carrier/rates" class="nav-link">Тарифы</RouterLink>
+            <RouterLink to="/carrier/terminals" class="nav-link">Терминалы</RouterLink>
+            <RouterLink to="/carrier/orders" class="nav-link">Заказы</RouterLink>
+          </nav>
+          <div class="header-actions">
+            <button @click="handleLogout" class="btn btn-outline">Выход</button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="dashboard-main">
+      <div class="container">
+        <div class="page-header">
+          <div class="page-title">
+            <h1>Тарифы</h1>
+            <p class="subtitle">Настройка ставок по весу и направлениям</p>
+          </div>
+          <button class="btn btn-primary" @click="openAddModal">
+            <Plus :size="18" :stroke-width="iconStrokeWidth" />
+            Добавить тариф
+          </button>
+        </div>
+
+        <!-- Filters -->
+        <div class="filters-bar">
+          <div class="search-wrapper">
+            <Search :size="18" :stroke-width="iconStrokeWidth" class="search-icon" />
+            <input
+              v-model="searchQuery"
+              type="text"
+              placeholder="Поиск по зонам..."
+              class="search-input"
+            />
+          </div>
+
+          <div class="filter-group">
+            <select v-model="filterTransportType" class="filter-select">
+              <option value="">Все типы</option>
+              <option v-for="type in transportTypes" :key="type.value" :value="type.value">
+                {{ type.label }}
+              </option>
+            </select>
+
+            <select v-model="filterOriginZone" class="filter-select">
+              <option value="">Откуда</option>
+              <option v-for="zone in zones" :key="zone.id" :value="zone.id">
+                {{ zone.zone_name }}
+              </option>
+            </select>
+
+            <select v-model="filterDestZone" class="filter-select">
+              <option value="">Куда</option>
+              <option v-for="zone in zones" :key="zone.id" :value="zone.id">
+                {{ zone.zone_name }}
+              </option>
+            </select>
+
+            <button
+              v-if="filterTransportType || filterOriginZone || filterDestZone"
+              class="btn-clear-filters"
+              @click="clearFilters"
+            >
+              <X :size="16" :stroke-width="iconStrokeWidth" />
+              Сбросить
+            </button>
+          </div>
+        </div>
+
+        <!-- Loading -->
+        <div v-if="loading" class="loading-state">
+          <div class="spinner"></div>
+          <p>Загрузка тарифов...</p>
+        </div>
+
+        <!-- Rate Cards Table -->
+        <div v-else-if="filteredRateCards.length" class="rates-table-wrapper">
+          <table class="rates-table">
+            <thead>
+              <tr>
+                <th>Откуда</th>
+                <th>Куда</th>
+                <th>Тип</th>
+                <th>Вес</th>
+                <th>Ставка</th>
+                <th>Срок</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="rate in filteredRateCards" :key="rate.id">
+                <td>
+                  <div class="zone-cell">
+                    <span class="zone-code">{{ rate.originZone?.zone_code }}</span>
+                    <span class="zone-name">{{ rate.originZone?.zone_name }}</span>
+                  </div>
+                </td>
+                <td>
+                  <div class="zone-cell">
+                    <span class="zone-code">{{ rate.destinationZone?.zone_code }}</span>
+                    <span class="zone-name">{{ rate.destinationZone?.zone_name }}</span>
+                  </div>
+                </td>
+                <td>
+                  <span class="transport-badge" :class="rate.transport_type">
+                    {{ getTransportLabel(rate.transport_type) }}
+                  </span>
+                </td>
+                <td class="weight-cell">
+                  {{ formatWeight(rate.weight_min, rate.weight_max) }}
+                </td>
+                <td class="rate-cell">
+                  <strong>${{ rate.rate_per_kg?.toFixed(2) }}</strong>
+                  <span class="rate-unit">/кг</span>
+                </td>
+                <td class="transit-cell">
+                  {{ rate.transit_days_min }}-{{ rate.transit_days_max }} дн.
+                </td>
+                <td class="actions-cell">
+                  <button class="btn-icon" @click="openEditModal(rate)" title="Редактировать">
+                    <Edit2 :size="16" :stroke-width="iconStrokeWidth" />
+                  </button>
+                  <button class="btn-icon btn-icon-danger" @click="deleteRateCard(rate.id)" title="Удалить">
+                    <Trash2 :size="16" :stroke-width="iconStrokeWidth" />
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Empty State -->
+        <div v-else class="empty-state">
+          <DollarSign :size="48" :stroke-width="iconStrokeWidth" />
+          <h3>Нет тарифов</h3>
+          <p>Добавьте тариф для расчета стоимости перевозок</p>
+          <button class="btn btn-primary" @click="openAddModal">
+            <Plus :size="18" :stroke-width="iconStrokeWidth" />
+            Добавить тариф
+          </button>
+        </div>
+      </div>
+    </main>
+
+    <!-- Add/Edit Modal -->
+    <div v-if="showAddModal" class="modal-overlay" @click.self="closeModal">
+      <div class="modal">
+        <div class="modal-header">
+          <h2>{{ editingRateCard ? 'Редактировать тариф' : 'Новый тариф' }}</h2>
+          <button class="btn-close" @click="closeModal">
+            <X :size="20" :stroke-width="iconStrokeWidth" />
+          </button>
+        </div>
+
+        <div class="modal-body">
+          <div class="form-row">
+            <div class="form-group">
+              <label>Откуда (зона)</label>
+              <select v-model="newRateCard.origin_zone_id" class="form-input">
+                <option value="">Выберите зону</option>
+                <option v-for="zone in zones" :key="zone.id" :value="zone.id">
+                  {{ zone.zone_code }} - {{ zone.zone_name }}
+                </option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Куда (зона)</label>
+              <select v-model="newRateCard.destination_zone_id" class="form-input">
+                <option value="">Выберите зону</option>
+                <option v-for="zone in zones" :key="zone.id" :value="zone.id">
+                  {{ zone.zone_code }} - {{ zone.zone_name }}
+                </option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Тип перевозки</label>
+            <select v-model="newRateCard.transport_type" class="form-input">
+              <option v-for="type in transportTypes" :key="type.value" :value="type.value">
+                {{ type.label }}
+              </option>
+            </select>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Вес от (кг)</label>
+              <input
+                v-model.number="newRateCard.weight_min"
+                type="number"
+                min="0"
+                step="0.1"
+                class="form-input"
+              />
+            </div>
+            <div class="form-group">
+              <label>Вес до (кг)</label>
+              <input
+                v-model.number="newRateCard.weight_max"
+                type="number"
+                min="0"
+                step="0.1"
+                placeholder="Без ограничения"
+                class="form-input"
+              />
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Ставка за кг (USD)</label>
+              <input
+                v-model.number="newRateCard.rate_per_kg"
+                type="number"
+                min="0"
+                step="0.01"
+                class="form-input"
+              />
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Срок мин. (дней)</label>
+              <input
+                v-model.number="newRateCard.transit_days_min"
+                type="number"
+                min="1"
+                class="form-input"
+              />
+            </div>
+            <div class="form-group">
+              <label>Срок макс. (дней)</label>
+              <input
+                v-model.number="newRateCard.transit_days_max"
+                type="number"
+                min="1"
+                class="form-input"
+              />
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button class="btn btn-outline" @click="closeModal">Отмена</button>
+          <button class="btn btn-primary" @click="saveRateCard">
+            <Save :size="16" :stroke-width="iconStrokeWidth" />
+            {{ editingRateCard ? 'Сохранить' : 'Создать тариф' }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<style lang="scss" scoped>
+@import '../../styles/_variables.scss';
+
+.carrier-rates {
+  min-height: 100vh;
+  background: $bg-light;
+}
+
+.dashboard-header {
+  background: $bg-white;
+  border-bottom: 1px solid $border-color;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.container {
+  max-width: $container-max-width;
+  margin: 0 auto;
+  padding: 0 $container-padding;
+}
+
+.header-content {
+  display: flex;
+  align-items: center;
+  height: 64px;
+  gap: $spacing-xl;
+}
+
+.header-info {
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+}
+
+.logo {
+  font-size: $font-size-xl;
+  font-weight: 600;
+  color: $color-primary;
+  text-decoration: none;
+}
+
+.role-badge {
+  background: rgba($color-secondary, 0.1);
+  color: $color-secondary;
+  padding: $spacing-xs $spacing-sm;
+  border-radius: $radius-full;
+  font-size: $font-size-xs;
+  font-weight: 500;
+}
+
+.header-nav {
+  display: flex;
+  gap: $spacing-md;
+  flex: 1;
+}
+
+.nav-link {
+  color: $text-secondary;
+  text-decoration: none;
+  font-size: $font-size-sm;
+  font-weight: 500;
+  padding: $spacing-xs $spacing-sm;
+  border-radius: $radius-md;
+  transition: all $transition-fast;
+
+  &:hover {
+    color: $text-primary;
+    background: $bg-hover;
+  }
+
+  &.router-link-active {
+    color: $color-primary;
+    background: rgba($color-primary, 0.1);
+  }
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: $spacing-sm;
+  padding: $spacing-sm $spacing-md;
+  border-radius: $radius-md;
+  font-size: $font-size-sm;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all $transition-base;
+  text-decoration: none;
+  border: none;
+}
+
+.btn-primary {
+  background: $color-primary;
+  color: $text-white;
+
+  &:hover {
+    background: $color-primary-dark;
+  }
+}
+
+.btn-outline {
+  background: transparent;
+  color: $color-primary;
+  border: 1px solid $color-primary;
+
+  &:hover {
+    background: $color-primary;
+    color: $text-white;
+  }
+}
+
+.btn-icon {
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border-radius: $radius-md;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: $text-secondary;
+  transition: all $transition-base;
+
+  &:hover {
+    background: $bg-hover;
+    color: $text-primary;
+  }
+
+  &.btn-icon-danger:hover {
+    background: rgba($color-danger, 0.1);
+    color: $color-danger;
+  }
+}
+
+.dashboard-main {
+  padding: $spacing-xl 0;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: $spacing-xl;
+}
+
+.page-title {
+  h1 {
+    font-size: $font-size-2xl;
+    font-weight: 600;
+    color: $text-primary;
+    margin: 0 0 $spacing-xs;
+  }
+
+  .subtitle {
+    color: $text-secondary;
+    font-size: $font-size-sm;
+    margin: 0;
+  }
+}
+
+.filters-bar {
+  display: flex;
+  gap: $spacing-md;
+  margin-bottom: $spacing-lg;
+  flex-wrap: wrap;
+}
+
+.search-wrapper {
+  position: relative;
+  flex: 1;
+  min-width: 200px;
+}
+
+.search-icon {
+  position: absolute;
+  left: $spacing-md;
+  top: 50%;
+  transform: translateY(-50%);
+  color: $text-muted;
+}
+
+.search-input {
+  width: 100%;
+  padding: $spacing-sm $spacing-md $spacing-sm 44px;
+  border: 1px solid $border-color;
+  border-radius: $radius-md;
+  font-size: $font-size-sm;
+  background: $bg-white;
+
+  &:focus {
+    outline: none;
+    border-color: $color-primary;
+  }
+}
+
+.filter-group {
+  display: flex;
+  gap: $spacing-sm;
+  flex-wrap: wrap;
+}
+
+.filter-select {
+  padding: $spacing-sm $spacing-md;
+  border: 1px solid $border-color;
+  border-radius: $radius-md;
+  font-size: $font-size-sm;
+  background: $bg-white;
+  min-width: 120px;
+
+  &:focus {
+    outline: none;
+    border-color: $color-primary;
+  }
+}
+
+.btn-clear-filters {
+  display: flex;
+  align-items: center;
+  gap: $spacing-xs;
+  padding: $spacing-sm $spacing-md;
+  border: 1px solid $border-color;
+  border-radius: $radius-md;
+  background: $bg-white;
+  color: $text-secondary;
+  font-size: $font-size-sm;
+  cursor: pointer;
+
+  &:hover {
+    border-color: $color-danger;
+    color: $color-danger;
+  }
+}
+
+.loading-state {
+  text-align: center;
+  padding: $spacing-2xl;
+
+  .spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid $border-color;
+    border-top-color: $color-primary;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto $spacing-md;
+  }
+
+  p {
+    color: $text-secondary;
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.rates-table-wrapper {
+  background: $bg-white;
+  border-radius: $radius-lg;
+  border: 1px solid $border-color;
+  overflow: hidden;
+}
+
+.rates-table {
+  width: 100%;
+  border-collapse: collapse;
+
+  th, td {
+    padding: $spacing-md $spacing-lg;
+    text-align: left;
+  }
+
+  th {
+    background: $bg-light;
+    color: $text-secondary;
+    font-size: $font-size-xs;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  td {
+    border-top: 1px solid $border-color;
+    font-size: $font-size-sm;
+  }
+
+  tr:hover td {
+    background: $bg-light;
+  }
+}
+
+.zone-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.zone-code {
+  font-size: $font-size-xs;
+  color: $text-muted;
+  font-weight: 600;
+}
+
+.zone-name {
+  color: $text-primary;
+}
+
+.transport-badge {
+  display: inline-block;
+  padding: $spacing-xs $spacing-sm;
+  border-radius: $radius-full;
+  font-size: $font-size-xs;
+  font-weight: 500;
+
+  &.air {
+    background: rgba($color-primary, 0.1);
+    color: $color-primary;
+  }
+
+  &.road {
+    background: rgba($color-success, 0.1);
+    color: $color-success;
+  }
+
+  &.rail {
+    background: rgba($color-warning, 0.1);
+    color: $color-warning;
+  }
+
+  &.sea {
+    background: rgba($color-secondary, 0.1);
+    color: $color-secondary;
+  }
+}
+
+.weight-cell {
+  color: $text-secondary;
+}
+
+.rate-cell {
+  strong {
+    color: $color-primary;
+    font-size: $font-size-base;
+  }
+
+  .rate-unit {
+    color: $text-muted;
+    font-size: $font-size-xs;
+  }
+}
+
+.transit-cell {
+  color: $text-secondary;
+}
+
+.actions-cell {
+  text-align: right;
+  white-space: nowrap;
+}
+
+.empty-state {
+  text-align: center;
+  padding: $spacing-2xl;
+  background: $bg-white;
+  border-radius: $radius-lg;
+  border: 1px solid $border-color;
+
+  svg {
+    color: $text-muted;
+    margin-bottom: $spacing-md;
+  }
+
+  h3 {
+    font-size: $font-size-lg;
+    font-weight: 600;
+    color: $text-primary;
+    margin: 0 0 $spacing-xs;
+  }
+
+  p {
+    color: $text-secondary;
+    margin: 0 0 $spacing-lg;
+  }
+}
+
+// Modal
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: $spacing-lg;
+}
+
+.modal {
+  background: $bg-white;
+  border-radius: $radius-lg;
+  width: 100%;
+  max-width: 500px;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.modal-header {
+  padding: $spacing-lg;
+  border-bottom: 1px solid $border-color;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  h2 {
+    font-size: $font-size-lg;
+    font-weight: 600;
+    color: $text-primary;
+    margin: 0;
+  }
+}
+
+.btn-close {
+  width: 36px;
+  height: 36px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  border-radius: $radius-md;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: $text-secondary;
+
+  &:hover {
+    background: $bg-hover;
+  }
+}
+
+.modal-body {
+  padding: $spacing-lg;
+}
+
+.modal-footer {
+  padding: $spacing-md $spacing-lg;
+  border-top: 1px solid $border-color;
+  display: flex;
+  justify-content: flex-end;
+  gap: $spacing-sm;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: $spacing-md;
+}
+
+.form-group {
+  margin-bottom: $spacing-md;
+
+  label {
+    display: block;
+    font-size: $font-size-sm;
+    font-weight: 500;
+    color: $text-primary;
+    margin-bottom: $spacing-xs;
+  }
+}
+
+.form-input {
+  width: 100%;
+  padding: $spacing-sm $spacing-md;
+  border: 1px solid $border-color;
+  border-radius: $radius-md;
+  font-size: $font-size-sm;
+  transition: border-color $transition-fast;
+
+  &:focus {
+    outline: none;
+    border-color: $color-primary;
+  }
+}
+
+@media (max-width: $breakpoint-md) {
+  .header-nav {
+    display: none;
+  }
+
+  .page-header {
+    flex-direction: column;
+    gap: $spacing-md;
+  }
+
+  .filters-bar {
+    flex-direction: column;
+  }
+
+  .filter-group {
+    width: 100%;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+
+  .rates-table {
+    th, td {
+      padding: $spacing-sm;
+    }
+  }
+}
+</style>

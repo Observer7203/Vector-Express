@@ -3,7 +3,7 @@ import { ref, computed, onMounted } from 'vue'
 import { RouterLink, useRoute, useRouter } from 'vue-router'
 import { useShipmentsStore } from '@/stores/shipments'
 import { useOrdersStore } from '@/stores/orders'
-import { ArrowLeft, Star, FileText } from 'lucide-vue-next'
+import { ArrowLeft, Star, FileText, ChevronDown, ChevronUp, Package, Fuel, Home, MapPin, Shield, FileCheck, Scale } from 'lucide-vue-next'
 
 const iconStrokeWidth = 1.2
 
@@ -14,6 +14,8 @@ const ordersStore = useOrdersStore()
 
 const sortBy = ref('price')
 const filterTransport = ref('')
+const expandedQuote = ref(null)
+const selectingQuote = ref(null)
 
 onMounted(async () => {
   await shipmentsStore.fetchShipment(route.params.id)
@@ -49,10 +51,18 @@ const transportTypeLabels = {
 }
 
 const serviceLabels = {
-  door_pickup: 'Забор',
+  door_pickup: 'Забор груза',
   customs: 'Таможня',
+  customs_clearance: 'Таможенное оформление',
   insurance: 'Страховка',
-  door_delivery: 'До двери'
+  door_delivery: 'Доставка до двери'
+}
+
+const surchargeIcons = {
+  fuel: Fuel,
+  residential: Home,
+  remote_area: MapPin,
+  default: Package
 }
 
 function formatDate(dateString) {
@@ -60,7 +70,17 @@ function formatDate(dateString) {
   return new Date(dateString).toLocaleDateString('ru-RU')
 }
 
+function formatPrice(value) {
+  if (!value && value !== 0) return '-'
+  return Number(value).toLocaleString('ru-RU', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+}
+
+function togglePriceBreakdown(quoteId) {
+  expandedQuote.value = expandedQuote.value === quoteId ? null : quoteId
+}
+
 async function selectQuote(quote) {
+  selectingQuote.value = quote.id
   try {
     const order = await ordersStore.createOrder({
       quote_id: quote.id,
@@ -71,7 +91,13 @@ async function selectQuote(quote) {
     router.push(`/orders/${order.id}`)
   } catch (e) {
     console.error('Error creating order:', e)
+  } finally {
+    selectingQuote.value = null
   }
+}
+
+function getSurchargeIcon(type) {
+  return surchargeIcons[type] || surchargeIcons.default
 }
 </script>
 
@@ -90,6 +116,9 @@ async function selectQuote(quote) {
                 {{ shipment.origin_city }}, {{ shipment.origin_country }}
                 <span class="arrow">→</span>
                 {{ shipment.destination_city }}, {{ shipment.destination_country }}
+                <span class="weight-info" v-if="shipment.total_weight">
+                  · {{ shipment.total_weight }} кг
+                </span>
               </p>
             </div>
           </div>
@@ -140,7 +169,7 @@ async function selectQuote(quote) {
           </div>
 
           <div v-else class="quotes-list">
-            <div v-for="(quote, index) in sortedQuotes" :key="quote.id" class="quote-card">
+            <div v-for="(quote, index) in sortedQuotes" :key="quote.id" class="quote-card" :class="{ expanded: expandedQuote === quote.id }">
               <div v-if="index === 0 && sortBy === 'price'" class="best-badge">Лучшая цена</div>
 
               <div class="quote-main">
@@ -166,17 +195,111 @@ async function selectQuote(quote) {
                   </div>
                   <div class="detail-item">
                     <span class="detail-label">Срок</span>
-                    <span class="detail-value">{{ quote.delivery_days }} дн.</span>
+                    <span class="detail-value">
+                      {{ quote.delivery_days_min && quote.delivery_days_min !== quote.delivery_days
+                         ? `${quote.delivery_days_min}-${quote.delivery_days}`
+                         : quote.delivery_days }} дн.
+                    </span>
                   </div>
                   <div class="detail-item">
                     <span class="detail-label">Доставка</span>
                     <span class="detail-value">{{ formatDate(quote.estimated_delivery_date) }}</span>
                   </div>
+                  <div class="detail-item" v-if="quote.billable_weight">
+                    <span class="detail-label">Тариф. вес</span>
+                    <span class="detail-value">{{ quote.billable_weight }} кг</span>
+                  </div>
                 </div>
 
-                <div class="quote-price">
-                  <span class="price-value">{{ quote.price?.toLocaleString() }}</span>
-                  <span class="price-currency">{{ quote.currency || 'USD' }}</span>
+                <div class="quote-price-section">
+                  <div class="quote-price">
+                    <span class="price-value">{{ formatPrice(quote.price) }}</span>
+                    <span class="price-currency">{{ quote.currency || 'USD' }}</span>
+                  </div>
+                  <button
+                    class="breakdown-toggle"
+                    @click="togglePriceBreakdown(quote.id)"
+                    :class="{ active: expandedQuote === quote.id }"
+                  >
+                    <span>Детали цены</span>
+                    <ChevronDown v-if="expandedQuote !== quote.id" :size="16" :stroke-width="iconStrokeWidth" />
+                    <ChevronUp v-else :size="16" :stroke-width="iconStrokeWidth" />
+                  </button>
+                </div>
+              </div>
+
+              <!-- Price Breakdown Panel -->
+              <div class="price-breakdown" v-if="expandedQuote === quote.id">
+                <div class="breakdown-grid">
+                  <div class="breakdown-item">
+                    <div class="breakdown-icon">
+                      <Package :size="18" :stroke-width="iconStrokeWidth" />
+                    </div>
+                    <div class="breakdown-details">
+                      <span class="breakdown-label">Базовая ставка</span>
+                      <span class="breakdown-desc">Перевозка груза</span>
+                    </div>
+                    <span class="breakdown-value">{{ formatPrice(quote.base_rate) }} {{ quote.currency }}</span>
+                  </div>
+
+                  <!-- Surcharges -->
+                  <template v-if="quote.surcharges?.items?.length">
+                    <div
+                      class="breakdown-item"
+                      v-for="surcharge in quote.surcharges.items"
+                      :key="surcharge.type"
+                    >
+                      <div class="breakdown-icon surcharge">
+                        <component :is="getSurchargeIcon(surcharge.type)" :size="18" :stroke-width="iconStrokeWidth" />
+                      </div>
+                      <div class="breakdown-details">
+                        <span class="breakdown-label">{{ surcharge.name }}</span>
+                        <span class="breakdown-desc">Надбавка</span>
+                      </div>
+                      <span class="breakdown-value">+{{ formatPrice(surcharge.amount) }} {{ quote.currency }}</span>
+                    </div>
+                  </template>
+
+                  <!-- Insurance -->
+                  <div class="breakdown-item" v-if="quote.insurance_cost > 0">
+                    <div class="breakdown-icon insurance">
+                      <Shield :size="18" :stroke-width="iconStrokeWidth" />
+                    </div>
+                    <div class="breakdown-details">
+                      <span class="breakdown-label">Страхование груза</span>
+                      <span class="breakdown-desc">0.5% от стоимости</span>
+                    </div>
+                    <span class="breakdown-value">+{{ formatPrice(quote.insurance_cost) }} {{ quote.currency }}</span>
+                  </div>
+
+                  <!-- Customs -->
+                  <div class="breakdown-item" v-if="quote.customs_fee > 0">
+                    <div class="breakdown-icon customs">
+                      <FileCheck :size="18" :stroke-width="iconStrokeWidth" />
+                    </div>
+                    <div class="breakdown-details">
+                      <span class="breakdown-label">Таможенное оформление</span>
+                      <span class="breakdown-desc">Фиксированная плата</span>
+                    </div>
+                    <span class="breakdown-value">+{{ formatPrice(quote.customs_fee) }} {{ quote.currency }}</span>
+                  </div>
+
+                  <!-- Weight info -->
+                  <div class="breakdown-item weight-info-row" v-if="quote.billable_weight">
+                    <div class="breakdown-icon weight">
+                      <Scale :size="18" :stroke-width="iconStrokeWidth" />
+                    </div>
+                    <div class="breakdown-details">
+                      <span class="breakdown-label">Тарифицируемый вес</span>
+                      <span class="breakdown-desc">Макс. из фактического и объемного</span>
+                    </div>
+                    <span class="breakdown-value">{{ quote.billable_weight }} кг</span>
+                  </div>
+                </div>
+
+                <div class="breakdown-total">
+                  <span>Итого к оплате</span>
+                  <span class="total-value">{{ formatPrice(quote.price) }} {{ quote.currency }}</span>
                 </div>
               </div>
 
@@ -190,8 +313,13 @@ async function selectQuote(quote) {
                   <span class="valid-until" v-if="quote.valid_until">
                     Действует до {{ formatDate(quote.valid_until) }}
                   </span>
-                  <button @click="selectQuote(quote)" class="btn btn-primary">
-                    Выбрать
+                  <button
+                    @click="selectQuote(quote)"
+                    class="btn btn-primary"
+                    :disabled="selectingQuote === quote.id"
+                  >
+                    <span v-if="selectingQuote === quote.id">Оформление...</span>
+                    <span v-else>Выбрать</span>
                   </button>
                 </div>
               </div>
@@ -271,6 +399,10 @@ h1 {
   .arrow {
     color: $color-primary;
     margin: 0 $spacing-xs;
+  }
+
+  .weight-info {
+    color: $text-muted;
   }
 }
 
@@ -400,6 +532,10 @@ h1 {
     border-color: rgba($color-primary, 0.3);
     box-shadow: $shadow;
   }
+
+  &.expanded {
+    border-color: $color-primary;
+  }
 }
 
 .best-badge {
@@ -500,8 +636,18 @@ h1 {
 .transport-rail { background: rgba(139, 92, 246, 0.1); color: #8b5cf6; }
 .transport-road { background: rgba(34, 197, 94, 0.1); color: #22c55e; }
 
-.quote-price {
+.quote-price-section {
   text-align: right;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-xs;
+}
+
+.quote-price {
+  display: flex;
+  align-items: baseline;
+  justify-content: flex-end;
+  gap: $spacing-xs;
 }
 
 .price-value {
@@ -513,7 +659,135 @@ h1 {
 .price-currency {
   font-size: $font-size-sm;
   color: $text-secondary;
-  margin-left: $spacing-xs;
+}
+
+.breakdown-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: $spacing-xs;
+  padding: $spacing-xs $spacing-sm;
+  background: transparent;
+  border: 1px solid $border-color;
+  border-radius: $radius-md;
+  font-size: $font-size-xs;
+  color: $text-secondary;
+  cursor: pointer;
+  transition: all $transition-fast;
+
+  &:hover, &.active {
+    background: $bg-light;
+    color: $color-primary;
+    border-color: $color-primary;
+  }
+
+  svg {
+    width: 16px;
+    height: 16px;
+  }
+}
+
+// Price Breakdown Panel
+.price-breakdown {
+  padding: $spacing-lg;
+  background: $bg-light;
+  border-top: 1px solid $border-color;
+}
+
+.breakdown-grid {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+}
+
+.breakdown-item {
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+  padding: $spacing-sm $spacing-md;
+  background: $bg-white;
+  border-radius: $radius-md;
+  border: 1px solid $border-color;
+}
+
+.breakdown-icon {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: $radius-md;
+  background: rgba($color-primary, 0.1);
+  color: $color-primary;
+
+  &.surcharge {
+    background: rgba($color-warning, 0.1);
+    color: $color-warning;
+  }
+
+  &.insurance {
+    background: rgba($color-info, 0.1);
+    color: $color-info;
+  }
+
+  &.customs {
+    background: rgba(139, 92, 246, 0.1);
+    color: #8b5cf6;
+  }
+
+  &.weight {
+    background: rgba($text-secondary, 0.1);
+    color: $text-secondary;
+  }
+
+  svg {
+    width: 18px;
+    height: 18px;
+  }
+}
+
+.breakdown-details {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.breakdown-label {
+  font-weight: 500;
+  font-size: $font-size-sm;
+  color: $text-primary;
+}
+
+.breakdown-desc {
+  font-size: $font-size-xs;
+  color: $text-muted;
+}
+
+.breakdown-value {
+  font-weight: 600;
+  font-size: $font-size-sm;
+  color: $text-primary;
+}
+
+.weight-info-row {
+  background: $bg-light;
+  border-style: dashed;
+}
+
+.breakdown-total {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: $spacing-md;
+  padding-top: $spacing-md;
+  border-top: 2px solid $border-color;
+  font-weight: 600;
+  color: $text-primary;
+
+  .total-value {
+    font-size: $font-size-xl;
+    color: $color-primary;
+  }
 }
 
 .quote-footer {
@@ -521,7 +795,7 @@ h1 {
   justify-content: space-between;
   align-items: center;
   padding: $spacing-md $spacing-lg;
-  background: $bg-light;
+  background: $bg-white;
   border-top: 1px solid $border-color;
 }
 
@@ -565,13 +839,18 @@ h1 {
   transition: all $transition-base;
   text-decoration: none;
   border: none;
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
 }
 
 .btn-primary {
   background: $color-primary;
   color: $text-white;
 
-  &:hover {
+  &:hover:not(:disabled) {
     background: $color-primary-dark;
   }
 }
@@ -582,8 +861,11 @@ h1 {
     gap: $spacing-md;
   }
 
-  .quote-price {
+  .quote-price-section {
     text-align: left;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
   }
 
   .filters-bar {
@@ -599,6 +881,21 @@ h1 {
   .quote-actions {
     width: 100%;
     justify-content: space-between;
+  }
+
+  .quote-details {
+    flex-wrap: wrap;
+    gap: $spacing-md;
+  }
+
+  .breakdown-item {
+    flex-wrap: wrap;
+  }
+
+  .breakdown-value {
+    width: 100%;
+    text-align: right;
+    margin-top: $spacing-xs;
   }
 }
 </style>

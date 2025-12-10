@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\CarrierManagementController;
 use App\Http\Controllers\Api\ChatController;
 use App\Http\Controllers\Api\CompanyController;
 use App\Http\Controllers\Api\InvoiceController;
@@ -100,5 +101,39 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/{invoice}', [InvoiceController::class, 'show']);
         Route::get('/{invoice}/pdf', [InvoiceController::class, 'downloadPdf']);
         Route::post('/{invoice}/pay', [InvoiceController::class, 'pay']);
+    });
+
+    // Carrier Management (for carriers only)
+    Route::prefix('carrier')->group(function () {
+        // Stats
+        Route::get('/stats', [CarrierManagementController::class, 'getStats']);
+
+        // Zones
+        Route::get('/zones', [CarrierManagementController::class, 'getZones']);
+        Route::post('/zones', [CarrierManagementController::class, 'createZone']);
+        Route::put('/zones/{id}', [CarrierManagementController::class, 'updateZone']);
+        Route::delete('/zones/{id}', [CarrierManagementController::class, 'deleteZone']);
+
+        // Terminals
+        Route::get('/terminals', [CarrierManagementController::class, 'getTerminals']);
+        Route::post('/terminals', [CarrierManagementController::class, 'createTerminal']);
+        Route::put('/terminals/{id}', [CarrierManagementController::class, 'updateTerminal']);
+        Route::delete('/terminals/{id}', [CarrierManagementController::class, 'deleteTerminal']);
+
+        // Surcharges
+        Route::get('/surcharges', [CarrierManagementController::class, 'getSurcharges']);
+        Route::post('/surcharges', [CarrierManagementController::class, 'createSurcharge']);
+        Route::put('/surcharges/{id}', [CarrierManagementController::class, 'updateSurcharge']);
+        Route::delete('/surcharges/{id}', [CarrierManagementController::class, 'deleteSurcharge']);
+
+        // Rate Cards
+        Route::get('/rate-cards', [CarrierManagementController::class, 'getRateCards']);
+        Route::post('/rate-cards', [CarrierManagementController::class, 'createRateCard']);
+        Route::put('/rate-cards/{id}', [CarrierManagementController::class, 'updateRateCard']);
+        Route::delete('/rate-cards/{id}', [CarrierManagementController::class, 'deleteRateCard']);
+
+        // Pricing Rule
+        Route::get('/pricing-rule', [CarrierManagementController::class, 'getPricingRule']);
+        Route::put('/pricing-rule', [CarrierManagementController::class, 'updatePricingRule']);
     });
 });
