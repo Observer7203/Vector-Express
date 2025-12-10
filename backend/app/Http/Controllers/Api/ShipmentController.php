@@ -46,11 +46,11 @@ class ShipmentController extends Controller
             'pickup_date' => ['nullable', 'date', 'after_or_equal:today'],
             'notes' => ['nullable', 'string'],
             'items' => ['required', 'array', 'min:1'],
-            'items.*.length' => ['required', 'numeric', 'min:0'],
-            'items.*.width' => ['required', 'numeric', 'min:0'],
-            'items.*.height' => ['required', 'numeric', 'min:0'],
-            'items.*.weight' => ['required', 'numeric', 'min:0'],
-            'items.*.quantity' => ['required', 'integer', 'min:1'],
+            'items.*.length' => ['nullable', 'numeric', 'min:0'],
+            'items.*.width' => ['nullable', 'numeric', 'min:0'],
+            'items.*.height' => ['nullable', 'numeric', 'min:0'],
+            'items.*.weight' => ['required', 'numeric', 'min:0.01'],
+            'items.*.quantity' => ['nullable', 'integer', 'min:1'],
             'items.*.description' => ['nullable', 'string', 'max:255'],
         ]);
 
@@ -108,11 +108,11 @@ class ShipmentController extends Controller
             'pickup_date' => ['nullable', 'date', 'after_or_equal:today'],
             'notes' => ['nullable', 'string'],
             'items' => ['sometimes', 'array', 'min:1'],
-            'items.*.length' => ['required', 'numeric', 'min:0'],
-            'items.*.width' => ['required', 'numeric', 'min:0'],
-            'items.*.height' => ['required', 'numeric', 'min:0'],
-            'items.*.weight' => ['required', 'numeric', 'min:0'],
-            'items.*.quantity' => ['required', 'integer', 'min:1'],
+            'items.*.length' => ['nullable', 'numeric', 'min:0'],
+            'items.*.width' => ['nullable', 'numeric', 'min:0'],
+            'items.*.height' => ['nullable', 'numeric', 'min:0'],
+            'items.*.weight' => ['required', 'numeric', 'min:0.01'],
+            'items.*.quantity' => ['nullable', 'integer', 'min:1'],
             'items.*.description' => ['nullable', 'string', 'max:255'],
         ]);
 

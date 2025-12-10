@@ -33,6 +33,8 @@ const form = ref({
 })
 
 const errors = ref({})
+const submitting = ref(false)
+const errorMessage = ref('')
 
 const canProceed = computed(() => {
   if (step.value === 1) {
@@ -86,14 +88,34 @@ function prevStep() {
 
 async function handleSubmit() {
   errors.value = {}
+  errorMessage.value = ''
+  submitting.value = true
+
   try {
-    const shipment = await shipmentsStore.createShipment(form.value)
+    // Prepare data - ensure items have proper values
+    const submitData = {
+      ...form.value,
+      items: form.value.items.map(item => ({
+        length: item.length || 0,
+        width: item.width || 0,
+        height: item.height || 0,
+        weight: item.weight || 0,
+        quantity: item.quantity || 1,
+        description: item.description || ''
+      }))
+    }
+
+    const shipment = await shipmentsStore.createShipment(submitData)
     await shipmentsStore.calculateQuotes(shipment.id)
     router.push(`/shipments/${shipment.id}/quotes`)
   } catch (e) {
+    console.error('Submit error:', e)
     if (e.response?.data?.errors) {
       errors.value = e.response.data.errors
     }
+    errorMessage.value = e.response?.data?.message || 'Произошла ошибка при создании заявки'
+  } finally {
+    submitting.value = false
   }
 }
 </script>
@@ -363,8 +385,13 @@ async function handleSubmit() {
             </div>
           </div>
 
+          <!-- Error Message -->
+          <div v-if="errorMessage" class="error-message">
+            {{ errorMessage }}
+          </div>
+
           <div class="form-actions">
-            <button v-if="step > 1" type="button" @click="prevStep" class="btn btn-outline">
+            <button v-if="step > 1" type="button" @click="prevStep" class="btn btn-outline" :disabled="submitting">
               <ArrowLeft :size="18" :stroke-width="iconStrokeWidth" />
               Назад
             </button>
@@ -382,10 +409,10 @@ async function handleSubmit() {
               v-if="step === totalSteps"
               type="submit"
               class="btn btn-primary"
-              :disabled="shipmentsStore.loading || shipmentsStore.calculating"
+              :disabled="submitting"
             >
-              <span v-if="shipmentsStore.calculating" class="btn-loader"></span>
-              {{ shipmentsStore.calculating ? 'Расчет...' : 'Рассчитать стоимость' }}
+              <span v-if="submitting" class="btn-loader"></span>
+              {{ submitting ? 'Расчет...' : 'Рассчитать стоимость' }}
             </button>
           </div>
         </form>
@@ -937,6 +964,15 @@ textarea {
 .no-services {
   color: $text-muted;
   font-size: $font-size-sm;
+}
+
+.error-message {
+  background: rgba($color-danger, 0.1);
+  color: $color-danger;
+  padding: $spacing-md;
+  border-radius: $radius-md;
+  font-size: $font-size-sm;
+  margin-top: $spacing-md;
 }
 
 .form-actions {
