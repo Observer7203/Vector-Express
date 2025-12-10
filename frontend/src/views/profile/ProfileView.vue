@@ -2,7 +2,7 @@
 import { onMounted, ref, computed } from 'vue'
 import { RouterLink } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
-import api from '@/api/axios'
+import api from '@/api/client'
 import {
   User,
   Building,
@@ -21,6 +21,7 @@ import {
   Eye,
   EyeOff
 } from 'lucide-vue-next'
+import AppHeader from '@/components/AppHeader.vue'
 
 const iconStrokeWidth = 1.2
 
@@ -213,28 +214,7 @@ async function handleLogout() {
 
 <template>
   <div class="profile-page">
-    <header class="dashboard-header">
-      <div class="container">
-        <div class="header-content">
-          <div class="header-info">
-            <RouterLink to="/" class="logo">Vector Express</RouterLink>
-          </div>
-          <nav class="header-nav">
-            <RouterLink to="/dashboard" class="nav-link">Дашборд</RouterLink>
-            <RouterLink to="/shipments" class="nav-link">Заявки</RouterLink>
-            <RouterLink to="/orders" class="nav-link">Заказы</RouterLink>
-            <RouterLink to="/tracking" class="nav-link">Отслеживание</RouterLink>
-          </nav>
-          <div class="header-actions">
-            <RouterLink to="/profile" class="user-link">
-              <User :size="18" :stroke-width="iconStrokeWidth" />
-              {{ user.name }}
-            </RouterLink>
-            <button @click="handleLogout" class="btn btn-outline">Выход</button>
-          </div>
-        </div>
-      </div>
-    </header>
+    <AppHeader />
 
     <main class="dashboard-main">
       <div class="container">

@@ -2,7 +2,7 @@
 import { onMounted, ref, computed } from 'vue'
 import { RouterLink } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
-import api from '@/api/axios'
+import api from '@/api/client'
 import {
   DollarSign,
   Plus,
@@ -14,6 +14,7 @@ import {
   Save,
   ChevronDown
 } from 'lucide-vue-next'
+import AppHeader from '@/components/AppHeader.vue'
 
 const iconStrokeWidth = 1.2
 
@@ -263,26 +264,7 @@ async function handleLogout() {
 
 <template>
   <div class="carrier-rates">
-    <header class="dashboard-header">
-      <div class="container">
-        <div class="header-content">
-          <div class="header-info">
-            <RouterLink to="/" class="logo">Vector Express</RouterLink>
-            <span class="role-badge">Перевозчик</span>
-          </div>
-          <nav class="header-nav">
-            <RouterLink to="/carrier" class="nav-link">Панель управления</RouterLink>
-            <RouterLink to="/carrier/zones" class="nav-link">Зоны</RouterLink>
-            <RouterLink to="/carrier/rates" class="nav-link">Тарифы</RouterLink>
-            <RouterLink to="/carrier/terminals" class="nav-link">Терминалы</RouterLink>
-            <RouterLink to="/carrier/orders" class="nav-link">Заказы</RouterLink>
-          </nav>
-          <div class="header-actions">
-            <button @click="handleLogout" class="btn btn-outline">Выход</button>
-          </div>
-        </div>
-      </div>
-    </header>
+    <AppHeader />
 
     <main class="dashboard-main">
       <div class="container">

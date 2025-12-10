@@ -1,14 +1,13 @@
 <script setup>
 import { onMounted, ref } from 'vue'
 import { RouterLink } from 'vue-router'
-import { useAuthStore } from '@/stores/auth'
 import { useShipmentsStore } from '@/stores/shipments'
 import { useOrdersStore } from '@/stores/orders'
-import { FileText, Truck, Clock, CheckCircle, PlusSquare, List, MapPin } from 'lucide-vue-next'
+import { FileText, Truck, Clock, CheckCircle, PlusSquare, MapPin } from 'lucide-vue-next'
+import AppHeader from '@/components/AppHeader.vue'
 
 const iconStrokeWidth = 1.2
 
-const authStore = useAuthStore()
 const shipmentsStore = useShipmentsStore()
 const ordersStore = useOrdersStore()
 
@@ -28,10 +27,6 @@ onMounted(async () => {
   stats.value.delivered = ordersStore.orders.filter((o) => o.status === 'delivered').length
 })
 
-async function handleLogout() {
-  await authStore.logout()
-}
-
 const statusLabels = {
   pending: 'Ожидает',
   confirmed: 'Подтвержден',
@@ -47,24 +42,7 @@ const statusLabels = {
 
 <template>
   <div class="dashboard">
-    <header class="dashboard-header">
-      <div class="container">
-        <div class="header-content">
-          <div class="header-info">
-            <RouterLink to="/" class="logo">Vector Express</RouterLink>
-          </div>
-          <nav class="header-nav">
-            <RouterLink to="/shipments" class="nav-link">Заявки</RouterLink>
-            <RouterLink to="/orders" class="nav-link">Заказы</RouterLink>
-            <RouterLink to="/tracking" class="nav-link">Отслеживание</RouterLink>
-          </nav>
-          <div class="header-actions">
-            <span class="user-name">{{ authStore.user?.name }}</span>
-            <button @click="handleLogout" class="btn btn-outline">Выход</button>
-          </div>
-        </div>
-      </div>
-    </header>
+    <AppHeader />
 
     <main class="dashboard-main">
       <div class="container">
@@ -205,74 +183,10 @@ const statusLabels = {
   background: $bg-light;
 }
 
-.dashboard-header {
-  background: $bg-white;
-  border-bottom: 1px solid $border-color;
-  position: sticky;
-  top: 0;
-  z-index: 100;
-}
-
 .container {
   max-width: $container-max-width;
   margin: 0 auto;
   padding: 0 $container-padding;
-}
-
-.header-content {
-  display: flex;
-  align-items: center;
-  height: 64px;
-  gap: $spacing-xl;
-}
-
-.header-info {
-  display: flex;
-  align-items: center;
-}
-
-.logo {
-  font-size: $font-size-xl;
-  font-weight: 600;
-  color: $color-primary;
-  text-decoration: none;
-}
-
-.header-nav {
-  display: flex;
-  gap: $spacing-md;
-  flex: 1;
-}
-
-.nav-link {
-  color: $text-secondary;
-  text-decoration: none;
-  font-size: $font-size-sm;
-  font-weight: 500;
-  padding: $spacing-xs $spacing-sm;
-  border-radius: $radius-md;
-  transition: all $transition-fast;
-
-  &:hover {
-    color: $text-primary;
-    background: $bg-hover;
-  }
-
-  &.router-link-active {
-    color: $color-primary;
-    background: rgba($color-primary, 0.1);
-  }
-}
-
-.header-actions {
-  display: flex;
-  align-items: center;
-  gap: $spacing-md;
-}
-
-.user-name {
-  color: $text-secondary;
-  font-size: $font-size-sm;
 }
 
 .btn {
