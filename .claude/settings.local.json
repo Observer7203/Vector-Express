@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git clone https://github.com/Observer7203/Vector-Express.git temp_repo)"
+    ]
+  }
+}
