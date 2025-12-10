@@ -9,42 +9,106 @@ class MockCarrierService extends AbstractCarrierService
 {
     public function getQuotes(Shipment $shipment): array
     {
+        // Check route support
+        if (!$this->supportsRoute(
+            $shipment->origin_country,
+            $shipment->destination_country,
+            $shipment->transport_type
+        )) {
+            return [];
+        }
+
+        // Try to get cached rate first
+        $cacheParams = [
+            'origin_country' => $shipment->origin_country,
+            'origin_city' => $shipment->origin_city,
+            'destination_country' => $shipment->destination_country,
+            'destination_city' => $shipment->destination_city,
+            'transport_type' => $shipment->transport_type,
+            'weight' => (float) $shipment->total_weight,
+            'volume' => (float) $shipment->total_volume,
+        ];
+
+        $cachedRate = $this->getCachedRate($cacheParams);
+        if ($cachedRate) {
+            return $cachedRate;
+        }
+
         $chargeableWeight = $this->getChargeableWeight($shipment);
-        $baseRates = $this->getBaseRates();
+
+        // Find zones
+        $originZone = $this->findZone($shipment->origin_country, $shipment->origin_city);
+        $destinationZone = $this->findZone($shipment->destination_country, $shipment->destination_city);
+
+        // Check for remote area
+        $isRemoteArea = $this->isRemoteArea(null, $destinationZone);
 
         $quotes = [];
+        $transportTypes = $shipment->transport_type
+            ? [$shipment->transport_type]
+            : ($this->carrier->supported_transport_types ?? ['road']);
 
-        foreach ($this->carrier->supported_transport_types ?? ['road'] as $transportType) {
-            $rate = $baseRates[$transportType] ?? 10;
-            $deliveryDays = $this->getDeliveryDays($transportType);
+        foreach ($transportTypes as $transportType) {
+            // Try to get rate from rate cards first
+            $rateCard = $this->findRateCard($originZone, $destinationZone, $chargeableWeight, $transportType);
 
-            $price = $chargeableWeight * $rate;
-
-            // Add insurance if required
-            if ($shipment->insurance_required) {
-                $price += $shipment->declared_value * 0.01; // 1% of declared value
+            if ($rateCard) {
+                // Use rate card pricing
+                $baseRate = $this->calculateBaseRate($rateCard, $chargeableWeight);
+                $baseRate = $this->applyMinimumCharge($baseRate);
+                $transitDaysMin = $rateCard->transit_days_min ?? $this->getDeliveryDays($transportType);
+                $transitDaysMax = $rateCard->transit_days_max ?? $transitDaysMin + 3;
+            } else {
+                // Fall back to default rates
+                $defaultRates = $this->getBaseRates();
+                $rate = $defaultRates[$transportType] ?? 10;
+                $baseRate = $this->applyMinimumCharge($chargeableWeight * $rate);
+                $transitDaysMin = $this->getDeliveryDays($transportType);
+                $transitDaysMax = $transitDaysMin + 3;
             }
 
-            // Add customs clearance fee
+            // Calculate surcharges using new system
+            $surcharges = $this->calculateSurcharges($baseRate, $chargeableWeight, $transportType, [
+                'residential_delivery' => $shipment->door_to_door,
+                'is_remote_area' => $isRemoteArea,
+            ]);
+
+            // Calculate insurance
+            $insuranceCost = 0;
+            if ($shipment->insurance_required && $shipment->declared_value) {
+                $insuranceCost = $this->calculateInsurance((float) $shipment->declared_value);
+            }
+
+            // Add customs clearance fee if not in surcharges
+            $customsFee = 0;
             if ($shipment->customs_clearance) {
-                $price += 150;
+                $customsFee = 150;
             }
 
-            // Add door-to-door surcharge
-            if ($shipment->door_to_door) {
-                $price += 50;
-            }
+            $totalPrice = $baseRate + $surcharges['total'] + $insuranceCost + $customsFee;
 
             $quotes[] = [
                 'carrier_id' => $this->carrier->id,
-                'price' => round($price, 2),
-                'currency' => $shipment->currency ?? 'USD',
-                'delivery_days' => $deliveryDays,
-                'estimated_delivery_date' => now()->addDays($deliveryDays)->toDateString(),
+                'price' => round($totalPrice, 2),
+                'currency' => $this->getCurrency(),
+                'base_rate' => round($baseRate, 2),
+                'surcharges' => $surcharges,
+                'insurance_cost' => $insuranceCost,
+                'customs_fee' => $customsFee,
+                'billable_weight' => round($chargeableWeight, 2),
+                'delivery_days' => $transitDaysMax,
+                'delivery_days_min' => $transitDaysMin,
+                'delivery_days_max' => $transitDaysMax,
+                'estimated_delivery_date' => now()->addDays($transitDaysMax)->toDateString(),
                 'transport_type' => $transportType,
                 'services_included' => $this->getServicesIncluded($shipment),
                 'valid_until' => now()->addDays(7),
             ];
+        }
+
+        // Cache the result
+        if (!empty($quotes)) {
+            $this->cacheRate($cacheParams, $quotes, 60);
         }
 
         return $quotes;
