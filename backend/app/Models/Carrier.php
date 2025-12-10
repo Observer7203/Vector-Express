@@ -50,6 +50,70 @@ class Carrier extends Model
         return $this->hasMany(Review::class);
     }
 
+    public function pricingRules(): HasMany
+    {
+        return $this->hasMany(CarrierPricingRule::class);
+    }
+
+    public function activePricingRule(): ?CarrierPricingRule
+    {
+        return $this->pricingRules()
+            ->where(function ($query) {
+                $query->whereNull('effective_from')
+                      ->orWhere('effective_from', '<=', now());
+            })
+            ->where(function ($query) {
+                $query->whereNull('effective_until')
+                      ->orWhere('effective_until', '>=', now());
+            })
+            ->latest()
+            ->first();
+    }
+
+    public function zones(): HasMany
+    {
+        return $this->hasMany(CarrierZone::class);
+    }
+
+    public function rateCards(): HasMany
+    {
+        return $this->hasMany(CarrierRateCard::class);
+    }
+
+    public function surcharges(): HasMany
+    {
+        return $this->hasMany(CarrierSurcharge::class);
+    }
+
+    public function activeSurcharges(): HasMany
+    {
+        return $this->surcharges()
+            ->where('is_active', true)
+            ->where(function ($query) {
+                $query->whereNull('effective_from')
+                      ->orWhere('effective_from', '<=', now());
+            })
+            ->where(function ($query) {
+                $query->whereNull('effective_until')
+                      ->orWhere('effective_until', '>=', now());
+            });
+    }
+
+    public function terminals(): HasMany
+    {
+        return $this->hasMany(CarrierTerminal::class);
+    }
+
+    public function activeTerminals(): HasMany
+    {
+        return $this->terminals()->where('is_active', true);
+    }
+
+    public function cachedRates(): HasMany
+    {
+        return $this->hasMany(CachedRate::class);
+    }
+
     public function supportsTransportType(string $type): bool
     {
         return in_array($type, $this->supported_transport_types ?? []);
