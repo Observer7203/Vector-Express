@@ -110,6 +110,55 @@ const router = createRouter({
       name: 'carrier-settings',
       component: () => import('@/views/carrier/CarrierSettingsView.vue'),
       meta: { requiresAuth: true, requiresRole: 'carrier' }
+    },
+    {
+      path: '/carrier/documents',
+      name: 'carrier-documents',
+      component: () => import('@/views/carrier/CarrierDocumentsView.vue'),
+      meta: { requiresAuth: true, requiresRole: 'carrier' }
+    },
+    // Admin routes
+    {
+      path: '/admin',
+      component: () => import('@/layouts/AdminLayout.vue'),
+      meta: { requiresAuth: true, requiresRole: 'admin' },
+      children: [
+        {
+          path: '',
+          name: 'admin-dashboard',
+          component: () => import('@/views/admin/DashboardView.vue')
+        },
+        {
+          path: 'users',
+          name: 'admin-users',
+          component: () => import('@/views/admin/UsersView.vue')
+        },
+        {
+          path: 'companies',
+          name: 'admin-companies',
+          component: () => import('@/views/admin/CompaniesView.vue')
+        },
+        {
+          path: 'carriers',
+          name: 'admin-carriers',
+          component: () => import('@/views/admin/CarriersView.vue')
+        },
+        {
+          path: 'orders',
+          name: 'admin-orders',
+          component: () => import('@/views/admin/OrdersView.vue')
+        },
+        {
+          path: 'invoices',
+          name: 'admin-invoices',
+          component: () => import('@/views/admin/InvoicesView.vue')
+        },
+        {
+          path: 'settings',
+          name: 'admin-settings',
+          component: () => import('@/views/admin/SettingsView.vue')
+        }
+      ]
     }
   ]
 })
@@ -125,6 +174,9 @@ router.beforeEach(async (to, from, next) => {
   if (to.meta.requiresAuth && !authStore.isAuthenticated) {
     next({ name: 'login', query: { redirect: to.fullPath } })
   } else if (to.meta.guest && authStore.isAuthenticated) {
+    next({ name: 'dashboard' })
+  } else if (to.meta.requiresRole && authStore.user?.role !== to.meta.requiresRole) {
+    // Role check - redirect to dashboard if role doesn't match
     next({ name: 'dashboard' })
   } else {
     next()

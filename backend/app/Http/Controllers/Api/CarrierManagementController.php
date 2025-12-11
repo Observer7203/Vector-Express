@@ -10,10 +10,14 @@ use App\Models\CarrierSurcharge;
 use App\Models\CarrierTerminal;
 use App\Models\CarrierZone;
 use App\Models\CarrierZonePostalCode;
+use App\Imports\CarrierZonesImport;
+use App\Imports\CarrierRateCardsImport;
+use App\Imports\CarrierTerminalsImport;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
+use Maatwebsite\Excel\Facades\Excel;
 
 /**
  * Carrier Management Controller
@@ -480,7 +484,7 @@ class CarrierManagementController extends Controller
             ->orderBy('origin_zone_id')
             ->orderBy('destination_zone_id')
             ->orderBy('transport_type')
-            ->orderBy('weight_min')
+            ->orderBy('min_weight')
             ->paginate($perPage);
 
         return response()->json($rateCards);
@@ -501,9 +505,10 @@ class CarrierManagementController extends Controller
             'origin_zone_id' => 'required|exists:carrier_zones,id',
             'destination_zone_id' => 'required|exists:carrier_zones,id',
             'transport_type' => 'required|in:air,road,rail,sea',
-            'weight_min' => 'required|numeric|min:0',
-            'weight_max' => 'nullable|numeric|gt:weight_min',
-            'rate_per_kg' => 'required|numeric|min:0',
+            'min_weight' => 'required|numeric|min:0',
+            'max_weight' => 'nullable|numeric|gt:min_weight',
+            'rate' => 'required|numeric|min:0',
+            'rate_unit' => 'nullable|in:per_kg,per_lb,per_100kg,per_100lbs,flat',
             'currency' => 'nullable|string|max:3',
             'transit_days_min' => 'nullable|integer|min:1',
             'transit_days_max' => 'nullable|integer|min:1',
@@ -543,9 +548,10 @@ class CarrierManagementController extends Controller
             'origin_zone_id' => 'sometimes|exists:carrier_zones,id',
             'destination_zone_id' => 'sometimes|exists:carrier_zones,id',
             'transport_type' => 'sometimes|in:air,road,rail,sea',
-            'weight_min' => 'sometimes|numeric|min:0',
-            'weight_max' => 'nullable|numeric',
-            'rate_per_kg' => 'sometimes|numeric|min:0',
+            'min_weight' => 'sometimes|numeric|min:0',
+            'max_weight' => 'nullable|numeric',
+            'rate' => 'sometimes|numeric|min:0',
+            'rate_unit' => 'nullable|in:per_kg,per_lb,per_100kg,per_100lbs,flat',
             'currency' => 'nullable|string|max:3',
             'transit_days_min' => 'nullable|integer|min:1',
             'transit_days_max' => 'nullable|integer|min:1',
@@ -676,5 +682,175 @@ class CarrierManagementController extends Controller
         );
 
         return response()->json(['data' => $stats]);
+    }
+
+    // =========================================================================
+    // IMPORT FROM EXCEL
+    // =========================================================================
+
+    /**
+     * Import zones from Excel file
+     */
+    public function importZones(Request $request): JsonResponse
+    {
+        $carrier = $this->getCarrier($request);
+
+        if (!$carrier) {
+            return response()->json(['error' => 'Carrier not found'], 404);
+        }
+
+        $request->validate([
+            'file' => 'required|file|mimes:xlsx,xls,csv|max:10240', // max 10MB
+        ]);
+
+        try {
+            $import = new CarrierZonesImport($carrier->id);
+            Excel::import($import, $request->file('file'));
+
+            $this->clearCarrierCache($carrier->id);
+
+            return response()->json([
+                'message' => 'Зоны успешно импортированы',
+                'imported' => $import->getImportedCount(),
+                'skipped' => $import->getSkippedCount(),
+                'errors' => $import->errors()->toArray(),
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => 'Ошибка импорта: ' . $e->getMessage()
+            ], 422);
+        }
+    }
+
+    /**
+     * Import rate cards from Excel file
+     */
+    public function importRateCards(Request $request): JsonResponse
+    {
+        $carrier = $this->getCarrier($request);
+
+        if (!$carrier) {
+            return response()->json(['error' => 'Carrier not found'], 404);
+        }
+
+        $request->validate([
+            'file' => 'required|file|mimes:xlsx,xls,csv|max:10240',
+        ]);
+
+        try {
+            $import = new CarrierRateCardsImport($carrier->id);
+            Excel::import($import, $request->file('file'));
+
+            $this->clearCarrierCache($carrier->id);
+
+            return response()->json([
+                'message' => 'Тарифы успешно импортированы',
+                'imported' => $import->getImportedCount(),
+                'skipped' => $import->getSkippedCount(),
+                'errors' => $import->errors()->toArray(),
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => 'Ошибка импорта: ' . $e->getMessage()
+            ], 422);
+        }
+    }
+
+    /**
+     * Import terminals from Excel file
+     */
+    public function importTerminals(Request $request): JsonResponse
+    {
+        $carrier = $this->getCarrier($request);
+
+        if (!$carrier) {
+            return response()->json(['error' => 'Carrier not found'], 404);
+        }
+
+        $request->validate([
+            'file' => 'required|file|mimes:xlsx,xls,csv|max:10240',
+        ]);
+
+        try {
+            $import = new CarrierTerminalsImport($carrier->id);
+            Excel::import($import, $request->file('file'));
+
+            $this->clearCarrierCache($carrier->id);
+
+            return response()->json([
+                'message' => 'Терминалы успешно импортированы',
+                'imported' => $import->getImportedCount(),
+                'skipped' => $import->getSkippedCount(),
+                'errors' => $import->errors()->toArray(),
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => 'Ошибка импорта: ' . $e->getMessage()
+            ], 422);
+        }
+    }
+
+    /**
+     * Get import templates info
+     */
+    public function getImportTemplates(): JsonResponse
+    {
+        return response()->json([
+            'templates' => [
+                'zones' => [
+                    'description' => 'Шаблон для импорта зон доставки',
+                    'columns' => [
+                        'zone_code' => 'Код зоны (обязательно, например: KZ, RU, CN)',
+                        'zone_name' => 'Название зоны (например: Казахстан)',
+                        'country_code' => 'Код страны ISO (например: KZ)',
+                        'description' => 'Описание (опционально)',
+                    ],
+                    'example' => [
+                        ['zone_code' => 'KZ', 'zone_name' => 'Казахстан', 'country_code' => 'KZ', 'description' => 'Внутренние перевозки'],
+                        ['zone_code' => 'RU', 'zone_name' => 'Россия', 'country_code' => 'RU', 'description' => 'Международные перевозки'],
+                    ]
+                ],
+                'rate_cards' => [
+                    'description' => 'Шаблон для импорта тарифов',
+                    'columns' => [
+                        'origin_zone' => 'Код зоны отправления (должен существовать)',
+                        'destination_zone' => 'Код зоны назначения (должен существовать)',
+                        'transport_type' => 'Тип транспорта: air, road, rail, sea',
+                        'min_weight' => 'Минимальный вес (кг)',
+                        'max_weight' => 'Максимальный вес (кг, пусто = без ограничения)',
+                        'rate' => 'Ставка за кг',
+                        'currency' => 'Валюта (USD, KZT, RUB)',
+                        'transit_days_min' => 'Мин. срок доставки (дни)',
+                        'transit_days_max' => 'Макс. срок доставки (дни)',
+                    ],
+                    'example' => [
+                        ['origin_zone' => 'KZ', 'destination_zone' => 'RU', 'transport_type' => 'road', 'min_weight' => 0, 'max_weight' => 100, 'rate' => 2.5, 'currency' => 'USD', 'transit_days_min' => 7, 'transit_days_max' => 14],
+                    ]
+                ],
+                'terminals' => [
+                    'description' => 'Шаблон для импорта терминалов',
+                    'columns' => [
+                        'terminal_code' => 'Код терминала (опционально)',
+                        'name' => 'Название (обязательно)',
+                        'type' => 'Тип: hub, depot, pickup_point, delivery_point',
+                        'country_code' => 'Код страны (KZ, RU и т.д.)',
+                        'city' => 'Город (обязательно)',
+                        'state' => 'Регион/область',
+                        'address' => 'Адрес',
+                        'postal_code' => 'Почтовый индекс',
+                        'latitude' => 'Широта',
+                        'longitude' => 'Долгота',
+                        'service_radius' => 'Радиус обслуживания (км)',
+                        'phone' => 'Телефон',
+                        'email' => 'Email',
+                        'working_hours' => 'Часы работы',
+                        'is_active' => 'Активен (1/0)',
+                    ],
+                    'example' => [
+                        ['terminal_code' => 'ALM-01', 'name' => 'Главный склад Алматы', 'type' => 'hub', 'country_code' => 'KZ', 'city' => 'Алматы', 'address' => 'ул. Логистическая, 1', 'latitude' => 43.238949, 'longitude' => 76.945465],
+                    ]
+                ],
+            ]
+        ]);
     }
 }

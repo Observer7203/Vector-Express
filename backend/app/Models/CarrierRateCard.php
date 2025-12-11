@@ -12,13 +12,14 @@ class CarrierRateCard extends Model
 
     protected $fillable = [
         'carrier_id',
+        'pricing_rule_id',
         'origin_zone_id',
         'destination_zone_id',
         'transport_type',
-        'weight_min',
-        'weight_max',
-        'rate_per_kg',
-        'flat_rate',
+        'min_weight',
+        'max_weight',
+        'rate',
+        'rate_unit',
         'currency',
         'transit_days_min',
         'transit_days_max',
@@ -29,10 +30,9 @@ class CarrierRateCard extends Model
     protected function casts(): array
     {
         return [
-            'weight_min' => 'decimal:2',
-            'weight_max' => 'decimal:2',
-            'rate_per_kg' => 'decimal:4',
-            'flat_rate' => 'decimal:2',
+            'min_weight' => 'decimal:2',
+            'max_weight' => 'decimal:2',
+            'rate' => 'decimal:4',
             'transit_days_min' => 'integer',
             'transit_days_max' => 'integer',
             'effective_from' => 'date',
@@ -72,11 +72,11 @@ class CarrierRateCard extends Model
 
     public function matchesWeight(float $weight): bool
     {
-        if ($this->weight_min !== null && $weight < $this->weight_min) {
+        if ($this->min_weight !== null && $weight < $this->min_weight) {
             return false;
         }
 
-        if ($this->weight_max !== null && $weight > $this->weight_max) {
+        if ($this->max_weight !== null && $weight > $this->max_weight) {
             return false;
         }
 
@@ -85,10 +85,16 @@ class CarrierRateCard extends Model
 
     public function calculateRate(float $billableWeight): float
     {
-        if ($this->flat_rate !== null) {
-            return (float) $this->flat_rate;
-        }
+        $rate = (float) $this->rate;
+        $rateUnit = $this->rate_unit ?? 'per_kg';
 
-        return $billableWeight * (float) $this->rate_per_kg;
+        return match ($rateUnit) {
+            'flat' => $rate,
+            'per_kg' => $billableWeight * $rate,
+            'per_lb' => $billableWeight * 2.20462 * $rate,
+            'per_100kg' => ($billableWeight / 100) * $rate,
+            'per_100lbs' => ($billableWeight * 2.20462 / 100) * $rate,
+            default => $billableWeight * $rate,
+        };
     }
 }

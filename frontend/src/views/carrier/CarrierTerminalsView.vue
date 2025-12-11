@@ -14,7 +14,10 @@ import {
   X,
   Save,
   Phone,
-  Mail
+  Mail,
+  Upload,
+  FileSpreadsheet,
+  AlertCircle
 } from 'lucide-vue-next'
 import AppHeader from '@/components/AppHeader.vue'
 
@@ -322,6 +325,66 @@ function formatWorkingHours(hours) {
 async function handleLogout() {
   await authStore.logout()
 }
+
+// Import functionality
+const showImportModal = ref(false)
+const importFile = ref(null)
+const importLoading = ref(false)
+const importResult = ref(null)
+
+function openImportModal() {
+  showImportModal.value = true
+  importFile.value = null
+  importResult.value = null
+}
+
+function closeImportModal() {
+  showImportModal.value = false
+  importFile.value = null
+  importResult.value = null
+}
+
+function handleFileSelect(event) {
+  const file = event.target.files[0]
+  if (file) {
+    importFile.value = file
+  }
+}
+
+async function handleImport() {
+  if (!importFile.value) return
+
+  importLoading.value = true
+  importResult.value = null
+
+  try {
+    const formData = new FormData()
+    formData.append('file', importFile.value)
+
+    const response = await api.post('/carrier/import/terminals', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    })
+
+    importResult.value = {
+      success: true,
+      message: response.data.message,
+      imported: response.data.imported,
+      skipped: response.data.skipped
+    }
+
+    await loadTerminals()
+  } catch (error) {
+    console.error('Import failed:', error)
+    importResult.value = {
+      success: false,
+      message: error.response?.data?.error || 'Ошибка импорта'
+    }
+  } finally {
+    importLoading.value = false
+  }
+}
 </script>
 
 <template>
@@ -335,10 +398,16 @@ async function handleLogout() {
             <h1>Терминалы и точки приема</h1>
             <p class="subtitle">Управление складами, хабами и пунктами выдачи</p>
           </div>
-          <button class="btn btn-primary" @click="openAddModal">
-            <Plus :size="18" :stroke-width="iconStrokeWidth" />
-            Добавить терминал
-          </button>
+          <div class="header-actions">
+            <button class="btn btn-outline" @click="openImportModal">
+              <Upload :size="18" :stroke-width="iconStrokeWidth" />
+              Импорт из Excel
+            </button>
+            <button class="btn btn-primary" @click="openAddModal">
+              <Plus :size="18" :stroke-width="iconStrokeWidth" />
+              Добавить терминал
+            </button>
+          </div>
         </div>
 
         <!-- Search -->
@@ -614,6 +683,85 @@ async function handleLogout() {
           <button class="btn btn-primary" @click="saveTerminal">
             <Save :size="16" :stroke-width="iconStrokeWidth" />
             {{ editingTerminal ? 'Сохранить' : 'Создать терминал' }}
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Import Modal -->
+    <div v-if="showImportModal" class="modal-overlay" @click.self="closeImportModal">
+      <div class="modal">
+        <div class="modal-header">
+          <h2>Импорт терминалов из Excel</h2>
+          <button class="btn-close" @click="closeImportModal">
+            <X :size="20" :stroke-width="iconStrokeWidth" />
+          </button>
+        </div>
+
+        <div class="modal-body">
+          <div class="import-info">
+            <FileSpreadsheet :size="24" :stroke-width="iconStrokeWidth" />
+            <div>
+              <p><strong>Формат файла:</strong> .xlsx, .xls или .csv</p>
+              <p class="import-hint">Существующие терминалы с тем же кодом будут обновлены</p>
+            </div>
+          </div>
+
+          <div class="columns-info">
+            <h4>Обязательные колонки:</h4>
+            <ul>
+              <li><code>name</code> — название терминала</li>
+              <li><code>city</code> — город</li>
+            </ul>
+            <h4>Опциональные колонки:</h4>
+            <ul>
+              <li><code>terminal_code</code> — уникальный код (напр: ALM-HUB)</li>
+              <li><code>type</code> — тип: hub, depot, pickup_point, delivery_point</li>
+              <li><code>country_code</code> — код страны (KZ, RU, CN и т.д.)</li>
+              <li><code>state</code> — область/регион</li>
+              <li><code>address</code> — адрес</li>
+              <li><code>postal_code</code> — почтовый индекс</li>
+              <li><code>latitude</code> — широта</li>
+              <li><code>longitude</code> — долгота</li>
+              <li><code>service_radius</code> — радиус обслуживания (км)</li>
+              <li><code>phone</code> — телефон</li>
+              <li><code>email</code> — email</li>
+              <li><code>is_active</code> — активен (1/0)</li>
+              <li><code>working_hours</code> — часы работы (текст или JSON)</li>
+            </ul>
+          </div>
+
+          <div class="form-group">
+            <label>Выберите файл</label>
+            <input
+              type="file"
+              accept=".xlsx,.xls,.csv"
+              @change="handleFileSelect"
+              class="form-input file-input"
+            />
+          </div>
+
+          <div v-if="importResult" class="import-result" :class="{ success: importResult.success, error: !importResult.success }">
+            <AlertCircle :size="20" :stroke-width="iconStrokeWidth" />
+            <div>
+              <p>{{ importResult.message }}</p>
+              <p v-if="importResult.success">
+                Импортировано: {{ importResult.imported }}, Пропущено: {{ importResult.skipped }}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button class="btn btn-outline" @click="closeImportModal">Отмена</button>
+          <button
+            class="btn btn-primary"
+            @click="handleImport"
+            :disabled="!importFile || importLoading"
+          >
+            <Upload v-if="!importLoading" :size="16" :stroke-width="iconStrokeWidth" />
+            <span v-else class="spinner-small"></span>
+            {{ importLoading ? 'Импорт...' : 'Импортировать' }}
           </button>
         </div>
       </div>
@@ -1156,6 +1304,111 @@ async function handleLogout() {
   }
 }
 
+// Import modal styles
+.import-info {
+  display: flex;
+  gap: $spacing-md;
+  padding: $spacing-md;
+  background: rgba($color-primary, 0.05);
+  border-radius: $radius-md;
+  margin-bottom: $spacing-lg;
+
+  p {
+    margin: 0;
+    font-size: $font-size-sm;
+  }
+
+  .import-hint {
+    color: $text-muted;
+    font-size: $font-size-xs;
+    margin-top: $spacing-xs;
+  }
+
+  svg {
+    color: $color-primary;
+    flex-shrink: 0;
+  }
+}
+
+.columns-info {
+  background: $bg-light;
+  border-radius: $radius-md;
+  padding: $spacing-md;
+  margin-bottom: $spacing-lg;
+  max-height: 300px;
+  overflow-y: auto;
+
+  h4 {
+    font-size: $font-size-sm;
+    font-weight: 600;
+    color: $text-primary;
+    margin: 0 0 $spacing-sm;
+
+    &:not(:first-child) {
+      margin-top: $spacing-md;
+    }
+  }
+
+  ul {
+    margin: 0;
+    padding-left: $spacing-lg;
+    font-size: $font-size-sm;
+  }
+
+  li {
+    color: $text-secondary;
+    margin-bottom: $spacing-xs;
+  }
+
+  code {
+    background: rgba($color-primary, 0.1);
+    color: $color-primary;
+    padding: 2px 6px;
+    border-radius: $radius-sm;
+    font-size: $font-size-xs;
+  }
+}
+
+.file-input {
+  padding: $spacing-sm;
+}
+
+.import-result {
+  display: flex;
+  gap: $spacing-md;
+  padding: $spacing-md;
+  border-radius: $radius-md;
+  margin-top: $spacing-md;
+
+  &.success {
+    background: rgba($color-success, 0.1);
+    color: $color-success;
+  }
+
+  &.error {
+    background: rgba($color-danger, 0.1);
+    color: $color-danger;
+  }
+
+  p {
+    margin: 0;
+    font-size: $font-size-sm;
+  }
+
+  svg {
+    flex-shrink: 0;
+  }
+}
+
+.spinner-small {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
 @media (max-width: $breakpoint-md) {
   .header-nav {
     display: none;
@@ -1164,6 +1417,11 @@ async function handleLogout() {
   .page-header {
     flex-direction: column;
     gap: $spacing-md;
+  }
+
+  .header-actions {
+    width: 100%;
+    flex-direction: column;
   }
 
   .terminals-grid {

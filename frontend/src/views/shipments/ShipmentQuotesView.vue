@@ -18,8 +18,12 @@ const expandedQuote = ref(null)
 const selectingQuote = ref(null)
 
 onMounted(async () => {
-  await shipmentsStore.fetchShipment(route.params.id)
-  await shipmentsStore.fetchQuotes(route.params.id)
+  try {
+    await shipmentsStore.fetchShipment(route.params.id)
+    await shipmentsStore.fetchQuotes(route.params.id)
+  } catch (e) {
+    console.error('Error loading quotes:', e)
+  }
 })
 
 const shipment = computed(() => shipmentsStore.currentShipment)
@@ -37,7 +41,7 @@ const sortedQuotes = computed(() => {
   } else if (sortBy.value === 'delivery') {
     result.sort((a, b) => a.delivery_days - b.delivery_days)
   } else if (sortBy.value === 'rating') {
-    result.sort((a, b) => (b.carrier?.rating || 0) - (a.carrier?.rating || 0))
+    result.sort((a, b) => (b.carrier?.company?.rating || 0) - (a.carrier?.company?.rating || 0))
   }
 
   return result
@@ -175,13 +179,13 @@ function getSurchargeIcon(type) {
               <div class="quote-main">
                 <div class="carrier-section">
                   <div class="carrier-logo">
-                    <span>{{ quote.carrier?.name?.charAt(0) || '?' }}</span>
+                    <span>{{ quote.carrier?.company?.name?.charAt(0) || '?' }}</span>
                   </div>
                   <div class="carrier-info">
-                    <span class="carrier-name">{{ quote.carrier?.name || 'Перевозчик' }}</span>
-                    <div class="carrier-rating" v-if="quote.carrier?.rating">
+                    <span class="carrier-name">{{ quote.carrier?.company?.name || 'Перевозчик' }}</span>
+                    <div class="carrier-rating" v-if="quote.carrier?.company?.rating">
                       <Star :size="14" :stroke-width="iconStrokeWidth" />
-                      <span>{{ quote.carrier.rating.toFixed(1) }}</span>
+                      <span>{{ Number(quote.carrier.company.rating).toFixed(1) }}</span>
                     </div>
                   </div>
                 </div>
@@ -456,12 +460,14 @@ h1 {
   }
 
   select {
-    padding: $spacing-xs $spacing-md;
+    padding: $spacing-xs 32px $spacing-xs $spacing-md;
     border: 1px solid $border-color;
     border-radius: $radius-md;
     font-size: $font-size-sm;
-    background: $bg-white;
+    background: $bg-white url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E") no-repeat right 12px center;
     min-width: 140px;
+    appearance: none;
+    cursor: pointer;
 
     &:focus {
       outline: none;

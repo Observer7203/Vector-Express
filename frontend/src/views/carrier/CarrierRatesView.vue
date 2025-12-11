@@ -12,7 +12,10 @@ import {
   Filter,
   X,
   Save,
-  ChevronDown
+  ChevronDown,
+  Upload,
+  FileSpreadsheet,
+  AlertCircle
 } from 'lucide-vue-next'
 import AppHeader from '@/components/AppHeader.vue'
 
@@ -35,9 +38,9 @@ const newRateCard = ref({
   origin_zone_id: '',
   destination_zone_id: '',
   transport_type: 'road',
-  weight_min: 0,
-  weight_max: null,
-  rate_per_kg: 0,
+  min_weight: 0,
+  max_weight: null,
+  rate: 0,
   currency: 'USD',
   transit_days_min: 1,
   transit_days_max: 7
@@ -49,6 +52,12 @@ const transportTypes = [
   { value: 'rail', label: 'ЖД' },
   { value: 'sea', label: 'Морские' }
 ]
+
+// Import functionality
+const showImportModal = ref(false)
+const importFile = ref(null)
+const importLoading = ref(false)
+const importResult = ref(null)
 
 const filteredRateCards = computed(() => {
   let result = rateCards.value
@@ -108,12 +117,12 @@ async function loadRateCards() {
         id: 1,
         origin_zone_id: 1,
         destination_zone_id: 2,
-        originZone: { id: 1, zone_code: 'Z1', zone_name: 'Казахстан' },
-        destinationZone: { id: 2, zone_code: 'Z2', zone_name: 'Россия' },
+        originZone: { id: 1, zone_code: 'KZ', zone_name: 'Казахстан' },
+        destinationZone: { id: 2, zone_code: 'RU', zone_name: 'Россия' },
         transport_type: 'air',
-        weight_min: 0,
-        weight_max: 5,
-        rate_per_kg: 15.5,
+        min_weight: 0,
+        max_weight: 5,
+        rate: 15.5,
         currency: 'USD',
         transit_days_min: 3,
         transit_days_max: 5
@@ -122,12 +131,12 @@ async function loadRateCards() {
         id: 2,
         origin_zone_id: 1,
         destination_zone_id: 2,
-        originZone: { id: 1, zone_code: 'Z1', zone_name: 'Казахстан' },
-        destinationZone: { id: 2, zone_code: 'Z2', zone_name: 'Россия' },
+        originZone: { id: 1, zone_code: 'KZ', zone_name: 'Казахстан' },
+        destinationZone: { id: 2, zone_code: 'RU', zone_name: 'Россия' },
         transport_type: 'air',
-        weight_min: 5,
-        weight_max: 20,
-        rate_per_kg: 12.0,
+        min_weight: 5,
+        max_weight: 20,
+        rate: 12.0,
         currency: 'USD',
         transit_days_min: 3,
         transit_days_max: 5
@@ -136,12 +145,12 @@ async function loadRateCards() {
         id: 3,
         origin_zone_id: 1,
         destination_zone_id: 3,
-        originZone: { id: 1, zone_code: 'Z1', zone_name: 'Казахстан' },
-        destinationZone: { id: 3, zone_code: 'Z3', zone_name: 'Китай' },
+        originZone: { id: 1, zone_code: 'KZ', zone_name: 'Казахстан' },
+        destinationZone: { id: 3, zone_code: 'CN', zone_name: 'Китай' },
         transport_type: 'road',
-        weight_min: 0,
-        weight_max: 100,
-        rate_per_kg: 4.5,
+        min_weight: 0,
+        max_weight: 100,
+        rate: 4.5,
         currency: 'USD',
         transit_days_min: 10,
         transit_days_max: 14
@@ -158,9 +167,9 @@ function openAddModal() {
     origin_zone_id: '',
     destination_zone_id: '',
     transport_type: 'road',
-    weight_min: 0,
-    weight_max: null,
-    rate_per_kg: 0,
+    min_weight: 0,
+    max_weight: null,
+    rate: 0,
     currency: 'USD',
     transit_days_min: 1,
     transit_days_max: 7
@@ -174,9 +183,9 @@ function openEditModal(rateCard) {
     origin_zone_id: rateCard.origin_zone_id,
     destination_zone_id: rateCard.destination_zone_id,
     transport_type: rateCard.transport_type,
-    weight_min: rateCard.weight_min,
-    weight_max: rateCard.weight_max,
-    rate_per_kg: rateCard.rate_per_kg,
+    min_weight: rateCard.min_weight,
+    max_weight: rateCard.max_weight,
+    rate: rateCard.rate,
     currency: rateCard.currency || 'USD',
     transit_days_min: rateCard.transit_days_min,
     transit_days_max: rateCard.transit_days_max
@@ -243,11 +252,11 @@ function getTransportLabel(type) {
   return t ? t.label : type
 }
 
-function formatWeight(min, max) {
-  if (max === null || max === undefined) {
-    return `${min}+ кг`
+function formatWeight(minWeight, maxWeight) {
+  if (maxWeight === null || maxWeight === undefined) {
+    return `${minWeight}+ кг`
   }
-  return `${min}-${max} кг`
+  return `${minWeight}-${maxWeight} кг`
 }
 
 function clearFilters() {
@@ -255,6 +264,61 @@ function clearFilters() {
   filterOriginZone.value = ''
   filterDestZone.value = ''
   searchQuery.value = ''
+}
+
+// Import functions
+function openImportModal() {
+  showImportModal.value = true
+  importFile.value = null
+  importResult.value = null
+}
+
+function closeImportModal() {
+  showImportModal.value = false
+  importFile.value = null
+  importResult.value = null
+}
+
+function handleFileSelect(event) {
+  const file = event.target.files[0]
+  if (file) {
+    importFile.value = file
+  }
+}
+
+async function handleImport() {
+  if (!importFile.value) return
+
+  importLoading.value = true
+  importResult.value = null
+
+  try {
+    const formData = new FormData()
+    formData.append('file', importFile.value)
+
+    const response = await api.post('/carrier/import/rate-cards', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    })
+
+    importResult.value = {
+      success: true,
+      message: response.data.message,
+      imported: response.data.imported,
+      skipped: response.data.skipped
+    }
+
+    await loadRateCards()
+  } catch (error) {
+    console.error('Import failed:', error)
+    importResult.value = {
+      success: false,
+      message: error.response?.data?.error || 'Ошибка импорта'
+    }
+  } finally {
+    importLoading.value = false
+  }
 }
 
 async function handleLogout() {
@@ -273,10 +337,16 @@ async function handleLogout() {
             <h1>Тарифы</h1>
             <p class="subtitle">Настройка ставок по весу и направлениям</p>
           </div>
-          <button class="btn btn-primary" @click="openAddModal">
-            <Plus :size="18" :stroke-width="iconStrokeWidth" />
-            Добавить тариф
-          </button>
+          <div class="header-actions">
+            <button class="btn btn-outline" @click="openImportModal">
+              <Upload :size="18" :stroke-width="iconStrokeWidth" />
+              Импорт из Excel
+            </button>
+            <button class="btn btn-primary" @click="openAddModal">
+              <Plus :size="18" :stroke-width="iconStrokeWidth" />
+              Добавить тариф
+            </button>
+          </div>
         </div>
 
         <!-- Filters -->
@@ -364,10 +434,10 @@ async function handleLogout() {
                   </span>
                 </td>
                 <td class="weight-cell">
-                  {{ formatWeight(rate.weight_min, rate.weight_max) }}
+                  {{ formatWeight(rate.min_weight, rate.max_weight) }}
                 </td>
                 <td class="rate-cell">
-                  <strong>${{ rate.rate_per_kg?.toFixed(2) }}</strong>
+                  <strong>${{ rate.rate?.toFixed(2) || '0.00' }}</strong>
                   <span class="rate-unit">/кг</span>
                 </td>
                 <td class="transit-cell">
@@ -444,7 +514,7 @@ async function handleLogout() {
             <div class="form-group">
               <label>Вес от (кг)</label>
               <input
-                v-model.number="newRateCard.weight_min"
+                v-model.number="newRateCard.min_weight"
                 type="number"
                 min="0"
                 step="0.1"
@@ -454,7 +524,7 @@ async function handleLogout() {
             <div class="form-group">
               <label>Вес до (кг)</label>
               <input
-                v-model.number="newRateCard.weight_max"
+                v-model.number="newRateCard.max_weight"
                 type="number"
                 min="0"
                 step="0.1"
@@ -468,7 +538,7 @@ async function handleLogout() {
             <div class="form-group">
               <label>Ставка за кг (USD)</label>
               <input
-                v-model.number="newRateCard.rate_per_kg"
+                v-model.number="newRateCard.rate"
                 type="number"
                 min="0"
                 step="0.01"
@@ -504,6 +574,79 @@ async function handleLogout() {
           <button class="btn btn-primary" @click="saveRateCard">
             <Save :size="16" :stroke-width="iconStrokeWidth" />
             {{ editingRateCard ? 'Сохранить' : 'Создать тариф' }}
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Import Modal -->
+    <div v-if="showImportModal" class="modal-overlay" @click.self="closeImportModal">
+      <div class="modal">
+        <div class="modal-header">
+          <h2>Импорт тарифов из Excel</h2>
+          <button class="btn-close" @click="closeImportModal">
+            <X :size="20" :stroke-width="iconStrokeWidth" />
+          </button>
+        </div>
+
+        <div class="modal-body">
+          <div class="import-info">
+            <FileSpreadsheet :size="24" :stroke-width="iconStrokeWidth" />
+            <div>
+              <p><strong>Формат файла:</strong> .xlsx, .xls или .csv</p>
+              <p class="import-hint">Убедитесь, что у вас уже созданы зоны с кодами, указанными в файле</p>
+            </div>
+          </div>
+
+          <div class="columns-info">
+            <h4>Обязательные колонки:</h4>
+            <ul>
+              <li><code>origin_zone</code> — код зоны отправления (например: KZ, RU)</li>
+              <li><code>destination_zone</code> — код зоны назначения</li>
+              <li><code>rate</code> — ставка за кг (число)</li>
+            </ul>
+            <h4>Опциональные колонки:</h4>
+            <ul>
+              <li><code>transport_type</code> — тип: road, air, rail, sea (по умолчанию: road)</li>
+              <li><code>min_weight</code> — минимальный вес (по умолчанию: 0)</li>
+              <li><code>max_weight</code> — максимальный вес</li>
+              <li><code>currency</code> — валюта (по умолчанию: USD)</li>
+              <li><code>transit_days_min</code> — мин. срок доставки (дней)</li>
+              <li><code>transit_days_max</code> — макс. срок доставки (дней)</li>
+            </ul>
+          </div>
+
+          <div class="form-group">
+            <label>Выберите файл</label>
+            <input
+              type="file"
+              accept=".xlsx,.xls,.csv"
+              @change="handleFileSelect"
+              class="form-input file-input"
+            />
+          </div>
+
+          <div v-if="importResult" class="import-result" :class="{ success: importResult.success, error: !importResult.success }">
+            <AlertCircle :size="20" :stroke-width="iconStrokeWidth" />
+            <div>
+              <p>{{ importResult.message }}</p>
+              <p v-if="importResult.success">
+                Импортировано: {{ importResult.imported }}, Пропущено: {{ importResult.skipped }}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button class="btn btn-outline" @click="closeImportModal">Отмена</button>
+          <button
+            class="btn btn-primary"
+            @click="handleImport"
+            :disabled="!importFile || importLoading"
+          >
+            <Upload v-if="!importLoading" :size="16" :stroke-width="iconStrokeWidth" />
+            <span v-else class="spinner-small"></span>
+            {{ importLoading ? 'Импорт...' : 'Импортировать' }}
           </button>
         </div>
       </div>
@@ -1007,6 +1150,109 @@ async function handleLogout() {
   }
 }
 
+// Import modal styles
+.import-info {
+  display: flex;
+  gap: $spacing-md;
+  padding: $spacing-md;
+  background: rgba($color-primary, 0.05);
+  border-radius: $radius-md;
+  margin-bottom: $spacing-lg;
+
+  p {
+    margin: 0;
+    font-size: $font-size-sm;
+  }
+
+  .import-hint {
+    color: $text-muted;
+    font-size: $font-size-xs;
+    margin-top: $spacing-xs;
+  }
+
+  svg {
+    color: $color-primary;
+    flex-shrink: 0;
+  }
+}
+
+.columns-info {
+  background: $bg-light;
+  border-radius: $radius-md;
+  padding: $spacing-md;
+  margin-bottom: $spacing-lg;
+
+  h4 {
+    font-size: $font-size-sm;
+    font-weight: 600;
+    color: $text-primary;
+    margin: 0 0 $spacing-sm;
+
+    &:not(:first-child) {
+      margin-top: $spacing-md;
+    }
+  }
+
+  ul {
+    margin: 0;
+    padding-left: $spacing-lg;
+    font-size: $font-size-sm;
+  }
+
+  li {
+    color: $text-secondary;
+    margin-bottom: $spacing-xs;
+  }
+
+  code {
+    background: rgba($color-primary, 0.1);
+    color: $color-primary;
+    padding: 2px 6px;
+    border-radius: $radius-sm;
+    font-size: $font-size-xs;
+  }
+}
+
+.file-input {
+  padding: $spacing-sm;
+}
+
+.import-result {
+  display: flex;
+  gap: $spacing-md;
+  padding: $spacing-md;
+  border-radius: $radius-md;
+  margin-top: $spacing-md;
+
+  &.success {
+    background: rgba($color-success, 0.1);
+    color: $color-success;
+  }
+
+  &.error {
+    background: rgba($color-danger, 0.1);
+    color: $color-danger;
+  }
+
+  p {
+    margin: 0;
+    font-size: $font-size-sm;
+  }
+
+  svg {
+    flex-shrink: 0;
+  }
+}
+
+.spinner-small {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
 @media (max-width: $breakpoint-md) {
   .header-nav {
     display: none;
@@ -1015,6 +1261,11 @@ async function handleLogout() {
   .page-header {
     flex-direction: column;
     gap: $spacing-md;
+  }
+
+  .header-actions {
+    width: 100%;
+    flex-direction: column;
   }
 
   .filters-bar {

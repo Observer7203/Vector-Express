@@ -403,8 +403,24 @@ return new class extends Migration
     private function hasIndex(string $table, string $indexName): bool
     {
         $connection = Schema::getConnection();
-        $indexes = $connection->getDoctrineSchemaManager()->listTableIndexes($table);
+        $driver = $connection->getDriverName();
 
-        return isset($indexes[$indexName]);
+        if ($driver === 'sqlite') {
+            $indexes = $connection->select("PRAGMA index_list('{$table}')");
+            foreach ($indexes as $index) {
+                if ($index->name === $indexName) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        // For MySQL and others
+        try {
+            $indexes = $connection->select("SHOW INDEX FROM {$table} WHERE Key_name = ?", [$indexName]);
+            return count($indexes) > 0;
+        } catch (\Exception $e) {
+            return false;
+        }
     }
 };

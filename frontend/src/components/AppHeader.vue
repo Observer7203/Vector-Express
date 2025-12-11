@@ -2,13 +2,14 @@
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { RouterLink } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
-import { User, Settings, ChevronDown, LogOut } from 'lucide-vue-next'
+import { User, Settings, ChevronDown, LogOut, Shield } from 'lucide-vue-next'
 
 const iconStrokeWidth = 1.2
 const authStore = useAuthStore()
 
 const showUserMenu = ref(false)
 const isCarrier = computed(() => authStore.user?.role === 'carrier')
+const isAdmin = computed(() => authStore.user?.role === 'admin')
 
 function closeMenu() {
   showUserMenu.value = false
@@ -39,6 +40,7 @@ onUnmounted(() => {
           <RouterLink to="/orders" class="nav-link">Заказы</RouterLink>
           <RouterLink to="/tracking" class="nav-link">Отслеживание</RouterLink>
           <RouterLink v-if="isCarrier" to="/carrier" class="nav-link">Панель перевозчика</RouterLink>
+          <RouterLink v-if="isAdmin" to="/admin" class="nav-link nav-link-admin">Админ-панель</RouterLink>
         </nav>
         <div class="header-actions">
           <div class="user-menu" @click.stop="showUserMenu = !showUserMenu">
@@ -57,6 +59,10 @@ onUnmounted(() => {
               <RouterLink v-if="isCarrier" to="/carrier" class="dropdown-item" @click="showUserMenu = false">
                 <Settings :size="16" :stroke-width="iconStrokeWidth" />
                 Панель перевозчика
+              </RouterLink>
+              <RouterLink v-if="isAdmin" to="/admin" class="dropdown-item dropdown-item-admin" @click="showUserMenu = false">
+                <Shield :size="16" :stroke-width="iconStrokeWidth" />
+                Админ-панель
               </RouterLink>
               <div class="dropdown-divider"></div>
               <button @click="handleLogout" class="dropdown-item dropdown-item-danger">
@@ -229,6 +235,30 @@ onUnmounted(() => {
 
   &:hover {
     background: rgba($color-danger, 0.1);
+  }
+}
+
+.dropdown-item-admin {
+  color: #7c3aed;
+
+  svg {
+    color: #7c3aed;
+  }
+
+  &:hover {
+    background: rgba(#7c3aed, 0.1);
+  }
+}
+
+.nav-link-admin {
+  color: #7c3aed !important;
+
+  &:hover {
+    background: rgba(#7c3aed, 0.1) !important;
+  }
+
+  &.router-link-active {
+    background: rgba(#7c3aed, 0.15) !important;
   }
 }
 

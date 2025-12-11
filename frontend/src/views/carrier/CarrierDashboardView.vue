@@ -11,7 +11,8 @@ import {
   ChevronRight,
   Settings,
   Truck,
-  AlertCircle
+  AlertCircle,
+  FileText
 } from 'lucide-vue-next'
 import AppHeader from '@/components/AppHeader.vue'
 
@@ -83,6 +84,15 @@ const menuItems = [
     route: '/carrier/surcharges',
     stat: null,
     statLabel: ''
+  },
+  {
+    title: 'Документы',
+    description: 'Загрузка документов для верификации',
+    icon: FileText,
+    route: '/carrier/documents',
+    stat: null,
+    statLabel: '',
+    highlight: true
   }
 ]
 </script>

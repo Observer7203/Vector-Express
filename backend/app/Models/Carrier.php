@@ -75,9 +75,17 @@ class Carrier extends Model
         return $this->hasMany(CarrierZone::class);
     }
 
-    public function rateCards(): HasMany
+    public function rateCards()
     {
-        return $this->hasMany(CarrierRateCard::class);
+        // Rate cards связаны через pricing rules
+        return $this->hasManyThrough(
+            CarrierRateCard::class,
+            CarrierPricingRule::class,
+            'carrier_id',        // Foreign key on pricing_rules
+            'pricing_rule_id',   // Foreign key on rate_cards
+            'id',                // Local key on carriers
+            'id'                 // Local key on pricing_rules
+        );
     }
 
     public function surcharges(): HasMany
@@ -122,6 +130,7 @@ class Carrier extends Model
     public function supportsCountry(string $country): bool
     {
         $countries = $this->supported_countries ?? [];
-        return empty($countries) || in_array($country, $countries);
+        // Поддержка wildcard '*' = все страны
+        return empty($countries) || in_array('*', $countries) || in_array($country, $countries);
     }
 }

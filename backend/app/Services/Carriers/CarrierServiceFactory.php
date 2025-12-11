@@ -9,6 +9,11 @@ class CarrierServiceFactory
 {
     public function make(Carrier $carrier): CarrierServiceInterface
     {
+        // Manual carriers use rate cards from database
+        if ($carrier->api_type === 'manual') {
+            return new ManualCarrierService($carrier);
+        }
+
         // Check if carrier has valid API configuration
         $config = $carrier->api_config;
         $hasValidConfig = is_array($config) && !empty($config);
@@ -23,7 +28,7 @@ class CarrierServiceFactory
             'fedex' => new FedexCarrierService($carrier),
             'ups' => new UpsCarrierService($carrier),
             'ponyexpress' => new PonyexpressCarrierService($carrier),
-            'manual', 'mock' => new MockCarrierService($carrier),
+            'mock' => new MockCarrierService($carrier),
             default => new MockCarrierService($carrier),
         };
     }

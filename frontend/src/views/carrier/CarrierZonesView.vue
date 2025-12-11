@@ -13,7 +13,9 @@ import {
   MapPin,
   X,
   Save,
-  AlertCircle
+  AlertCircle,
+  Upload,
+  FileSpreadsheet
 } from 'lucide-vue-next'
 import AppHeader from '@/components/AppHeader.vue'
 
@@ -41,18 +43,150 @@ const newPostalCode = ref({
   is_remote_area: false
 })
 
-const countries = [
-  { code: 'KZ', name: 'Казахстан' },
-  { code: 'RU', name: 'Россия' },
+// Import functionality
+const showImportModal = ref(false)
+const importFile = ref(null)
+const importLoading = ref(false)
+const importResult = ref(null)
+
+// Полный список стран
+const allCountries = [
+  { code: 'AF', name: 'Афганистан' },
+  { code: 'AL', name: 'Албания' },
+  { code: 'DZ', name: 'Алжир' },
+  { code: 'AD', name: 'Андорра' },
+  { code: 'AO', name: 'Ангола' },
+  { code: 'AR', name: 'Аргентина' },
+  { code: 'AM', name: 'Армения' },
+  { code: 'AU', name: 'Австралия' },
+  { code: 'AT', name: 'Австрия' },
+  { code: 'AZ', name: 'Азербайджан' },
+  { code: 'BY', name: 'Беларусь' },
+  { code: 'BE', name: 'Бельгия' },
+  { code: 'BD', name: 'Бангладеш' },
+  { code: 'BR', name: 'Бразилия' },
+  { code: 'BG', name: 'Болгария' },
+  { code: 'CA', name: 'Канада' },
+  { code: 'CL', name: 'Чили' },
   { code: 'CN', name: 'Китай' },
-  { code: 'UZ', name: 'Узбекистан' },
-  { code: 'KG', name: 'Кыргызстан' },
+  { code: 'CO', name: 'Колумбия' },
+  { code: 'HR', name: 'Хорватия' },
+  { code: 'CY', name: 'Кипр' },
+  { code: 'CZ', name: 'Чехия' },
+  { code: 'DK', name: 'Дания' },
+  { code: 'EG', name: 'Египет' },
+  { code: 'EE', name: 'Эстония' },
+  { code: 'FI', name: 'Финляндия' },
+  { code: 'FR', name: 'Франция' },
+  { code: 'GE', name: 'Грузия' },
   { code: 'DE', name: 'Германия' },
-  { code: 'US', name: 'США' },
+  { code: 'GR', name: 'Греция' },
+  { code: 'HK', name: 'Гонконг' },
+  { code: 'HU', name: 'Венгрия' },
+  { code: 'IS', name: 'Исландия' },
+  { code: 'IN', name: 'Индия' },
+  { code: 'ID', name: 'Индонезия' },
+  { code: 'IR', name: 'Иран' },
+  { code: 'IQ', name: 'Ирак' },
+  { code: 'IE', name: 'Ирландия' },
+  { code: 'IL', name: 'Израиль' },
+  { code: 'IT', name: 'Италия' },
+  { code: 'JP', name: 'Япония' },
+  { code: 'JO', name: 'Иордания' },
+  { code: 'KZ', name: 'Казахстан' },
+  { code: 'KE', name: 'Кения' },
+  { code: 'KW', name: 'Кувейт' },
+  { code: 'KG', name: 'Кыргызстан' },
+  { code: 'LV', name: 'Латвия' },
+  { code: 'LB', name: 'Ливан' },
+  { code: 'LT', name: 'Литва' },
+  { code: 'LU', name: 'Люксембург' },
+  { code: 'MY', name: 'Малайзия' },
+  { code: 'MX', name: 'Мексика' },
+  { code: 'MD', name: 'Молдова' },
+  { code: 'MN', name: 'Монголия' },
+  { code: 'ME', name: 'Черногория' },
+  { code: 'MA', name: 'Марокко' },
+  { code: 'NL', name: 'Нидерланды' },
+  { code: 'NZ', name: 'Новая Зеландия' },
+  { code: 'NG', name: 'Нигерия' },
+  { code: 'NO', name: 'Норвегия' },
+  { code: 'OM', name: 'Оман' },
+  { code: 'PK', name: 'Пакистан' },
+  { code: 'PA', name: 'Панама' },
+  { code: 'PE', name: 'Перу' },
+  { code: 'PH', name: 'Филиппины' },
+  { code: 'PL', name: 'Польша' },
+  { code: 'PT', name: 'Португалия' },
+  { code: 'QA', name: 'Катар' },
+  { code: 'RO', name: 'Румыния' },
+  { code: 'RU', name: 'Россия' },
+  { code: 'SA', name: 'Саудовская Аравия' },
+  { code: 'RS', name: 'Сербия' },
+  { code: 'SG', name: 'Сингапур' },
+  { code: 'SK', name: 'Словакия' },
+  { code: 'SI', name: 'Словения' },
+  { code: 'ZA', name: 'ЮАР' },
+  { code: 'KR', name: 'Южная Корея' },
+  { code: 'ES', name: 'Испания' },
+  { code: 'LK', name: 'Шри-Ланка' },
+  { code: 'SE', name: 'Швеция' },
+  { code: 'CH', name: 'Швейцария' },
+  { code: 'TW', name: 'Тайвань' },
+  { code: 'TJ', name: 'Таджикистан' },
+  { code: 'TH', name: 'Таиланд' },
   { code: 'TR', name: 'Турция' },
+  { code: 'TM', name: 'Туркменистан' },
+  { code: 'UA', name: 'Украина' },
   { code: 'AE', name: 'ОАЭ' },
-  { code: 'GB', name: 'Великобритания' }
+  { code: 'GB', name: 'Великобритания' },
+  { code: 'US', name: 'США' },
+  { code: 'UZ', name: 'Узбекистан' },
+  { code: 'VE', name: 'Венесуэла' },
+  { code: 'VN', name: 'Вьетнам' }
 ]
+
+// Поиск страны
+const countrySearch = ref('')
+const showCountryDropdown = ref(false)
+
+const filteredCountries = computed(() => {
+  if (!countrySearch.value) return allCountries
+  const query = countrySearch.value.toLowerCase()
+  return allCountries.filter(
+    (c) =>
+      c.name.toLowerCase().includes(query) ||
+      c.code.toLowerCase().includes(query)
+  )
+})
+
+function selectCountry(country) {
+  newZone.value.country_code = country.code
+  countrySearch.value = country.name
+  showCountryDropdown.value = false
+
+  // Автозаполнение кода и названия зоны
+  if (!editingZone.value || !newZone.value.zone_code) {
+    newZone.value.zone_code = country.code
+  }
+  if (!editingZone.value || !newZone.value.zone_name) {
+    newZone.value.zone_name = country.name
+  }
+}
+
+function onCountrySearchFocus() {
+  showCountryDropdown.value = true
+}
+
+function onCountrySearchBlur() {
+  // Небольшая задержка, чтобы клик по опции успел сработать
+  setTimeout(() => {
+    showCountryDropdown.value = false
+  }, 200)
+}
+
+// Обновим для совместимости
+const countries = allCountries
 
 const filteredZones = computed(() => {
   if (!searchQuery.value) return zones.value
@@ -125,6 +259,7 @@ function toggleZone(zoneId) {
 
 function openAddModal() {
   editingZone.value = null
+  countrySearch.value = ''
   newZone.value = {
     zone_code: '',
     zone_name: '',
@@ -137,6 +272,11 @@ function openAddModal() {
 
 function openEditModal(zone) {
   editingZone.value = zone.id
+
+  // Находим страну по коду и заполняем поле поиска
+  const country = allCountries.find((c) => c.code === zone.country_code)
+  countrySearch.value = country ? country.name : zone.country_code
+
   newZone.value = {
     zone_code: zone.zone_code,
     zone_name: zone.zone_name,
@@ -160,7 +300,11 @@ function closeModal() {
 }
 
 function addPostalCode() {
-  if (!newPostalCode.value.postal_code_prefix || !newPostalCode.value.city) return
+  // Требуем хотя бы город
+  if (!newPostalCode.value.city && !newPostalCode.value.postal_code_prefix) {
+    alert('Введите хотя бы город или почтовый код')
+    return
+  }
 
   newZone.value.postal_codes.push({
     ...newPostalCode.value,
@@ -224,6 +368,61 @@ function getCountryName(code) {
   return country ? country.name : code
 }
 
+// Import functions
+function openImportModal() {
+  showImportModal.value = true
+  importFile.value = null
+  importResult.value = null
+}
+
+function closeImportModal() {
+  showImportModal.value = false
+  importFile.value = null
+  importResult.value = null
+}
+
+function handleFileSelect(event) {
+  const file = event.target.files[0]
+  if (file) {
+    importFile.value = file
+  }
+}
+
+async function handleImport() {
+  if (!importFile.value) return
+
+  importLoading.value = true
+  importResult.value = null
+
+  try {
+    const formData = new FormData()
+    formData.append('file', importFile.value)
+
+    const response = await api.post('/carrier/import/zones', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    })
+
+    importResult.value = {
+      success: true,
+      message: response.data.message,
+      imported: response.data.imported,
+      skipped: response.data.skipped
+    }
+
+    await loadZones()
+  } catch (error) {
+    console.error('Import failed:', error)
+    importResult.value = {
+      success: false,
+      message: error.response?.data?.error || 'Ошибка импорта'
+    }
+  } finally {
+    importLoading.value = false
+  }
+}
+
 async function handleLogout() {
   await authStore.logout()
 }
@@ -240,10 +439,16 @@ async function handleLogout() {
             <h1>Зоны доставки</h1>
             <p class="subtitle">Настройте географические зоны для расчета тарифов</p>
           </div>
-          <button class="btn btn-primary" @click="openAddModal">
-            <Plus :size="18" :stroke-width="iconStrokeWidth" />
-            Добавить зону
-          </button>
+          <div class="header-actions">
+            <button class="btn btn-outline" @click="openImportModal">
+              <Upload :size="18" :stroke-width="iconStrokeWidth" />
+              Импорт из Excel
+            </button>
+            <button class="btn btn-primary" @click="openAddModal">
+              <Plus :size="18" :stroke-width="iconStrokeWidth" />
+              Добавить зону
+            </button>
+          </div>
         </div>
 
         <!-- Search -->
@@ -355,13 +560,40 @@ async function handleLogout() {
         </div>
 
         <div class="modal-body">
+          <div class="form-group">
+            <label>Страна</label>
+            <div class="country-autocomplete">
+              <input
+                v-model="countrySearch"
+                type="text"
+                placeholder="Начните вводить название страны..."
+                class="form-input"
+                @focus="onCountrySearchFocus"
+                @blur="onCountrySearchBlur"
+                autocomplete="off"
+              />
+              <div v-if="showCountryDropdown && filteredCountries.length" class="country-dropdown">
+                <div
+                  v-for="country in filteredCountries"
+                  :key="country.code"
+                  class="country-option"
+                  @mousedown="selectCountry(country)"
+                >
+                  <span class="country-code">{{ country.code }}</span>
+                  <span class="country-name">{{ country.name }}</span>
+                </div>
+              </div>
+            </div>
+            <span class="form-hint">При выборе страны код и название зоны заполнятся автоматически</span>
+          </div>
+
           <div class="form-row">
             <div class="form-group">
               <label>Код зоны</label>
               <input
                 v-model="newZone.zone_code"
                 type="text"
-                placeholder="Z1"
+                placeholder="KZ"
                 class="form-input"
               />
             </div>
@@ -377,20 +609,10 @@ async function handleLogout() {
           </div>
 
           <div class="form-group">
-            <label>Страна</label>
-            <select v-model="newZone.country_code" class="form-input">
-              <option value="">Выберите страну</option>
-              <option v-for="country in countries" :key="country.code" :value="country.code">
-                {{ country.name }}
-              </option>
-            </select>
-          </div>
-
-          <div class="form-group">
             <label>Описание</label>
             <textarea
               v-model="newZone.description"
-              placeholder="Описание зоны..."
+              placeholder="Описание зоны (например: Доставка в/из Беларуси)"
               class="form-input"
               rows="2"
             ></textarea>
@@ -450,6 +672,70 @@ async function handleLogout() {
           <button class="btn btn-primary" @click="saveZone">
             <Save :size="16" :stroke-width="iconStrokeWidth" />
             {{ editingZone ? 'Сохранить' : 'Создать зону' }}
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Import Modal -->
+    <div v-if="showImportModal" class="modal-overlay" @click.self="closeImportModal">
+      <div class="modal import-modal">
+        <div class="modal-header">
+          <h2>Импорт зон из Excel</h2>
+          <button class="btn-close" @click="closeImportModal">
+            <X :size="20" :stroke-width="iconStrokeWidth" />
+          </button>
+        </div>
+
+        <div class="modal-body">
+          <div class="import-info">
+            <FileSpreadsheet :size="48" :stroke-width="iconStrokeWidth" class="import-icon" />
+            <h3>Загрузите файл Excel (.xlsx, .xls) или CSV</h3>
+            <p>Файл должен содержать колонки:</p>
+            <ul class="columns-list">
+              <li><strong>zone_code</strong> - Код зоны (обязательно)</li>
+              <li><strong>zone_name</strong> - Название зоны</li>
+              <li><strong>country_code</strong> - Код страны ISO (KZ, RU и т.д.)</li>
+              <li><strong>description</strong> - Описание</li>
+            </ul>
+          </div>
+
+          <div class="file-upload">
+            <input
+              type="file"
+              id="import-file"
+              accept=".xlsx,.xls,.csv"
+              @change="handleFileSelect"
+              class="file-input"
+            />
+            <label for="import-file" class="file-label">
+              <Upload :size="20" :stroke-width="iconStrokeWidth" />
+              <span v-if="importFile">{{ importFile.name }}</span>
+              <span v-else>Выберите файл или перетащите сюда</span>
+            </label>
+          </div>
+
+          <div v-if="importResult" class="import-result" :class="{ success: importResult.success, error: !importResult.success }">
+            <AlertCircle :size="20" :stroke-width="iconStrokeWidth" />
+            <div class="result-content">
+              <p>{{ importResult.message }}</p>
+              <p v-if="importResult.success">
+                Импортировано: {{ importResult.imported }}, Пропущено: {{ importResult.skipped }}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button class="btn btn-outline" @click="closeImportModal">Отмена</button>
+          <button
+            class="btn btn-primary"
+            @click="handleImport"
+            :disabled="!importFile || importLoading"
+          >
+            <Upload v-if="!importLoading" :size="16" :stroke-width="iconStrokeWidth" />
+            <span v-if="importLoading" class="spinner-small"></span>
+            {{ importLoading ? 'Импорт...' : 'Импортировать' }}
           </button>
         </div>
       </div>
@@ -983,8 +1269,64 @@ async function handleLogout() {
   }
 }
 
+.form-hint {
+  display: block;
+  font-size: $font-size-xs;
+  color: $text-muted;
+  margin-top: $spacing-xs;
+}
+
 textarea.form-input {
   resize: vertical;
+}
+
+// Country autocomplete
+.country-autocomplete {
+  position: relative;
+}
+
+.country-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  max-height: 250px;
+  overflow-y: auto;
+  background: $bg-white;
+  border: 1px solid $border-color;
+  border-top: none;
+  border-radius: 0 0 $radius-md $radius-md;
+  box-shadow: $shadow;
+  z-index: 100;
+}
+
+.country-option {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  padding: $spacing-sm $spacing-md;
+  cursor: pointer;
+  transition: background $transition-fast;
+
+  &:hover {
+    background: $bg-light;
+  }
+
+  .country-code {
+    font-weight: 600;
+    color: $color-primary;
+    font-size: $font-size-xs;
+    min-width: 28px;
+    padding: 2px 4px;
+    background: rgba($color-primary, 0.1);
+    border-radius: $radius-sm;
+    text-align: center;
+  }
+
+  .country-name {
+    color: $text-primary;
+    font-size: $font-size-sm;
+  }
 }
 
 .postal-codes-form {
@@ -1080,6 +1422,125 @@ textarea.form-input {
   }
 }
 
+// Import Modal Styles
+.import-modal {
+  max-width: 500px;
+}
+
+.import-info {
+  text-align: center;
+  padding: $spacing-lg 0;
+
+  .import-icon {
+    color: $color-primary;
+    margin-bottom: $spacing-md;
+  }
+
+  h3 {
+    font-size: $font-size-base;
+    font-weight: 600;
+    color: $text-primary;
+    margin: 0 0 $spacing-sm;
+  }
+
+  p {
+    color: $text-secondary;
+    font-size: $font-size-sm;
+    margin: 0 0 $spacing-md;
+  }
+}
+
+.columns-list {
+  text-align: left;
+  background: $bg-light;
+  padding: $spacing-md;
+  border-radius: $radius-md;
+  margin: 0;
+  list-style: none;
+
+  li {
+    font-size: $font-size-sm;
+    color: $text-secondary;
+    padding: $spacing-xs 0;
+
+    strong {
+      color: $text-primary;
+      font-family: monospace;
+    }
+  }
+}
+
+.file-upload {
+  margin-top: $spacing-lg;
+}
+
+.file-input {
+  display: none;
+}
+
+.file-label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: $spacing-sm;
+  padding: $spacing-lg;
+  border: 2px dashed $border-color;
+  border-radius: $radius-md;
+  cursor: pointer;
+  transition: all $transition-fast;
+  color: $text-secondary;
+  font-size: $font-size-sm;
+
+  &:hover {
+    border-color: $color-primary;
+    background: rgba($color-primary, 0.05);
+  }
+}
+
+.import-result {
+  display: flex;
+  align-items: flex-start;
+  gap: $spacing-sm;
+  margin-top: $spacing-lg;
+  padding: $spacing-md;
+  border-radius: $radius-md;
+
+  &.success {
+    background: rgba($color-success, 0.1);
+    color: $color-success;
+  }
+
+  &.error {
+    background: rgba($color-danger, 0.1);
+    color: $color-danger;
+  }
+
+  .result-content {
+    p {
+      margin: 0;
+      font-size: $font-size-sm;
+
+      &:first-child {
+        font-weight: 500;
+      }
+    }
+  }
+}
+
+.spinner-small {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+.header-actions {
+  display: flex;
+  gap: $spacing-sm;
+}
+
 @media (max-width: $breakpoint-md) {
   .header-nav {
     display: none;
@@ -1088,6 +1549,15 @@ textarea.form-input {
   .page-header {
     flex-direction: column;
     gap: $spacing-md;
+  }
+
+  .header-actions {
+    flex-direction: column;
+    width: 100%;
+
+    .btn {
+      width: 100%;
+    }
   }
 
   .form-row {

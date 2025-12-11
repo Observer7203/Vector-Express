@@ -7,6 +7,7 @@ use App\Models\Company;
 use App\Models\Invoice;
 use App\Models\Order;
 use App\Models\Shipment;
+use App\Models\CompanyDocument;
 use App\Policies\ChatPolicy;
 use App\Policies\CompanyPolicy;
 use App\Policies\InvoicePolicy;
@@ -15,6 +16,7 @@ use App\Policies\ShipmentPolicy;
 use App\Services\Carriers\CarrierServiceFactory;
 use App\Services\QuoteService;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -38,5 +40,8 @@ class AppServiceProvider extends ServiceProvider
         Gate::policy(Company::class, CompanyPolicy::class);
         Gate::policy(Chat::class, ChatPolicy::class);
         Gate::policy(Invoice::class, InvoicePolicy::class);
+
+        // Explicit model binding for document parameter
+        Route::model('document', CompanyDocument::class);
     }
 }

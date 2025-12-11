@@ -13,9 +13,12 @@ return new class extends Migration
             $table->foreignId('carrier_id')->constrained()->onDelete('cascade');
             $table->string('zone_code', 10);
             $table->string('zone_name', 100)->nullable();
+            $table->string('country_code', 3)->nullable();
+            $table->text('description')->nullable();
             $table->timestamps();
 
             $table->unique(['carrier_id', 'zone_code']);
+            $table->index('country_code');
         });
     }
 

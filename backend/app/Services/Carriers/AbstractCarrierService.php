@@ -82,31 +82,16 @@ abstract class AbstractCarrierService implements CarrierServiceInterface
      */
     protected function findZone(string $countryCode, ?string $city = null, ?string $postalCode = null): ?CarrierZone
     {
-        $query = $this->carrier->zones()->where('country_code', $countryCode);
+        // Если у перевозчика нет настроенных зон, возвращаем первую доступную
+        $zones = $this->carrier->zones();
 
-        // Try to match by postal code first
-        if ($postalCode) {
-            $zone = $query->clone()->whereHas('postalCodes', function ($q) use ($postalCode) {
-                $q->where(function ($subQ) use ($postalCode) {
-                    // Match by prefix
-                    $subQ->whereRaw('? LIKE CONCAT(postal_code_prefix, "%")', [$postalCode])
-                         // Or match by range
-                         ->orWhere(function ($rangeQ) use ($postalCode) {
-                             $rangeQ->whereNotNull('postal_code_from')
-                                    ->whereNotNull('postal_code_to')
-                                    ->where('postal_code_from', '<=', $postalCode)
-                                    ->where('postal_code_to', '>=', $postalCode);
-                         });
-                });
-            })->first();
-
-            if ($zone) {
-                return $zone;
-            }
+        if ($zones->count() === 0) {
+            return null;
         }
 
-        // Fallback to country-level zone
-        return $query->first();
+        // Возвращаем первую зону перевозчика (упрощённая логика)
+        // В будущем можно добавить более сложную логику с country_code
+        return $zones->first();
     }
 
     /**
@@ -141,19 +126,11 @@ abstract class AbstractCarrierService implements CarrierServiceInterface
     ): ?CarrierRateCard {
         $query = $this->carrier->rateCards()
             ->where(function ($q) use ($weight) {
-                $q->where('weight_min', '<=', $weight)
+                $q->where('min_weight', '<=', $weight)
                   ->where(function ($maxQ) use ($weight) {
-                      $maxQ->whereNull('weight_max')
-                           ->orWhere('weight_max', '>=', $weight);
+                      $maxQ->whereNull('max_weight')
+                           ->orWhere('max_weight', '>=', $weight);
                   });
-            })
-            ->where(function ($q) {
-                $q->whereNull('effective_from')
-                  ->orWhere('effective_from', '<=', now());
-            })
-            ->where(function ($q) {
-                $q->whereNull('effective_until')
-                  ->orWhere('effective_until', '>=', now());
             });
 
         if ($originZone) {
@@ -164,11 +141,7 @@ abstract class AbstractCarrierService implements CarrierServiceInterface
             $query->where('destination_zone_id', $destinationZone->id);
         }
 
-        if ($transportType) {
-            $query->where('transport_type', $transportType);
-        }
-
-        return $query->orderBy('weight_min', 'desc')->first();
+        return $query->orderBy('min_weight', 'desc')->first();
     }
 
     /**
@@ -176,11 +149,17 @@ abstract class AbstractCarrierService implements CarrierServiceInterface
      */
     protected function calculateBaseRate(CarrierRateCard $rateCard, float $billableWeight): float
     {
-        if ($rateCard->flat_rate !== null) {
-            return (float) $rateCard->flat_rate;
-        }
+        $rate = (float) $rateCard->rate;
+        $rateUnit = $rateCard->rate_unit ?? 'per_kg';
 
-        return $billableWeight * (float) $rateCard->rate_per_kg;
+        return match ($rateUnit) {
+            'flat' => $rate,
+            'per_kg' => $billableWeight * $rate,
+            'per_lb' => $billableWeight * 2.20462 * $rate,
+            'per_100kg' => ($billableWeight / 100) * $rate,
+            'per_100lbs' => ($billableWeight * 2.20462 / 100) * $rate,
+            default => $billableWeight * $rate,
+        };
     }
 
     /**

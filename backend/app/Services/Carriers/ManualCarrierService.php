@@ -12,7 +12,7 @@ use Illuminate\Support\Str;
  */
 class ManualCarrierService extends AbstractCarrierService
 {
-    public function calculateQuotes(Shipment $shipment): array
+    public function getQuotes(Shipment $shipment): array
     {
         if (!$this->supportsRoute(
             $shipment->origin_country,
@@ -22,7 +22,7 @@ class ManualCarrierService extends AbstractCarrierService
             return [];
         }
 
-        $billableWeight = $this->calculateBillableWeight($shipment);
+        $billableWeight = $this->getChargeableWeight($shipment);
 
         // Find zones
         $originZone = $this->findZone(
@@ -49,10 +49,8 @@ class ManualCarrierService extends AbstractCarrierService
             return [];
         }
 
-        // Calculate base rate
-        $baseRate = $rateCard->flat_rate
-            ? (float) $rateCard->flat_rate
-            : $billableWeight * (float) $rateCard->rate_per_kg;
+        // Calculate base rate using parent method
+        $baseRate = $this->calculateBaseRate($rateCard, $billableWeight);
 
         // Apply minimum charge
         $pricingRule = $this->carrier->activePricingRule();
@@ -100,6 +98,7 @@ class ManualCarrierService extends AbstractCarrierService
                 'surcharges' => $surcharges,
                 'insurance_cost' => $insuranceCost,
                 'billable_weight' => round($billableWeight, 2),
+                'delivery_days' => $transitDaysMax,
                 'delivery_days_min' => $transitDaysMin,
                 'delivery_days_max' => $transitDaysMax,
                 'estimated_delivery_date' => now()->addDays($transitDaysMax)->format('Y-m-d'),
@@ -110,29 +109,26 @@ class ManualCarrierService extends AbstractCarrierService
         ];
     }
 
-    public function createOrder(Order $order): array
+    public function createOrder(Order $order): CarrierOrderResponse
     {
         // For manual carriers, we just generate internal tracking number
         $trackingNumber = 'VE-' . strtoupper(Str::random(10));
 
-        return [
-            'success' => true,
-            'tracking_number' => $trackingNumber,
-            'carrier_tracking_number' => null, // No external tracking for manual carriers
-            'message' => 'Order created successfully. Carrier will be notified.',
-        ];
+        return CarrierOrderResponse::success(
+            carrierOrderId: $trackingNumber,
+            trackingNumber: $trackingNumber,
+            data: ['message' => 'Order created successfully. Carrier will be notified.']
+        );
     }
 
-    public function getTrackingStatus(string $trackingNumber): array
+    public function getTrackingStatus(string $trackingNumber): TrackingStatus
     {
         // Manual carriers update status through admin panel
-        // This returns whatever is stored in tracking_events table
-        return [
-            'tracking_number' => $trackingNumber,
-            'status' => 'pending',
-            'events' => [],
-            'message' => 'Tracking information will be updated by carrier',
-        ];
+        return new TrackingStatus(
+            trackingNumber: $trackingNumber,
+            status: 'pending',
+            events: [],
+        );
     }
 
     public function cancelOrder(string $orderNumber): bool
@@ -142,9 +138,9 @@ class ManualCarrierService extends AbstractCarrierService
         return true;
     }
 
-    public function getShippingLabel(Order $order): ?string
+    public function getShippingLabel(Order $order): string
     {
         // Manual carriers don't provide automatic labels
-        return null;
+        return '';
     }
 }

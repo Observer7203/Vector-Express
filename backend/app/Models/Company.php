@@ -46,6 +46,62 @@ class Company extends Model
         return $this->hasOne(Carrier::class);
     }
 
+    public function documents(): HasMany
+    {
+        return $this->hasMany(CompanyDocument::class);
+    }
+
+    public function orders()
+    {
+        // Orders связаны через users компании
+        return $this->hasManyThrough(Order::class, User::class);
+    }
+
+    public function pendingDocuments(): HasMany
+    {
+        return $this->hasMany(CompanyDocument::class)->where('status', 'pending');
+    }
+
+    public function approvedDocuments(): HasMany
+    {
+        return $this->hasMany(CompanyDocument::class)->where('status', 'approved');
+    }
+
+    public function hasAllRequiredDocuments(): bool
+    {
+        if ($this->type !== 'carrier') {
+            return true;
+        }
+
+        $approvedTypes = $this->approvedDocuments()->pluck('document_type')->toArray();
+
+        foreach (CompanyDocument::REQUIRED_FOR_CARRIER as $requiredType) {
+            if (!in_array($requiredType, $approvedTypes)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    public function getMissingDocuments(): array
+    {
+        if ($this->type !== 'carrier') {
+            return [];
+        }
+
+        $approvedTypes = $this->approvedDocuments()->pluck('document_type')->toArray();
+        $missing = [];
+
+        foreach (CompanyDocument::REQUIRED_FOR_CARRIER as $requiredType) {
+            if (!in_array($requiredType, $approvedTypes)) {
+                $missing[] = $requiredType;
+            }
+        }
+
+        return $missing;
+    }
+
     public function isShipper(): bool
     {
         return $this->type === 'shipper';

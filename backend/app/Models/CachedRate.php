@@ -12,6 +12,7 @@ class CachedRate extends Model
 
     protected $fillable = [
         'carrier_id',
+        'route_hash',
         'cache_key',
         'origin_country',
         'origin_city',
@@ -77,6 +78,7 @@ class CachedRate extends Model
                 'cache_key' => $cacheKey,
             ],
             [
+                'route_hash' => $cacheKey, // for backwards compatibility
                 'origin_country' => $params['origin_country'] ?? null,
                 'origin_city' => $params['origin_city'] ?? null,
                 'origin_postal_code' => $params['origin_postal_code'] ?? null,

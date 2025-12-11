@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\Carrier;
 use App\Models\Company;
 use App\Models\User;
 use Illuminate\Auth\Events\PasswordReset;
@@ -32,12 +33,26 @@ class AuthController extends Controller
         ]);
 
         $company = null;
+        $carrier = null;
+
         if ($request->role === 'carrier' || $request->company_name) {
             $company = Company::create([
                 'name' => $request->company_name,
                 'inn' => $request->company_inn,
                 'type' => $request->company_type ?? ($request->role === 'carrier' ? 'carrier' : 'shipper'),
+                'verified' => false, // Требуется верификация
             ]);
+
+            // Автоматически создаем запись Carrier для перевозчика
+            if ($request->role === 'carrier') {
+                $carrier = Carrier::create([
+                    'company_id' => $company->id,
+                    'api_type' => 'manual', // По умолчанию ручной расчет
+                    'supported_transport_types' => ['road'], // По умолчанию автоперевозки
+                    'supported_countries' => ['KZ'], // По умолчанию Казахстан
+                    'is_active' => false, // Неактивен до верификации
+                ]);
+            }
         }
 
         $user = User::create([
@@ -53,11 +68,25 @@ class AuthController extends Controller
 
         $token = $user->createToken('auth-token')->plainTextToken;
 
-        return response()->json([
-            'message' => 'Registration successful. Please verify your email.',
+        // Формируем ответ с информацией о статусе верификации
+        $responseData = [
+            'message' => $request->role === 'carrier'
+                ? 'Регистрация успешна. Для начала работы загрузите необходимые документы и пройдите верификацию.'
+                : 'Registration successful. Please verify your email.',
             'user' => $user->load('company'),
             'token' => $token,
-        ], 201);
+        ];
+
+        if ($request->role === 'carrier') {
+            $responseData['verification_required'] = true;
+            $responseData['required_documents'] = [
+                'registration_certificate' => 'Свидетельство о регистрации компании',
+                'transport_license' => 'Лицензия на грузоперевозки',
+                'insurance_policy' => 'Страховой полис',
+            ];
+        }
+
+        return response()->json($responseData, 201);
     }
 
     public function login(Request $request): JsonResponse

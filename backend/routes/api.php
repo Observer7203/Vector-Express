@@ -4,12 +4,18 @@ use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\CarrierManagementController;
 use App\Http\Controllers\Api\ChatController;
 use App\Http\Controllers\Api\CompanyController;
+use App\Http\Controllers\Api\CompanyDocumentController;
 use App\Http\Controllers\Api\InvoiceController;
 use App\Http\Controllers\Api\OrderController;
 use App\Http\Controllers\Api\QuoteController;
 use App\Http\Controllers\Api\ShipmentController;
 use App\Http\Controllers\Api\TrackingController;
 use App\Http\Controllers\Api\UserController;
+use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
+use App\Http\Controllers\Admin\UserController as AdminUserController;
+use App\Http\Controllers\Admin\CompanyController as AdminCompanyController;
+use App\Http\Controllers\Admin\CarrierController as AdminCarrierController;
+use App\Http\Controllers\Admin\OrderController as AdminOrderController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -32,6 +38,9 @@ Route::prefix('auth')->group(function () {
 Route::post('/tracking', [TrackingController::class, 'track']);
 Route::get('/tracking/{order}', [TrackingController::class, 'orderTracking']);
 
+// Document download (requires token in query string)
+Route::get('/documents/{document}/download', [AdminCompanyController::class, 'downloadDocument']);
+
 // Protected routes
 Route::middleware('auth:sanctum')->group(function () {
     // Auth
@@ -53,6 +62,16 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/{company}/logo', [CompanyController::class, 'updateLogo']);
         Route::post('/{company}/verification', [CompanyController::class, 'requestVerification']);
         Route::post('/{company}/carrier', [CompanyController::class, 'setupCarrier']);
+    });
+
+    // Company Documents (для загрузки документов перевозчика)
+    Route::prefix('company-documents')->group(function () {
+        Route::get('/', [CompanyDocumentController::class, 'index']);
+        Route::post('/', [CompanyDocumentController::class, 'store']);
+        Route::get('/verification-status', [CompanyDocumentController::class, 'verificationStatus']);
+        Route::get('/{document}', [CompanyDocumentController::class, 'show']);
+        Route::delete('/{document}', [CompanyDocumentController::class, 'destroy']);
+        Route::get('/{document}/download', [CompanyDocumentController::class, 'download']);
     });
 
     // Shipments
@@ -135,5 +154,58 @@ Route::middleware('auth:sanctum')->group(function () {
         // Pricing Rule
         Route::get('/pricing-rule', [CarrierManagementController::class, 'getPricingRule']);
         Route::put('/pricing-rule', [CarrierManagementController::class, 'updatePricingRule']);
+
+        // Import from Excel
+        Route::post('/import/zones', [CarrierManagementController::class, 'importZones']);
+        Route::post('/import/rate-cards', [CarrierManagementController::class, 'importRateCards']);
+        Route::post('/import/terminals', [CarrierManagementController::class, 'importTerminals']);
+        Route::get('/import/templates', [CarrierManagementController::class, 'getImportTemplates']);
+    });
+
+    // Admin routes
+    Route::prefix('admin')->middleware('admin')->group(function () {
+        // Dashboard
+        Route::get('/dashboard', [AdminDashboardController::class, 'index']);
+
+        // Users management
+        Route::get('/users', [AdminUserController::class, 'index']);
+        Route::post('/users', [AdminUserController::class, 'store']);
+        Route::get('/users/{user}', [AdminUserController::class, 'show']);
+        Route::put('/users/{user}', [AdminUserController::class, 'update']);
+        Route::delete('/users/{user}', [AdminUserController::class, 'destroy']);
+        Route::post('/users/{user}/toggle-active', [AdminUserController::class, 'toggleActive']);
+        Route::post('/users/{user}/reset-password', [AdminUserController::class, 'resetPassword']);
+
+        // Companies management
+        Route::get('/companies', [AdminCompanyController::class, 'index']);
+        Route::get('/companies/pending-verification', [AdminCompanyController::class, 'pendingVerification']);
+        Route::post('/companies', [AdminCompanyController::class, 'store']);
+        Route::get('/companies/{company}', [AdminCompanyController::class, 'show']);
+        Route::put('/companies/{company}', [AdminCompanyController::class, 'update']);
+        Route::delete('/companies/{company}', [AdminCompanyController::class, 'destroy']);
+        Route::post('/companies/{company}/verify', [AdminCompanyController::class, 'verify']);
+        Route::post('/companies/{company}/unverify', [AdminCompanyController::class, 'unverify']);
+        Route::get('/companies/{company}/documents', [AdminCompanyController::class, 'documents']);
+
+        // Document verification
+        Route::post('/documents/{document}/approve', [AdminCompanyController::class, 'approveDocument']);
+        Route::post('/documents/{document}/reject', [AdminCompanyController::class, 'rejectDocument']);
+        Route::get('/documents/{document}/download', [AdminCompanyController::class, 'downloadDocument']);
+
+        // Carriers management
+        Route::get('/carriers', [AdminCarrierController::class, 'index']);
+        Route::post('/carriers', [AdminCarrierController::class, 'store']);
+        Route::get('/carriers/available-companies', [AdminCarrierController::class, 'availableCompanies']);
+        Route::get('/carriers/countries', [AdminCarrierController::class, 'countries']);
+        Route::get('/carriers/{carrier}', [AdminCarrierController::class, 'show']);
+        Route::put('/carriers/{carrier}', [AdminCarrierController::class, 'update']);
+        Route::delete('/carriers/{carrier}', [AdminCarrierController::class, 'destroy']);
+        Route::post('/carriers/{carrier}/toggle-active', [AdminCarrierController::class, 'toggleActive']);
+
+        // Orders management
+        Route::get('/orders', [AdminOrderController::class, 'index']);
+        Route::get('/orders/statistics', [AdminOrderController::class, 'statistics']);
+        Route::get('/orders/{order}', [AdminOrderController::class, 'show']);
+        Route::put('/orders/{order}/status', [AdminOrderController::class, 'updateStatus']);
     });
 });
