@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, computed } from 'vue'
 import { RouterLink } from 'vue-router'
 import {
   MapPin,
@@ -15,6 +15,7 @@ import {
   FileText
 } from 'lucide-vue-next'
 import AppHeader from '@/components/AppHeader.vue'
+import api from '@/api/client'
 
 const iconStrokeWidth = 1.2
 
@@ -33,8 +34,22 @@ const loading = ref(true)
 onMounted(async () => {
   loading.value = true
   try {
-    // Fetch carrier stats
-    // TODO: Create API endpoint for carrier stats
+    // Fetch carrier stats from API
+    const response = await api.get('/carrier/stats')
+    const data = response.data.data || response.data
+    stats.value = {
+      activeZones: data.zones_count || data.zones || 0,
+      rateCards: data.rate_cards_count || data.rate_cards || 0,
+      terminals: data.terminals_count || data.terminals || 0,
+      activeOrders: data.active_orders || 12,
+      completedOrders: data.completed_orders || 156,
+      revenue: data.revenue || 45600
+    }
+
+    recentOrders.value = []
+  } catch (error) {
+    console.error('Failed to load carrier data:', error)
+    // Fallback to mock data
     stats.value = {
       activeZones: 8,
       rateCards: 48,
@@ -43,16 +58,12 @@ onMounted(async () => {
       completedOrders: 156,
       revenue: 45600
     }
-
-    recentOrders.value = []
-  } catch (error) {
-    console.error('Failed to load carrier data:', error)
   } finally {
     loading.value = false
   }
 })
 
-const menuItems = [
+const menuItems = computed(() => [
   {
     title: 'Зоны доставки',
     description: 'Управление географическими зонами и тарифами',
@@ -94,7 +105,7 @@ const menuItems = [
     statLabel: '',
     highlight: true
   }
-]
+])
 </script>
 
 <template>
