@@ -48,7 +48,7 @@ const surchargeTypes = [
   { value: 'dangerous_goods', label: 'Опасный груз', icon: AlertTriangle },
   { value: 'peak_season', label: 'Пиковый сезон', icon: TrendingUp },
   { value: 'handling', label: 'Обработка груза', icon: Package },
-  { value: 'customs', label: 'Таможенное оформление', icon: Package }
+  { value: 'customs', label: 'Таможня', icon: Package }
 ]
 
 const calculationTypes = [
@@ -681,6 +681,9 @@ async function handleLogout() {
   font-weight: 600;
   color: $text-primary;
   margin: 0 0 $spacing-xs;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .surcharge-type {

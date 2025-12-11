@@ -313,7 +313,7 @@ async function handleSubmit() {
                   <input v-model="form.customs_clearance" type="checkbox" />
                   <div class="checkbox-content">
                     <FileText :size="24" :stroke-width="iconStrokeWidth" />
-                    <span>Таможенное оформление</span>
+                    <span>Таможня</span>
                   </div>
                 </label>
                 <label class="checkbox-card" :class="{ checked: form.door_to_door }">

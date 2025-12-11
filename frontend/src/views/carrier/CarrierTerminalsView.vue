@@ -57,9 +57,9 @@ const newTerminal = ref({
 
 const terminalTypes = [
   { value: 'hub', label: 'Хаб (основной терминал)' },
-  { value: 'depot', label: 'Депо (склад)' },
-  { value: 'pickup_point', label: 'Пункт приема' },
-  { value: 'delivery_point', label: 'Пункт выдачи' }
+  { value: 'warehouse', label: 'Склад' },
+  { value: 'pickup', label: 'Пункт приема' },
+  { value: 'delivery', label: 'Пункт выдачи' }
 ]
 
 const countries = [
@@ -88,9 +88,9 @@ const filteredTerminals = computed(() => {
   const query = searchQuery.value.toLowerCase()
   return terminals.value.filter(
     (t) =>
-      t.name.toLowerCase().includes(query) ||
-      t.terminal_code.toLowerCase().includes(query) ||
-      t.city.toLowerCase().includes(query)
+      t.name?.toLowerCase().includes(query) ||
+      t.terminal_code?.toLowerCase().includes(query) ||
+      t.city?.toLowerCase().includes(query)
   )
 })
 
@@ -102,7 +102,9 @@ async function loadTerminals() {
   loading.value = true
   try {
     const response = await api.get('/carrier/terminals')
+    console.log('Terminals API response:', response.data)
     terminals.value = response.data.data || response.data || []
+    console.log('Terminals loaded:', terminals.value.length, 'items')
   } catch (error) {
     console.error('Failed to load terminals:', error)
     // Mock data for development
@@ -716,7 +718,7 @@ async function handleImport() {
             <h4>Опциональные колонки:</h4>
             <ul>
               <li><code>terminal_code</code> — уникальный код (напр: ALM-HUB)</li>
-              <li><code>type</code> — тип: hub, depot, pickup_point, delivery_point</li>
+              <li><code>type</code> — тип: hub, warehouse, pickup, delivery</li>
               <li><code>country_code</code> — код страны (KZ, RU, CN и т.д.)</li>
               <li><code>state</code> — область/регион</li>
               <li><code>address</code> — адрес</li>

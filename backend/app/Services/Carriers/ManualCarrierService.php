@@ -28,7 +28,7 @@ class ManualCarrierService extends AbstractCarrierService
         $originZone = $this->findZone(
             $shipment->origin_country,
             $shipment->origin_city,
-            null // postal code if available
+            null
         );
 
         $destinationZone = $this->findZone(
@@ -37,46 +37,84 @@ class ManualCarrierService extends AbstractCarrierService
             null
         );
 
-        // Get rate card
-        $rateCard = $this->findRateCard(
+        // If transport type is null (any), get quotes for all available types
+        if ($shipment->transport_type === null) {
+            return $this->getQuotesForAllTransportTypes($shipment, $originZone, $destinationZone, $billableWeight);
+        }
+
+        return $this->buildQuoteForTransportType(
+            $shipment,
             $originZone,
             $destinationZone,
             $billableWeight,
             $shipment->transport_type
+        );
+    }
+
+    private function getQuotesForAllTransportTypes(
+        Shipment $shipment,
+        $originZone,
+        $destinationZone,
+        float $billableWeight
+    ): array {
+        $quotes = [];
+        $transportTypes = $this->carrier->supported_transport_types ?? ['road', 'rail', 'air', 'sea'];
+
+        foreach ($transportTypes as $transportType) {
+            $quote = $this->buildQuoteForTransportType(
+                $shipment,
+                $originZone,
+                $destinationZone,
+                $billableWeight,
+                $transportType
+            );
+            if (!empty($quote)) {
+                $quotes = array_merge($quotes, $quote);
+            }
+        }
+
+        return $quotes;
+    }
+
+    private function buildQuoteForTransportType(
+        Shipment $shipment,
+        $originZone,
+        $destinationZone,
+        float $billableWeight,
+        string $transportType
+    ): array {
+        $rateCard = $this->findRateCard(
+            $originZone,
+            $destinationZone,
+            $billableWeight,
+            $transportType
         );
 
         if (!$rateCard) {
             return [];
         }
 
-        // Calculate base rate using parent method
         $baseRate = $this->calculateBaseRate($rateCard, $billableWeight);
 
-        // Apply minimum charge
         $pricingRule = $this->carrier->activePricingRule();
         if ($pricingRule?->minimum_charge && $baseRate < $pricingRule->minimum_charge) {
             $baseRate = (float) $pricingRule->minimum_charge;
         }
 
-        // Calculate surcharges
-        $surcharges = $this->calculateSurcharges($baseRate, $billableWeight, $shipment->transport_type, [
+        $surcharges = $this->calculateSurcharges($baseRate, $billableWeight, $transportType, [
             'residential_delivery' => $shipment->door_to_door,
         ]);
 
-        // Calculate insurance if required
         $insuranceCost = 0;
         if ($shipment->insurance_required && $shipment->declared_value) {
             $insuranceCost = $this->calculateInsurance((float) $shipment->declared_value);
         }
 
-        // Total price
         $totalPrice = $baseRate + $surcharges['total'] + $insuranceCost;
 
-        // Determine transit time
         $transitDaysMin = $rateCard->transit_days_min ?? 3;
         $transitDaysMax = $rateCard->transit_days_max ?? 7;
 
-        // Build services included
         $servicesIncluded = [];
         if ($shipment->door_to_door) {
             $servicesIncluded[] = 'door_pickup';
@@ -102,7 +140,7 @@ class ManualCarrierService extends AbstractCarrierService
                 'delivery_days_min' => $transitDaysMin,
                 'delivery_days_max' => $transitDaysMax,
                 'estimated_delivery_date' => now()->addDays($transitDaysMax)->format('Y-m-d'),
-                'transport_type' => $shipment->transport_type ?? $rateCard->transport_type,
+                'transport_type' => $transportType,
                 'services_included' => $servicesIncluded,
                 'valid_until' => now()->addDays(7)->format('Y-m-d H:i:s'),
             ],

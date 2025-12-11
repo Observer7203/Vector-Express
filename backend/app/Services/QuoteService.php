@@ -66,9 +66,8 @@ class QuoteService
                 }
 
                 // Check if carrier's company is verified
-                if (!$carrier->company->verified) {
-                    // Allow unverified for testing/development
-                    // In production, you might want to return false here
+                if (!$carrier->company?->verified) {
+                    return false;
                 }
 
                 return true;

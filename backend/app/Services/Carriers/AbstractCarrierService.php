@@ -80,18 +80,42 @@ abstract class AbstractCarrierService implements CarrierServiceInterface
     /**
      * Find zone for a location based on carrier's zone configuration
      */
-    protected function findZone(string $countryCode, ?string $city = null, ?string $postalCode = null): ?CarrierZone
+    protected function findZone(string $country, ?string $city = null, ?string $postalCode = null): ?CarrierZone
     {
-        // Если у перевозчика нет настроенных зон, возвращаем первую доступную
         $zones = $this->carrier->zones();
 
         if ($zones->count() === 0) {
             return null;
         }
 
-        // Возвращаем первую зону перевозчика (упрощённая логика)
-        // В будущем можно добавить более сложную логику с country_code
-        return $zones->first();
+        // Маппинг название страны -> ISO код
+        $countryMap = [
+            'Казахстан' => 'KZ',
+            'Россия' => 'RU',
+            'Китай' => 'CN',
+            'Узбекистан' => 'UZ',
+            'Кыргызстан' => 'KG',
+            'Таджикистан' => 'TJ',
+            'Беларусь' => 'BY',
+            'Туркменистан' => 'TM',
+            'США' => 'US',
+            'Германия' => 'DE',
+            'Турция' => 'TR',
+            'ОАЭ' => 'AE',
+        ];
+
+        // Получаем ISO код
+        $countryCode = $countryMap[$country] ?? $country;
+
+        // Ищем зону по country_code или zone_code
+        $zone = $zones->where('country_code', $countryCode)->first();
+
+        if (!$zone) {
+            // Попробуем найти по zone_code (например zone_code = 'KZ')
+            $zone = $zones->where('zone_code', $countryCode)->first();
+        }
+
+        return $zone;
     }
 
     /**
@@ -139,6 +163,10 @@ abstract class AbstractCarrierService implements CarrierServiceInterface
 
         if ($destinationZone) {
             $query->where('destination_zone_id', $destinationZone->id);
+        }
+
+        if ($transportType) {
+            $query->where('transport_type', $transportType);
         }
 
         return $query->orderBy('min_weight', 'desc')->first();

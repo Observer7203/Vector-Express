@@ -259,7 +259,7 @@ class CarrierManagementController extends Controller
         $validated = $request->validate([
             'terminal_code' => 'required|string|max:20',
             'name' => 'required|string|max:100',
-            'type' => 'required|in:hub,depot,pickup_point,delivery_point',
+            'type' => 'required|in:hub,warehouse,pickup,delivery',
             'country_code' => 'required|string|max:2',
             'city' => 'required|string|max:100',
             'address' => 'required|string|max:500',
@@ -302,7 +302,7 @@ class CarrierManagementController extends Controller
         $validated = $request->validate([
             'terminal_code' => 'sometimes|string|max:20',
             'name' => 'sometimes|string|max:100',
-            'type' => 'sometimes|in:hub,depot,pickup_point,delivery_point',
+            'type' => 'sometimes|in:hub,warehouse,pickup,delivery',
             'country_code' => 'sometimes|string|max:2',
             'city' => 'sometimes|string|max:100',
             'address' => 'sometimes|string|max:500',
@@ -832,7 +832,7 @@ class CarrierManagementController extends Controller
                     'columns' => [
                         'terminal_code' => 'Код терминала (опционально)',
                         'name' => 'Название (обязательно)',
-                        'type' => 'Тип: hub, depot, pickup_point, delivery_point',
+                        'type' => 'Тип: hub, warehouse, pickup, delivery',
                         'country_code' => 'Код страны (KZ, RU и т.д.)',
                         'city' => 'Город (обязательно)',
                         'state' => 'Регион/область',

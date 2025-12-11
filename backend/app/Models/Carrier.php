@@ -75,17 +75,9 @@ class Carrier extends Model
         return $this->hasMany(CarrierZone::class);
     }
 
-    public function rateCards()
+    public function rateCards(): HasMany
     {
-        // Rate cards связаны через pricing rules
-        return $this->hasManyThrough(
-            CarrierRateCard::class,
-            CarrierPricingRule::class,
-            'carrier_id',        // Foreign key on pricing_rules
-            'pricing_rule_id',   // Foreign key on rate_cards
-            'id',                // Local key on carriers
-            'id'                 // Local key on pricing_rules
-        );
+        return $this->hasMany(CarrierRateCard::class);
     }
 
     public function surcharges(): HasMany
@@ -130,7 +122,45 @@ class Carrier extends Model
     public function supportsCountry(string $country): bool
     {
         $countries = $this->supported_countries ?? [];
+
         // Поддержка wildcard '*' = все страны
-        return empty($countries) || in_array('*', $countries) || in_array($country, $countries);
+        if (empty($countries) || in_array('*', $countries)) {
+            return true;
+        }
+
+        // Прямое совпадение (название или код)
+        if (in_array($country, $countries)) {
+            return true;
+        }
+
+        // Маппинг название -> код ISO
+        $countryMap = [
+            'Казахстан' => 'KZ',
+            'Россия' => 'RU',
+            'Китай' => 'CN',
+            'Узбекистан' => 'UZ',
+            'Кыргызстан' => 'KG',
+            'Таджикистан' => 'TJ',
+            'Беларусь' => 'BY',
+            'Туркменистан' => 'TM',
+            'США' => 'US',
+            'Германия' => 'DE',
+            'Турция' => 'TR',
+            'ОАЭ' => 'AE',
+        ];
+
+        // Проверка по ISO коду если передали название
+        $countryCode = $countryMap[$country] ?? null;
+        if ($countryCode && in_array($countryCode, $countries)) {
+            return true;
+        }
+
+        // Обратная проверка - если передали код, ищем название
+        $countryName = array_search($country, $countryMap);
+        if ($countryName && in_array($countryName, $countries)) {
+            return true;
+        }
+
+        return false;
     }
 }

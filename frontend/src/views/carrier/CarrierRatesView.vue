@@ -66,8 +66,8 @@ const filteredRateCards = computed(() => {
     const query = searchQuery.value.toLowerCase()
     result = result.filter(
       (r) =>
-        r.originZone?.zone_name?.toLowerCase().includes(query) ||
-        r.destinationZone?.zone_name?.toLowerCase().includes(query)
+        (r.originZone?.zone_name || r.origin_zone?.zone_name)?.toLowerCase().includes(query) ||
+        (r.destinationZone?.zone_name || r.destination_zone?.zone_name)?.toLowerCase().includes(query)
     )
   }
 
@@ -108,7 +108,9 @@ async function loadRateCards() {
   loading.value = true
   try {
     const response = await api.get('/carrier/rate-cards')
+    console.log('Rate cards API response:', response.data)
     rateCards.value = response.data.data || response.data || []
+    console.log('Rate cards loaded:', rateCards.value.length, 'items')
   } catch (error) {
     console.error('Failed to load rate cards:', error)
     // Mock data
@@ -418,14 +420,14 @@ async function handleLogout() {
               <tr v-for="rate in filteredRateCards" :key="rate.id">
                 <td>
                   <div class="zone-cell">
-                    <span class="zone-code">{{ rate.originZone?.zone_code }}</span>
-                    <span class="zone-name">{{ rate.originZone?.zone_name }}</span>
+                    <span class="zone-code">{{ (rate.originZone || rate.origin_zone)?.zone_code }}</span>
+                    <span class="zone-name">{{ (rate.originZone || rate.origin_zone)?.zone_name }}</span>
                   </div>
                 </td>
                 <td>
                   <div class="zone-cell">
-                    <span class="zone-code">{{ rate.destinationZone?.zone_code }}</span>
-                    <span class="zone-name">{{ rate.destinationZone?.zone_name }}</span>
+                    <span class="zone-code">{{ (rate.destinationZone || rate.destination_zone)?.zone_code }}</span>
+                    <span class="zone-name">{{ (rate.destinationZone || rate.destination_zone)?.zone_name }}</span>
                   </div>
                 </td>
                 <td>
@@ -437,7 +439,7 @@ async function handleLogout() {
                   {{ formatWeight(rate.min_weight, rate.max_weight) }}
                 </td>
                 <td class="rate-cell">
-                  <strong>${{ rate.rate?.toFixed(2) || '0.00' }}</strong>
+                  <strong>${{ parseFloat(rate.rate || 0).toFixed(2) }}</strong>
                   <span class="rate-unit">/кг</span>
                 </td>
                 <td class="transit-cell">
