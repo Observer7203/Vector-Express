@@ -10,6 +10,7 @@ use App\Models\CarrierSurcharge;
 use App\Models\CarrierTerminal;
 use App\Models\CarrierZone;
 use App\Models\CarrierZonePostalCode;
+use App\Models\Order;
 use App\Imports\CarrierZonesImport;
 use App\Imports\CarrierRateCardsImport;
 use App\Imports\CarrierTerminalsImport;
@@ -677,11 +678,163 @@ class CarrierManagementController extends Controller
                     'surcharges_count' => CarrierSurcharge::where('carrier_id', $carrier->id)
                         ->where('is_active', true)
                         ->count(),
+                    'orders_count' => Order::where('carrier_id', $carrier->id)->count(),
+                    'active_orders_count' => Order::where('carrier_id', $carrier->id)
+                        ->whereNotIn('status', ['delivered', 'cancelled'])
+                        ->count(),
                 ];
             }
         );
 
         return response()->json(['data' => $stats]);
+    }
+
+    // =========================================================================
+    // ORDERS
+    // =========================================================================
+
+    /**
+     * Get orders for the carrier
+     */
+    public function getOrders(Request $request): JsonResponse
+    {
+        $carrier = $this->getCarrier($request);
+
+        if (!$carrier) {
+            return response()->json(['error' => 'Carrier not found'], 404);
+        }
+
+        $query = Order::where('carrier_id', $carrier->id)
+            ->with([
+                'user:id,name,email,phone',
+                'quote.shipment:id,origin_city,origin_country,destination_city,destination_country,total_weight,total_volume,cargo_type'
+            ]);
+
+        // Filter by status
+        if ($status = $request->get('status')) {
+            $query->where('status', $status);
+        }
+
+        // Search
+        if ($search = $request->get('search')) {
+            $query->where(function ($q) use ($search) {
+                $q->where('order_number', 'like', "%{$search}%")
+                    ->orWhere('tracking_number', 'like', "%{$search}%")
+                    ->orWhereHas('user', function ($q) use ($search) {
+                        $q->where('name', 'like', "%{$search}%");
+                    });
+            });
+        }
+
+        $orders = $query->latest()->paginate(15);
+
+        // Get stats for carrier
+        $stats = [
+            'total' => Order::where('carrier_id', $carrier->id)->count(),
+            'pending' => Order::where('carrier_id', $carrier->id)->where('status', 'pending')->count(),
+            'confirmed' => Order::where('carrier_id', $carrier->id)->where('status', 'confirmed')->count(),
+            'in_transit' => Order::where('carrier_id', $carrier->id)->where('status', 'in_transit')->count(),
+            'delivered' => Order::where('carrier_id', $carrier->id)->where('status', 'delivered')->count(),
+        ];
+
+        return response()->json([
+            'orders' => $orders,
+            'stats' => $stats
+        ]);
+    }
+
+    /**
+     * Get single order details for the carrier
+     */
+    public function getOrder(Request $request, int $orderId): JsonResponse
+    {
+        $carrier = $this->getCarrier($request);
+
+        if (!$carrier) {
+            return response()->json(['error' => 'Carrier not found'], 404);
+        }
+
+        $order = Order::where('carrier_id', $carrier->id)
+            ->with([
+                'user',
+                'quote.shipment.items',
+                'trackingEvents'
+            ])
+            ->find($orderId);
+
+        if (!$order) {
+            return response()->json(['error' => 'Order not found'], 404);
+        }
+
+        return response()->json(['order' => $order]);
+    }
+
+    /**
+     * Update order status by carrier
+     */
+    public function updateOrderStatus(Request $request, int $orderId): JsonResponse
+    {
+        $carrier = $this->getCarrier($request);
+
+        if (!$carrier) {
+            return response()->json(['error' => 'Carrier not found'], 404);
+        }
+
+        $order = Order::where('carrier_id', $carrier->id)->find($orderId);
+
+        if (!$order) {
+            return response()->json(['error' => 'Order not found'], 404);
+        }
+
+        $validated = $request->validate([
+            'status' => ['required', 'in:confirmed,pickup_scheduled,picked_up,in_transit,customs,out_for_delivery,delivered'],
+            'note' => ['nullable', 'string'],
+            'location' => ['nullable', 'string'],
+        ]);
+
+        $oldStatus = $order->status;
+        $order->status = $validated['status'];
+
+        // Update timestamps based on status
+        if ($validated['status'] === 'confirmed' && !$order->confirmed_at) {
+            $order->confirmed_at = now();
+        } elseif ($validated['status'] === 'picked_up' && !$order->picked_up_at) {
+            $order->picked_up_at = now();
+        } elseif ($validated['status'] === 'delivered' && !$order->delivered_at) {
+            $order->delivered_at = now();
+        }
+
+        $order->save();
+
+        // Create tracking event
+        $order->trackingEvents()->create([
+            'status' => $validated['status'],
+            'description' => $validated['note'] ?? $this->getStatusDescription($validated['status']),
+            'location' => $validated['location'] ?? null,
+            'event_time' => now(),
+        ]);
+
+        return response()->json([
+            'message' => "Статус заказа изменён с {$oldStatus} на {$validated['status']}",
+            'order' => $order->fresh(['user', 'quote.shipment', 'trackingEvents'])
+        ]);
+    }
+
+    /**
+     * Get status description
+     */
+    private function getStatusDescription(string $status): string
+    {
+        return match ($status) {
+            'confirmed' => 'Заказ подтверждён перевозчиком',
+            'pickup_scheduled' => 'Забор груза запланирован',
+            'picked_up' => 'Груз забран',
+            'in_transit' => 'Груз в пути',
+            'customs' => 'Груз на таможне',
+            'out_for_delivery' => 'Груз на доставке',
+            'delivered' => 'Груз доставлен',
+            default => 'Статус обновлён',
+        };
     }
 
     // =========================================================================

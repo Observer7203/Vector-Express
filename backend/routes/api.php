@@ -127,6 +127,11 @@ Route::middleware('auth:sanctum')->group(function () {
         // Stats
         Route::get('/stats', [CarrierManagementController::class, 'getStats']);
 
+        // Orders
+        Route::get('/orders', [CarrierManagementController::class, 'getOrders']);
+        Route::get('/orders/{id}', [CarrierManagementController::class, 'getOrder']);
+        Route::put('/orders/{id}/status', [CarrierManagementController::class, 'updateOrderStatus']);
+
         // Zones
         Route::get('/zones', [CarrierManagementController::class, 'getZones']);
         Route::post('/zones', [CarrierManagementController::class, 'createZone']);

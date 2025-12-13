@@ -3,6 +3,7 @@ import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { RouterLink } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import { User, Settings, ChevronDown, LogOut, Shield } from 'lucide-vue-next'
+import LanguageSwitcher from './LanguageSwitcher.vue'
 
 const iconStrokeWidth = 1.2
 const authStore = useAuthStore()
@@ -43,6 +44,7 @@ onUnmounted(() => {
           <RouterLink v-if="isAdmin" to="/admin" class="nav-link nav-link-admin">Админ-панель</RouterLink>
         </nav>
         <div class="header-actions">
+          <LanguageSwitcher />
           <div class="user-menu" @click.stop="showUserMenu = !showUserMenu">
             <div class="user-menu-trigger">
               <div class="user-avatar">

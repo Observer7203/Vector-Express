@@ -12,7 +12,8 @@ import {
   Settings,
   Truck,
   AlertCircle,
-  FileText
+  FileText,
+  ClipboardList
 } from 'lucide-vue-next'
 import AppHeader from '@/components/AppHeader.vue'
 import api from '@/api/client'
@@ -64,6 +65,15 @@ onMounted(async () => {
 })
 
 const menuItems = computed(() => [
+  {
+    title: 'Заказы',
+    description: 'Просмотр и обработка заказов клиентов',
+    icon: ClipboardList,
+    route: '/carrier/orders',
+    stat: stats.value.activeOrders,
+    statLabel: 'активных заказов',
+    highlight: true
+  },
   {
     title: 'Зоны доставки',
     description: 'Управление географическими зонами и тарифами',
