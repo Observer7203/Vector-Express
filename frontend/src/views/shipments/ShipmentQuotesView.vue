@@ -2,9 +2,11 @@
 import { ref, computed, onMounted } from 'vue'
 import { RouterLink, useRoute, useRouter } from 'vue-router'
 import { useShipmentsStore } from '@/stores/shipments'
-import { ArrowLeft, Star, FileText, ChevronDown, ChevronUp, Package, Fuel, Home, MapPin, Shield, FileCheck, Scale } from 'lucide-vue-next'
+import { useI18n } from 'vue-i18n'
+import { ArrowLeft, Star, FileText, ChevronDown, ChevronUp, Package, Fuel, Home, MapPin, Shield, FileCheck, Scale, Zap, DollarSign, Award } from 'lucide-vue-next'
 
 const iconStrokeWidth = 1.2
+const { t } = useI18n()
 
 const route = useRoute()
 const router = useRouter()
@@ -25,6 +27,35 @@ onMounted(async () => {
 
 const shipment = computed(() => shipmentsStore.currentShipment)
 const quotes = computed(() => shipmentsStore.quotes)
+
+// Find cheapest quote
+const cheapestQuoteId = computed(() => {
+  if (!quotes.value.length) return null
+  const cheapest = [...quotes.value].sort((a, b) => a.price - b.price)[0]
+  return cheapest?.id
+})
+
+// Find fastest quote
+const fastestQuoteId = computed(() => {
+  if (!quotes.value.length) return null
+  const fastest = [...quotes.value].sort((a, b) => a.delivery_days - b.delivery_days)[0]
+  return fastest?.id
+})
+
+// Find best value (optimal price/time ratio)
+const bestValueQuoteId = computed(() => {
+  if (!quotes.value.length) return null
+  // Calculate score: lower is better (normalized price + normalized time)
+  const quotesWithScore = quotes.value.map(q => {
+    const maxPrice = Math.max(...quotes.value.map(x => x.price))
+    const maxDays = Math.max(...quotes.value.map(x => x.delivery_days))
+    const priceScore = maxPrice > 0 ? q.price / maxPrice : 0
+    const daysScore = maxDays > 0 ? q.delivery_days / maxDays : 0
+    return { ...q, score: priceScore + daysScore }
+  })
+  const best = quotesWithScore.sort((a, b) => a.score - b.score)[0]
+  return best?.id
+})
 
 const sortedQuotes = computed(() => {
   let result = [...quotes.value]
@@ -157,8 +188,22 @@ function getSurchargeIcon(type) {
           </div>
 
           <div v-else class="quotes-list">
-            <div v-for="(quote, index) in sortedQuotes" :key="quote.id" class="quote-card" :class="{ expanded: expandedQuote === quote.id }">
-              <div v-if="index === 0 && sortBy === 'price'" class="best-badge">Лучшая цена</div>
+            <div v-for="quote in sortedQuotes" :key="quote.id" class="quote-card" :class="{ expanded: expandedQuote === quote.id }">
+              <!-- Quote badges -->
+              <div class="quote-badges">
+                <div v-if="quote.id === cheapestQuoteId" class="badge badge-cheapest">
+                  <DollarSign :size="12" :stroke-width="iconStrokeWidth" />
+                  {{ t('quotes.cheapest') }}
+                </div>
+                <div v-if="quote.id === fastestQuoteId" class="badge badge-fastest">
+                  <Zap :size="12" :stroke-width="iconStrokeWidth" />
+                  {{ t('quotes.fastest') }}
+                </div>
+                <div v-if="quote.id === bestValueQuoteId && quote.id !== cheapestQuoteId && quote.id !== fastestQuoteId" class="badge badge-best">
+                  <Award :size="12" :stroke-width="iconStrokeWidth" />
+                  {{ t('quotes.bestValue') }}
+                </div>
+              </div>
 
               <div class="quote-main">
                 <div class="carrier-section">
@@ -526,16 +571,44 @@ h1 {
   }
 }
 
-.best-badge {
+// Quote badges
+.quote-badges {
   position: absolute;
   top: 0;
-  right: $spacing-lg;
-  background: $color-success;
-  color: $text-white;
+  right: $spacing-md;
+  display: flex;
+  gap: $spacing-xs;
+  z-index: 1;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
   padding: $spacing-xs $spacing-sm;
   font-size: $font-size-xs;
   font-weight: 600;
   border-radius: 0 0 $radius-md $radius-md;
+
+  svg {
+    width: 12px;
+    height: 12px;
+  }
+}
+
+.badge-cheapest {
+  background: $color-success;
+  color: $text-white;
+}
+
+.badge-fastest {
+  background: #8b5cf6;
+  color: $text-white;
+}
+
+.badge-best {
+  background: $color-warning;
+  color: #1f2937;
 }
 
 .quote-main {
@@ -884,6 +957,211 @@ h1 {
     width: 100%;
     text-align: right;
     margin-top: $spacing-xs;
+  }
+}
+
+// Dark theme overrides
+[data-theme="dark"] {
+  .page {
+    background: var(--bg-light);
+  }
+
+  .page-header {
+    background: var(--bg-white);
+    border-bottom-color: var(--border-color);
+  }
+
+  h1 {
+    color: var(--text-primary);
+  }
+
+  .route-summary {
+    color: var(--text-secondary);
+
+    .arrow {
+      color: var(--color-primary);
+    }
+
+    .weight-info {
+      color: var(--text-muted);
+    }
+  }
+
+  .back-link {
+    color: var(--text-secondary);
+
+    &:hover {
+      background: var(--bg-hover);
+      color: var(--text-primary);
+    }
+  }
+
+  .loading {
+    color: var(--text-secondary);
+  }
+
+  .spinner {
+    border-color: var(--border-color);
+    border-top-color: var(--color-primary);
+  }
+
+  .filters-bar {
+    background: var(--bg-white);
+    border-color: var(--border-color);
+  }
+
+  .filter-group {
+    label {
+      color: var(--text-muted);
+    }
+
+    select {
+      background-color: var(--bg-white);
+      border-color: var(--border-color);
+      color: var(--text-primary);
+
+      &:focus {
+        border-color: var(--color-primary);
+      }
+    }
+  }
+
+  .results-count {
+    color: var(--text-secondary);
+  }
+
+  .empty-state {
+    background: var(--bg-white);
+    border-color: var(--border-color);
+  }
+
+  .empty-icon {
+    background: var(--bg-light);
+
+    svg {
+      color: var(--text-muted);
+    }
+  }
+
+  .empty-state h3 {
+    color: var(--text-primary);
+  }
+
+  .empty-state p {
+    color: var(--text-secondary);
+  }
+
+  .quote-card {
+    background: var(--bg-white);
+    border-color: var(--border-color);
+
+    &:hover {
+      border-color: rgba(249, 115, 22, 0.3);
+    }
+
+    &.expanded {
+      border-color: var(--color-primary);
+    }
+  }
+
+  .carrier-logo {
+    background-color: var(--color-primary);
+  }
+
+  .carrier-name {
+    color: var(--text-primary);
+  }
+
+  .carrier-rating {
+    color: var(--text-secondary);
+  }
+
+  .detail-label {
+    color: var(--text-muted);
+  }
+
+  .detail-value {
+    color: var(--text-primary);
+  }
+
+  .price-value {
+    color: var(--text-primary);
+  }
+
+  .price-currency {
+    color: var(--text-secondary);
+  }
+
+  .breakdown-toggle {
+    border-color: var(--border-color);
+    color: var(--text-secondary);
+
+    &:hover, &.active {
+      background: var(--bg-light);
+      color: var(--color-primary);
+      border-color: var(--color-primary);
+    }
+  }
+
+  .price-breakdown {
+    background: var(--bg-light);
+    border-top-color: var(--border-color);
+  }
+
+  .breakdown-item {
+    background: var(--bg-white);
+    border-color: var(--border-color);
+  }
+
+  .breakdown-icon {
+    background: rgba(249, 115, 22, 0.15);
+    color: var(--color-primary);
+
+    &.surcharge {
+      background: rgba(251, 191, 36, 0.15);
+    }
+  }
+
+  .breakdown-label {
+    color: var(--text-primary);
+  }
+
+  .breakdown-desc {
+    color: var(--text-muted);
+  }
+
+  .breakdown-value {
+    color: var(--text-primary);
+  }
+
+  .weight-info-row {
+    background: var(--bg-light);
+  }
+
+  .breakdown-total {
+    border-top-color: var(--border-color);
+    color: var(--text-primary);
+
+    .total-value {
+      color: var(--color-primary);
+    }
+  }
+
+  .quote-footer {
+    background: var(--bg-white);
+    border-top-color: var(--border-color);
+  }
+
+  .valid-until {
+    color: var(--text-muted);
+  }
+
+  .btn-primary {
+    background: var(--color-primary);
+
+    &:hover:not(:disabled) {
+      background: var(--color-primary-dark);
+    }
   }
 }
 </style>

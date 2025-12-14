@@ -5,6 +5,7 @@ import { useAuthStore } from '@/stores/auth'
 import { useI18n } from 'vue-i18n'
 import { User, Settings, ChevronDown, LogOut, Shield } from 'lucide-vue-next'
 import LanguageSwitcher from './LanguageSwitcher.vue'
+import ThemeToggle from './ThemeToggle.vue'
 
 const { t } = useI18n()
 const iconStrokeWidth = 1.2
@@ -46,6 +47,7 @@ onUnmounted(() => {
           <RouterLink v-if="isAdmin" to="/admin" class="nav-link nav-link-admin">{{ t('nav.admin') }}</RouterLink>
         </nav>
         <div class="header-actions">
+          <ThemeToggle />
           <LanguageSwitcher />
           <div class="user-menu" @click.stop="showUserMenu = !showUserMenu">
             <div class="user-menu-trigger">
@@ -279,6 +281,71 @@ onUnmounted(() => {
 
   .user-name {
     display: none;
+  }
+}
+
+// Dark theme overrides
+[data-theme="dark"] {
+  .app-header {
+    background: var(--bg-white);
+    border-bottom-color: var(--border-color);
+  }
+
+  .logo {
+    color: var(--color-primary);
+  }
+
+  .nav-link {
+    color: var(--text-secondary);
+
+    &:hover {
+      color: var(--text-primary);
+      background: var(--bg-hover);
+    }
+
+    &.router-link-active {
+      color: var(--color-primary);
+      background: rgba(249, 115, 22, 0.15);
+    }
+  }
+
+  .user-menu-trigger {
+    &:hover {
+      background: var(--bg-hover);
+    }
+  }
+
+  .user-avatar {
+    background: rgba(249, 115, 22, 0.15);
+
+    svg {
+      color: var(--color-primary);
+    }
+  }
+
+  .user-name {
+    color: var(--text-secondary);
+  }
+
+  .user-dropdown {
+    background: var(--bg-white);
+    border-color: var(--border-color);
+  }
+
+  .dropdown-item {
+    color: var(--text-primary);
+
+    svg {
+      color: var(--text-secondary);
+    }
+
+    &:hover {
+      background: var(--bg-hover);
+    }
+  }
+
+  .dropdown-divider {
+    background: var(--border-color);
   }
 }
 </style>

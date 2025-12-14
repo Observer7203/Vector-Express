@@ -35,6 +35,11 @@
     "amount": "Amount",
     "currency": "Currency"
   },
+  "quotes": {
+    "cheapest": "Cheapest",
+    "fastest": "Fastest",
+    "bestValue": "Best Value"
+  },
   "nav": {
     "home": "Home",
     "tracking": "Tracking",

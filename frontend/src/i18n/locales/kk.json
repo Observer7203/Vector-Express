@@ -35,6 +35,11 @@
     "amount": "Сомасы",
     "currency": "Валюта"
   },
+  "quotes": {
+    "cheapest": "Ең арзан",
+    "fastest": "Ең жылдам",
+    "bestValue": "Ең тиімді"
+  },
   "nav": {
     "home": "Басты бет",
     "tracking": "Қадағалау",

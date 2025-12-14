@@ -4,6 +4,7 @@ import { useAuthStore } from '@/stores/auth'
 import { useI18n } from 'vue-i18n'
 import { Globe, DollarSign, Truck, ShieldCheck, Calculator, Search, UserPlus } from 'lucide-vue-next'
 import LanguageSwitcher from '@/components/LanguageSwitcher.vue'
+import ThemeToggle from '@/components/ThemeToggle.vue'
 
 // Lucide icons с тонкими линиями
 const iconStrokeWidth = 1.2
@@ -19,6 +20,7 @@ const { t } = useI18n()
         <nav class="nav">
           <div class="logo">Vector Express</div>
           <div class="nav-links">
+            <ThemeToggle />
             <LanguageSwitcher />
             <RouterLink v-if="authStore.isAuthenticated" to="/dashboard" class="btn btn-outline">
               {{ t('home.personalCabinet') }}
@@ -548,6 +550,150 @@ const { t } = useI18n()
   .footer-content {
     grid-template-columns: 1fr;
     gap: $spacing-lg;
+  }
+}
+
+// Dark theme overrides
+[data-theme="dark"] {
+  .home {
+    background: var(--bg-dark);
+  }
+
+  .header {
+    background: var(--bg-white);
+    border-bottom-color: var(--border-color);
+  }
+
+  .logo {
+    color: var(--color-primary);
+  }
+
+  .hero {
+    background: var(--bg-light);
+  }
+
+  .hero-pattern {
+    color: var(--color-primary);
+  }
+
+  .hero-content h1 {
+    color: var(--text-primary);
+  }
+
+  .hero-subtitle {
+    color: var(--text-secondary);
+  }
+
+  .btn-primary {
+    background: var(--color-primary);
+
+    &:hover {
+      background: var(--color-primary-dark);
+    }
+  }
+
+  .btn-outline {
+    color: var(--color-primary);
+    border-color: var(--color-primary);
+
+    &:hover {
+      background: var(--color-primary);
+      color: var(--text-white);
+    }
+  }
+
+  .btn-outline-dark {
+    color: var(--text-primary);
+    border-color: var(--border-color-dark);
+
+    &:hover {
+      background: var(--bg-hover);
+    }
+  }
+
+  .btn-text {
+    color: var(--text-secondary);
+
+    &:hover {
+      color: var(--text-primary);
+    }
+  }
+
+  .btn-white {
+    background: var(--bg-white);
+    color: var(--color-primary);
+
+    &:hover {
+      background: var(--bg-light);
+    }
+  }
+
+  .section-title {
+    color: var(--text-primary);
+  }
+
+  .features {
+    background: var(--bg-dark);
+  }
+
+  .feature-card {
+    background: var(--bg-white);
+    border-color: var(--border-color);
+
+    &:hover {
+      border-color: var(--color-primary);
+    }
+
+    h3 {
+      color: var(--text-primary);
+    }
+
+    p {
+      color: var(--text-secondary);
+    }
+  }
+
+  .feature-icon {
+    background: rgba(249, 115, 22, 0.15);
+
+    svg {
+      color: var(--color-primary);
+    }
+  }
+
+  .carriers {
+    background: var(--bg-light);
+  }
+
+  .carrier-item {
+    background: var(--bg-white);
+    border-color: var(--border-color);
+    color: var(--text-muted);
+  }
+
+  .cta {
+    background: var(--color-primary);
+  }
+
+  .footer {
+    background: #000000;
+  }
+
+  .footer-brand p,
+  .footer-links a {
+    color: var(--text-muted);
+
+    &:hover {
+      color: var(--text-white);
+    }
+  }
+
+  .footer-bottom {
+    border-top-color: rgba(255, 255, 255, 0.05);
+
+    p {
+      color: var(--text-muted);
+    }
   }
 }
 </style>
