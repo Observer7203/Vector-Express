@@ -1,6 +1,7 @@
 <script setup>
 import { onMounted, ref, reactive } from 'vue'
 import { RouterLink } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import api from '@/api/client'
 import {
   Settings,
@@ -18,6 +19,8 @@ import {
   CheckCircle
 } from 'lucide-vue-next'
 import AppHeader from '@/components/AppHeader.vue'
+
+const { t } = useI18n()
 
 const iconStrokeWidth = 1.2
 
@@ -73,13 +76,13 @@ const currencies = [
 ]
 
 const weekdays = [
-  { value: 'mon', label: 'Пн' },
-  { value: 'tue', label: 'Вт' },
-  { value: 'wed', label: 'Ср' },
-  { value: 'thu', label: 'Чт' },
-  { value: 'fri', label: 'Пт' },
-  { value: 'sat', label: 'Сб' },
-  { value: 'sun', label: 'Вс' }
+  { value: 'mon', label: t('carrierSettings.weekdays.mon') },
+  { value: 'tue', label: t('carrierSettings.weekdays.tue') },
+  { value: 'wed', label: t('carrierSettings.weekdays.wed') },
+  { value: 'thu', label: t('carrierSettings.weekdays.thu') },
+  { value: 'fri', label: t('carrierSettings.weekdays.fri') },
+  { value: 'sat', label: t('carrierSettings.weekdays.sat') },
+  { value: 'sun', label: t('carrierSettings.weekdays.sun') }
 ]
 
 onMounted(async () => {
@@ -103,14 +106,14 @@ async function saveSettings() {
 
   try {
     await api.put('/carrier/pricing-rule', settings)
-    message.value = { type: 'success', text: 'Настройки успешно сохранены' }
+    message.value = { type: 'success', text: t('carrierSettings.messages.saveSuccess') }
 
     setTimeout(() => {
       message.value = { type: '', text: '' }
     }, 3000)
   } catch (error) {
     console.error('Failed to save settings:', error)
-    message.value = { type: 'error', text: 'Ошибка при сохранении настроек' }
+    message.value = { type: 'error', text: t('carrierSettings.messages.saveError') }
   } finally {
     saving.value = false
   }
@@ -142,12 +145,12 @@ function toggleNotification(key) {
       <div class="container">
         <div class="page-header">
           <div class="page-title">
-            <h1>Настройки</h1>
-            <p class="subtitle">Правила расчета, типы перевозок и конфигурация системы</p>
+            <h1>{{ t('carrierSettings.title') }}</h1>
+            <p class="subtitle">{{ t('carrierSettings.subtitle') }}</p>
           </div>
           <button @click="saveSettings" class="btn btn-primary" :disabled="saving">
             <Save :size="18" :stroke-width="iconStrokeWidth" />
-            {{ saving ? 'Сохранение...' : 'Сохранить' }}
+            {{ saving ? t('carrierSettings.saving') : t('common.save') }}
           </button>
         </div>
 
@@ -163,19 +166,19 @@ function toggleNotification(key) {
           <section class="settings-section">
             <div class="section-header">
               <Calculator :size="20" :stroke-width="iconStrokeWidth" />
-              <h2>Правила расчета</h2>
+              <h2>{{ t('carrierSettings.pricingRules.title') }}</h2>
             </div>
             <div class="section-body">
               <div class="form-group">
-                <label>DIM-фактор</label>
+                <label>{{ t('carrierSettings.pricingRules.dimFactor') }}</label>
                 <div class="input-with-hint">
                   <input type="number" v-model.number="settings.dim_factor" min="1000" max="10000" step="100" />
-                  <span class="hint">Делитель для расчета объемного веса (обычно 5000-6000)</span>
+                  <span class="hint">{{ t('carrierSettings.pricingRules.dimFactorHint') }}</span>
                 </div>
               </div>
 
               <div class="form-group">
-                <label>Минимальный тариф</label>
+                <label>{{ t('carrierSettings.pricingRules.minRate') }}</label>
                 <div class="input-group">
                   <span class="input-prefix">$</span>
                   <input type="number" v-model.number="settings.min_rate" min="0" step="0.01" />
@@ -183,16 +186,16 @@ function toggleNotification(key) {
               </div>
 
               <div class="form-group">
-                <label>Ставка страхования</label>
+                <label>{{ t('carrierSettings.pricingRules.insuranceRate') }}</label>
                 <div class="input-group">
                   <input type="number" v-model.number="settings.insurance_rate" min="0" max="10" step="0.1" />
                   <span class="input-suffix">%</span>
                 </div>
-                <span class="hint">Процент от объявленной стоимости груза</span>
+                <span class="hint">{{ t('carrierSettings.pricingRules.insuranceRateHint') }}</span>
               </div>
 
               <div class="form-group">
-                <label>Валюта по умолчанию</label>
+                <label>{{ t('carrierSettings.pricingRules.defaultCurrency') }}</label>
                 <select v-model="settings.default_currency">
                   <option v-for="currency in currencies" :key="currency.value" :value="currency.value">
                     {{ currency.label }}
@@ -206,10 +209,10 @@ function toggleNotification(key) {
           <section class="settings-section">
             <div class="section-header">
               <Truck :size="20" :stroke-width="iconStrokeWidth" />
-              <h2>Типы перевозок</h2>
+              <h2>{{ t('carrierSettings.transportTypes.title') }}</h2>
             </div>
             <div class="section-body">
-              <p class="section-description">Выберите типы перевозок, которые вы предоставляете</p>
+              <p class="section-description">{{ t('carrierSettings.transportTypes.description') }}</p>
 
               <div class="transport-toggles">
                 <div
@@ -221,8 +224,8 @@ function toggleNotification(key) {
                     <Plane :size="24" :stroke-width="iconStrokeWidth" />
                   </div>
                   <div class="toggle-info">
-                    <span class="toggle-label">Авиаперевозки</span>
-                    <span class="toggle-desc">Быстрая доставка по воздуху</span>
+                    <span class="toggle-label">{{ t('carrierSettings.transportTypes.air') }}</span>
+                    <span class="toggle-desc">{{ t('carrierSettings.transportTypes.airDesc') }}</span>
                   </div>
                   <component
                     :is="settings.transport_types.air ? ToggleRight : ToggleLeft"
@@ -241,8 +244,8 @@ function toggleNotification(key) {
                     <Truck :size="24" :stroke-width="iconStrokeWidth" />
                   </div>
                   <div class="toggle-info">
-                    <span class="toggle-label">Автоперевозки</span>
-                    <span class="toggle-desc">Доставка автотранспортом</span>
+                    <span class="toggle-label">{{ t('carrierSettings.transportTypes.road') }}</span>
+                    <span class="toggle-desc">{{ t('carrierSettings.transportTypes.roadDesc') }}</span>
                   </div>
                   <component
                     :is="settings.transport_types.road ? ToggleRight : ToggleLeft"
@@ -261,8 +264,8 @@ function toggleNotification(key) {
                     <Train :size="24" :stroke-width="iconStrokeWidth" />
                   </div>
                   <div class="toggle-info">
-                    <span class="toggle-label">ЖД перевозки</span>
-                    <span class="toggle-desc">Железнодорожная доставка</span>
+                    <span class="toggle-label">{{ t('carrierSettings.transportTypes.rail') }}</span>
+                    <span class="toggle-desc">{{ t('carrierSettings.transportTypes.railDesc') }}</span>
                   </div>
                   <component
                     :is="settings.transport_types.rail ? ToggleRight : ToggleLeft"
@@ -281,8 +284,8 @@ function toggleNotification(key) {
                     <Ship :size="24" :stroke-width="iconStrokeWidth" />
                   </div>
                   <div class="toggle-info">
-                    <span class="toggle-label">Морские перевозки</span>
-                    <span class="toggle-desc">Доставка морским транспортом</span>
+                    <span class="toggle-label">{{ t('carrierSettings.transportTypes.sea') }}</span>
+                    <span class="toggle-desc">{{ t('carrierSettings.transportTypes.seaDesc') }}</span>
                   </div>
                   <component
                     :is="settings.transport_types.sea ? ToggleRight : ToggleLeft"
@@ -299,41 +302,41 @@ function toggleNotification(key) {
           <section class="settings-section">
             <div class="section-header">
               <DollarSign :size="20" :stroke-width="iconStrokeWidth" />
-              <h2>Ограничения груза</h2>
+              <h2>{{ t('carrierSettings.cargoLimits.title') }}</h2>
             </div>
             <div class="section-body">
-              <p class="section-description">Максимально допустимые параметры груза</p>
+              <p class="section-description">{{ t('carrierSettings.cargoLimits.description') }}</p>
 
               <div class="limits-grid">
                 <div class="form-group">
-                  <label>Макс. вес</label>
+                  <label>{{ t('carrierSettings.cargoLimits.maxWeight') }}</label>
                   <div class="input-group">
                     <input type="number" v-model.number="settings.max_weight" min="1" step="1" />
-                    <span class="input-suffix">кг</span>
+                    <span class="input-suffix">{{ t('shipment.kg') }}</span>
                   </div>
                 </div>
 
                 <div class="form-group">
-                  <label>Макс. длина</label>
+                  <label>{{ t('carrierSettings.cargoLimits.maxLength') }}</label>
                   <div class="input-group">
                     <input type="number" v-model.number="settings.max_length" min="1" step="1" />
-                    <span class="input-suffix">см</span>
+                    <span class="input-suffix">{{ t('shipment.cm') }}</span>
                   </div>
                 </div>
 
                 <div class="form-group">
-                  <label>Макс. ширина</label>
+                  <label>{{ t('carrierSettings.cargoLimits.maxWidth') }}</label>
                   <div class="input-group">
                     <input type="number" v-model.number="settings.max_width" min="1" step="1" />
-                    <span class="input-suffix">см</span>
+                    <span class="input-suffix">{{ t('shipment.cm') }}</span>
                   </div>
                 </div>
 
                 <div class="form-group">
-                  <label>Макс. высота</label>
+                  <label>{{ t('carrierSettings.cargoLimits.maxHeight') }}</label>
                   <div class="input-group">
                     <input type="number" v-model.number="settings.max_height" min="1" step="1" />
-                    <span class="input-suffix">см</span>
+                    <span class="input-suffix">{{ t('shipment.cm') }}</span>
                   </div>
                 </div>
               </div>
@@ -344,23 +347,23 @@ function toggleNotification(key) {
           <section class="settings-section">
             <div class="section-header">
               <Settings :size="20" :stroke-width="iconStrokeWidth" />
-              <h2>Рабочее время</h2>
+              <h2>{{ t('carrierSettings.workingHours.title') }}</h2>
             </div>
             <div class="section-body">
               <div class="time-inputs">
                 <div class="form-group">
-                  <label>Начало</label>
+                  <label>{{ t('carrierSettings.workingHours.start') }}</label>
                   <input type="time" v-model="settings.working_hours_start" />
                 </div>
                 <span class="time-separator">—</span>
                 <div class="form-group">
-                  <label>Окончание</label>
+                  <label>{{ t('carrierSettings.workingHours.end') }}</label>
                   <input type="time" v-model="settings.working_hours_end" />
                 </div>
               </div>
 
               <div class="form-group">
-                <label>Рабочие дни</label>
+                <label>{{ t('carrierSettings.workingHours.workingDays') }}</label>
                 <div class="weekdays">
                   <button
                     v-for="day in weekdays"
@@ -379,7 +382,7 @@ function toggleNotification(key) {
           <section class="settings-section">
             <div class="section-header">
               <AlertCircle :size="20" :stroke-width="iconStrokeWidth" />
-              <h2>Уведомления</h2>
+              <h2>{{ t('carrierSettings.notifications.title') }}</h2>
             </div>
             <div class="section-body">
               <div class="notification-toggles">
@@ -388,8 +391,8 @@ function toggleNotification(key) {
                   @click="toggleNotification('new_orders')"
                 >
                   <div class="toggle-info">
-                    <span class="toggle-label">Новые заказы</span>
-                    <span class="toggle-desc">Уведомления о новых заказах</span>
+                    <span class="toggle-label">{{ t('carrierSettings.notifications.newOrders') }}</span>
+                    <span class="toggle-desc">{{ t('carrierSettings.notifications.newOrdersDesc') }}</span>
                   </div>
                   <component
                     :is="settings.notifications.new_orders ? ToggleRight : ToggleLeft"
@@ -404,8 +407,8 @@ function toggleNotification(key) {
                   @click="toggleNotification('status_updates')"
                 >
                   <div class="toggle-info">
-                    <span class="toggle-label">Изменения статуса</span>
-                    <span class="toggle-desc">Уведомления об изменении статуса заказов</span>
+                    <span class="toggle-label">{{ t('carrierSettings.notifications.statusUpdates') }}</span>
+                    <span class="toggle-desc">{{ t('carrierSettings.notifications.statusUpdatesDesc') }}</span>
                   </div>
                   <component
                     :is="settings.notifications.status_updates ? ToggleRight : ToggleLeft"
@@ -420,8 +423,8 @@ function toggleNotification(key) {
                   @click="toggleNotification('payments')"
                 >
                   <div class="toggle-info">
-                    <span class="toggle-label">Платежи</span>
-                    <span class="toggle-desc">Уведомления о поступлении платежей</span>
+                    <span class="toggle-label">{{ t('carrierSettings.notifications.payments') }}</span>
+                    <span class="toggle-desc">{{ t('carrierSettings.notifications.paymentsDesc') }}</span>
                   </div>
                   <component
                     :is="settings.notifications.payments ? ToggleRight : ToggleLeft"
@@ -438,7 +441,7 @@ function toggleNotification(key) {
         <!-- Loading -->
         <div v-else class="loading-state">
           <div class="spinner"></div>
-          <span>Загрузка настроек...</span>
+          <span>{{ t('carrierSettings.loadingSettings') }}</span>
         </div>
       </div>
     </main>

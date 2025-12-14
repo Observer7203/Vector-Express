@@ -167,7 +167,8 @@
     "pendingConfirmation": "Растауды күтуде",
     "inProgress": "Жұмыста",
     "noOrdersYet": "Тапсырыстар жоқ",
-    "ordersWillAppear": "Тапсырыстар клиенттер сіздің компанияңызды таңдағанда пайда болады"
+    "ordersWillAppear": "Тапсырыстар клиенттер сіздің компанияңызды таңдағанда пайда болады",
+    "managementData": "Деректерді басқару"
   },
   "admin": {
     "dashboard": "Әкімші панелі",
@@ -228,5 +229,898 @@
     "paymentSuccessful": "Төлем сәтті өтті",
     "statusUpdated": "Күйі жаңартылды",
     "documentUploaded": "Құжат жүктелді"
+  },
+  "home": {
+    "personalCabinet": "Жеке кабинет",
+    "hero": {
+      "title": "Ең жақсы логистикалық шешімді табыңыз",
+      "subtitle": "Әлемнің жетекші тасымалдаушыларынан бағалар мен жеткізу мерзімдерін бір жерде салыстырыңыз",
+      "calculateCost": "Құнын есептеу",
+      "trackShipment": "Жүкті қадағалау"
+    },
+    "features": {
+      "title": "Неге Vector Express?",
+      "globalNetwork": {
+        "title": "Жаһандық желі",
+        "description": "Әлемнің кез келген нүктесіне жеткізу. 220-дан астам ел мен аумақ."
+      },
+      "bestPrices": {
+        "title": "Ең жақсы бағалар",
+        "description": "Әртүрлі тасымалдаушылардың ұсыныстарын салыстырып, оңтайлысын таңдаңыз."
+      },
+      "allCargoTypes": {
+        "title": "Барлық жүк түрлері",
+        "description": "Әуе, теңіз, темір жол және автомобиль тасымалдары. Кез келген өлшемдер."
+      },
+      "reliability": {
+        "title": "Сенімділік",
+        "description": "Жүкті сақтандыру, кеден ресімдеу, есікке дейін жеткізу."
+      }
+    },
+    "partners": {
+      "title": "Біздің серіктестер"
+    },
+    "cta": {
+      "title": "Бастауға дайынсыз ба?",
+      "subtitle": "Өтінім жасаңыз және ең жақсы тасымалдаушылардан ұсыныстар алыңыз",
+      "register": "Тіркелу"
+    },
+    "footer": {
+      "tagline": "Жаңа буын логистикалық платформасы",
+      "company": "Компания",
+      "aboutUs": "Біз туралы",
+      "contacts": "Байланыстар",
+      "services": "Қызметтер",
+      "airFreight": "Әуе тасымалы",
+      "oceanFreight": "Теңіз тасымалы",
+      "support": "Қолдау",
+      "faq": "Жиі қойылатын сұрақтар",
+      "documents": "Құжаттар",
+      "copyright": "© 2025 Vector Express. Барлық құқықтар қорғалған."
+    }
+  },
+  "adminDashboard": {
+    "loadingData": "Деректер жүктелуде...",
+    "noData": "Деректер жоқ",
+    "stats": {
+      "users": "Пайдаланушылар",
+      "companies": "Компаниялар",
+      "orders": "Тапсырыстар",
+      "revenue": "Кіріс",
+      "commission": "Комиссия",
+      "perWeek": "аптаға",
+      "perMonth": "айға",
+      "shippers": "тапсырыс берушілер",
+      "carriers": "тасымалдаушылар"
+    },
+    "alerts": {
+      "companiesAwaitVerification": "компаниялар верификацияны күтуде",
+      "overduePayments": "мерзімі өткен төлемдер",
+      "awaitingPayment": "төлемді күтуде"
+    },
+    "charts": {
+      "ordersPerWeek": "Аптаға тапсырыстар",
+      "orderStatuses": "Тапсырыс күйлері",
+      "topCarriers": "Үздік тасымалдаушылар",
+      "ordersCount": "тапсырыстар"
+    },
+    "statuses": {
+      "pending": "Күтуде",
+      "confirmed": "Расталған",
+      "inTransit": "Жолда",
+      "delivered": "Жеткізілген",
+      "cancelled": "Болдырылмаған"
+    }
+  },
+  "adminOrders": {
+    "subtitle": "Жүйе тапсырыстарын басқару",
+    "stats": {
+      "total": "Барлық тапсырыстар",
+      "pending": "Растауды күтуде",
+      "inProgress": "Процесте",
+      "delivered": "Жеткізілді"
+    },
+    "searchPlaceholder": "Тапсырыс нөмірі VE-2025-...",
+    "dateFrom": "Күнінен",
+    "dateTo": "Күніне дейін",
+    "reset": "Тазалау",
+    "table": {
+      "number": "Нөмірі",
+      "customer": "Тапсырыс беруші",
+      "carrier": "Тасымалдаушы",
+      "route": "Бағыт",
+      "amount": "Сомасы",
+      "status": "Күйі",
+      "date": "Күні",
+      "actions": "Әрекеттер"
+    },
+    "view": "Қарау",
+    "changeStatus": "Күйін өзгерту",
+    "noOrders": "Тапсырыстар табылмады",
+    "pageInfo": "Бет {current} / {last}",
+    "orderNumber": "Тапсырыс {number}",
+    "deliveryContacts": "Жеткізу байланыстары",
+    "financial": "Қаржы",
+    "orderLabel": "Тапсырыс",
+    "newStatus": "Жаңа күй",
+    "saving": "Сақтауда..."
+  },
+  "adminUsers": {
+    "title": "Пайдаланушылар",
+    "subtitle": "Жүйе пайдаланушыларын басқару",
+    "addUser": "Пайдаланушы қосу",
+    "editUser": "Пайдаланушыны өңдеу",
+    "searchPlaceholder": "Аты, email бойынша іздеу...",
+    "noUsers": "Пайдаланушылар табылмады",
+    "pageInfo": "Бет {current} / {last}",
+    "create": "Жасау",
+    "saving": "Сақтауда...",
+    "confirmResetPassword": "{name} үшін құпия сөзді қалпына келтіру?",
+    "confirmDelete": "\"{name}\" пайдаланушысын жою?",
+    "statusActive": "Белсенді",
+    "statusBlocked": "Бұғатталған",
+    "roles": {
+      "customer": "Тапсырыс беруші",
+      "carrier": "Тасымалдаушы",
+      "admin": "Әкімші"
+    },
+    "filters": {
+      "allRoles": "Барлық рөлдер",
+      "customers": "Тапсырыс берушілер",
+      "carriers": "Тасымалдаушылар",
+      "admins": "Әкімшілер",
+      "all": "Барлығы",
+      "active": "Белсенді",
+      "blocked": "Бұғатталған"
+    },
+    "table": {
+      "id": "ID",
+      "user": "Пайдаланушы",
+      "role": "Рөлі",
+      "company": "Компания",
+      "status": "Күйі",
+      "registration": "Тіркелу",
+      "actions": "Әрекеттер"
+    },
+    "form": {
+      "name": "Аты",
+      "email": "Email",
+      "password": "Құпия сөз",
+      "phone": "Телефон",
+      "role": "Рөлі",
+      "company": "Компания",
+      "noCompany": "Компаниясыз",
+      "isActive": "Белсенді"
+    },
+    "actions": {
+      "block": "Бұғаттау",
+      "activate": "Белсендіру",
+      "resetPassword": "Құпия сөзді қалпына келтіру"
+    },
+    "passwordModal": {
+      "title": "Жаңа құпия сөз",
+      "info": "{name} пайдаланушысы үшін құпия сөз қалпына келтірілді.",
+      "newPassword": "Жаңа құпия сөз:",
+      "warning": "Бұл құпия сөзді сақтап, пайдаланушыға беріңіз. Терезені жапқаннан кейін ол қайта көрсетілмейді."
+    }
+  },
+  "adminCarriers": {
+    "title": "Тасымалдаушылар",
+    "subtitle": "Баға есептеу үшін тасымалдаушы баптауларын басқару",
+    "addCarrier": "Тасымалдаушы қосу",
+    "editCarrier": "Тасымалдаушыны өңдеу",
+    "searchPlaceholder": "Атауы бойынша іздеу...",
+    "noCarriers": "Тасымалдаушылар табылмады",
+    "pageInfo": "Бет {current} / {last}",
+    "confirmDelete": "\"{name}\" тасымалдаушысын жою?",
+    "infoBanner": "\"тасымалдаушы\" түріндегі компаниялар carrier баптауларынсыз. Баптау үшін \"Тасымалдаушы қосу\" басыңыз.",
+    "inn": "ЖСН",
+    "quotes": "ұсыныстар",
+    "orders": "тапсырыстар",
+    "active": "Белсенді",
+    "inactive": "Белсенді емес",
+    "filters": {
+      "active": "Белсенді",
+      "inactive": "Белсенді емес"
+    },
+    "table": {
+      "company": "Компания",
+      "apiType": "API түрі",
+      "transportTypes": "Тасымалдау түрлері",
+      "countries": "Елдер",
+      "stats": "Статистика"
+    },
+    "transportTypes": {
+      "air": "Әуе",
+      "sea": "Теңіз",
+      "rail": "Темір жол",
+      "road": "Автомобиль"
+    },
+    "apiTypes": {
+      "manual": "Қолмен есептеу",
+      "dhl": "DHL API",
+      "fedex": "FedEx API",
+      "ups": "UPS API",
+      "ponyexpress": "Ponyexpress API",
+      "custom": "Custom API"
+    },
+    "form": {
+      "company": "Компания",
+      "selectCompany": "Компанияны таңдаңыз",
+      "noInn": "ЖСН жоқ",
+      "noAvailableCompanies": "Carrier баптауларынсыз компаниялар жоқ",
+      "apiType": "API түрі",
+      "transportTypes": "Тасымалдау түрлері",
+      "countries": "Елдер",
+      "countryPlaceholder": "Елді енгізіңіз...",
+      "add": "Қосу",
+      "popularCountries": "Танымал: Қазақстан, Қытай, Ресей, АҚШ, Германия, Түркия",
+      "isActive": "Белсенді (есептеулерге қатысады)",
+      "create": "Жасау"
+    }
+  },
+  "dashboard": {
+    "title": "Жеке кабинет",
+    "createRequest": "Өтінім жасау",
+    "shipments": "Өтінімдер",
+    "orders": "Тапсырыстар",
+    "pending": "Күтуде",
+    "delivered": "Жеткізілді",
+    "quickActions": "Жылдам әрекеттер",
+    "recentOrders": "Соңғы тапсырыстар",
+    "allOrders": "Барлық тапсырыстар",
+    "noOrders": "Тапсырыстар жоқ",
+    "createRequestPrompt": "Жеткізу құнын есептеу үшін өтінім жасаңыз",
+    "actions": {
+      "createRequest": "Өтінім жасау",
+      "calculateCost": "Жеткізу құнын есептеу",
+      "myShipments": "Менің өтінімдерім",
+      "viewManage": "Қарау және басқару",
+      "myOrders": "Менің тапсырыстарым",
+      "orderHistory": "Тапсырыстар тарихы",
+      "trackCargo": "Жүкті қадағалау",
+      "byTrackingNumber": "Қадағалау нөмірі бойынша"
+    },
+    "table": {
+      "number": "Нөмірі",
+      "amount": "Сомасы"
+    }
+  },
+  "adminLayout": {
+    "administrator": "Әкімші",
+    "menu": {
+      "dashboard": "Дашборд",
+      "users": "Пайдаланушылар",
+      "companies": "Компаниялар",
+      "carriers": "Тасымалдаушылар",
+      "orders": "Тапсырыстар",
+      "invoices": "Шоттар",
+      "settings": "Баптаулар"
+    }
+  },
+  "login": {
+    "title": "Жүйеге кіру",
+    "subtitle": "Жеке кабинетке кіру үшін жүйеге кіріңіз",
+    "emailPlaceholder": "your@email.com",
+    "passwordPlaceholder": "••••••••",
+    "loggingIn": "Кіру..."
+  },
+  "register": {
+    "title": "Тіркелу",
+    "subtitle": "Платформаға қол жеткізу үшін тіркелгі жасаңыз",
+    "accountType": "Тіркелгі түрі",
+    "namePlaceholder": "Иван Петров",
+    "emailPlaceholder": "your@email.com",
+    "phonePlaceholder": "+7 777 123 45 67",
+    "companyName": "Компания атауы",
+    "companyNamePlaceholder": "ЖШС Логистика",
+    "companyInn": "ЖСН/БСН",
+    "companyInnPlaceholder": "123456789012",
+    "passwordPlaceholder": "Кемінде 8 таңба",
+    "confirmPasswordPlaceholder": "Құпия сөзді қайталаңыз",
+    "registering": "Тіркелу...",
+    "roles": {
+      "customer": "Тапсырыс беруші",
+      "carrier": "Тасымалдаушы"
+    }
+  },
+  "carrierOrders": {
+    "title": "Менің тапсырыстарым",
+    "subtitle": "Тасымалдау тапсырыстарын басқару",
+    "stats": {
+      "totalOrders": "Барлық тапсырыстар",
+      "pendingConfirmation": "Растауды күтуде",
+      "inProgress": "Жұмыста",
+      "delivered": "Жеткізілді"
+    },
+    "searchPlaceholder": "Тапсырыс нөмірі бойынша іздеу...",
+    "allStatuses": "Барлық күйлер",
+    "loadingOrders": "Тапсырыстар жүктелуде...",
+    "customer": "Тапсырыс беруші",
+    "weight": "Салмағы",
+    "amount": "Сомасы",
+    "date": "Күні",
+    "viewDetails": "Толығырақ",
+    "noOrders": "Тапсырыстар жоқ",
+    "noOrdersMessage": "Тапсырыстар клиенттер сіздің компанияңызды таңдағанда пайда болады",
+    "orderTitle": "Тапсырыс",
+    "route": "Бағыт",
+    "origin": "Қайдан",
+    "destination": "Қайда",
+    "cargo": "Жүк",
+    "volume": "Көлемі",
+    "cargoType": "Жүк түрі",
+    "deliveryContacts": "Жеткізу байланыстары",
+    "contactPerson": "Байланыс тұлғасы",
+    "deliveryAddress": "Жеткізу мекенжайы",
+    "payment": "Төлем",
+    "platformCommission": "Платформа комиссиясы",
+    "trackingNumber": "Қадағалау нөмірі",
+    "errorUpdatingStatus": "Күйді жаңарту кезінде қате",
+    "actions": {
+      "confirmOrder": "Тапсырысты растау",
+      "schedulePickup": "Алуды жоспарлау",
+      "pickedUp": "Жүк алынды",
+      "inTransit": "Жолда",
+      "outForDelivery": "Жеткізуге беру",
+      "delivered": "Жеткізілді"
+    }
+  },
+  "adminCompanies": {
+    "title": "Компаниялар",
+    "subtitle": "Тапсырыс берушілер мен тасымалдаушылар компанияларын басқару",
+    "addCompany": "Компания қосу",
+    "editCompany": "Компанияны өңдеу",
+    "searchPlaceholder": "Атауы, ЖСН/БСН бойынша іздеу...",
+    "noCompanies": "Компаниялар табылмады",
+    "pageInfo": "Бет {current} / {last}",
+    "create": "Жасау",
+    "saving": "Сақтауда...",
+    "confirmDelete": "\"{name}\" компаниясын жою?",
+    "users": "пайдаланушылар",
+    "typeCarrier": "Тасымалдаушы",
+    "typeShipper": "Тапсырыс беруші",
+    "verified": "Верификацияланған",
+    "verify": "Верификациялау",
+    "verifyCompany": "Компанияны верификациялау",
+    "filters": {
+      "allTypes": "Барлық түрлер",
+      "shippers": "Тапсырыс берушілер",
+      "carriers": "Тасымалдаушылар",
+      "all": "Барлығы",
+      "verified": "Верификацияланған",
+      "notVerified": "Верификацияланбаған"
+    },
+    "table": {
+      "company": "Компания",
+      "inn": "ЖСН/БСН",
+      "type": "Түрі",
+      "contacts": "Байланыстар",
+      "rating": "Рейтинг",
+      "verification": "Верификация",
+      "actions": "Әрекеттер"
+    },
+    "form": {
+      "name": "Атауы",
+      "inn": "ЖСН/БСН",
+      "type": "Түрі",
+      "legalAddress": "Заңды мекенжайы",
+      "actualAddress": "Нақты мекенжайы",
+      "phone": "Телефон",
+      "email": "Email",
+      "website": "Веб-сайт"
+    },
+    "documents": {
+      "title": "Құжаттар",
+      "loading": "Құжаттар жүктелуде...",
+      "noDocuments": "Құжаттар жүктелмеген",
+      "uploaded": "Жүктелді",
+      "approve": "Мақұлдау",
+      "reject": "Қабылдамау",
+      "approved": "Құжат мақұлданды. Компания верификацияланды!",
+      "errorApproving": "Құжатты мақұлдау кезінде қате",
+      "errorRejecting": "Құжатты қабылдамау кезінде қате",
+      "provideReason": "Қабылдамау себебін көрсетіңіз",
+      "reasonPlaceholder": "Қабылдамау себебі...",
+      "statusPending": "Тексерілуде",
+      "statusApproved": "Расталған",
+      "statusRejected": "Қабылданбаған"
+    }
+  },
+  "ordersList": {
+    "title": "Менің тапсырыстарым",
+    "totalOrders": "Барлығы {count} тапсырыс",
+    "newRequest": "Жаңа өтінім",
+    "searchPlaceholder": "Тапсырыс нөмірі, трек-номері немесе қала бойынша іздеу...",
+    "loadingOrders": "Тапсырыстар жүктелуде...",
+    "noOrdersYet": "Сізде әлі тапсырыстар жоқ",
+    "createRequestPrompt": "Тасымалдау өтінімін жасаңыз және қолайлы ұсынысты таңдаңыз",
+    "goToRequests": "Өтінімдерге өту",
+    "nothingFound": "Ештеңе табылмады",
+    "tryChangingFilters": "Іздеу параметрлерін өзгертіп көріңіз",
+    "resetFilters": "Сүзгілерді тазалау",
+    "pageInfo": "Бет {current} / {last}"
+  },
+  "orderDetail": {
+    "backToOrders": "Тапсырыстарға қайту",
+    "order": "Тапсырыс",
+    "deliveryStatus": "Жеткізу күйі",
+    "orderInfo": "Тапсырыс туралы ақпарат",
+    "orderNumber": "Тапсырыс нөмірі",
+    "createdAt": "Жасалған күні",
+    "carrier": "Тасымалдаушы",
+    "trackingNumber": "Трек-номер",
+    "carrierTrackingNumber": "Тасымалдаушының трек-номері",
+    "cost": "Құны",
+    "serviceCommission": "Қызмет комиссиясы",
+    "pickup": "Жүкті алу",
+    "contactPerson": "Байланыс тұлғасы",
+    "phone": "Телефон",
+    "address": "Мекенжай",
+    "pickupDate": "Алу күні",
+    "delivery": "Жеткізу",
+    "deliveryHistory": "Жеткізу тарихы",
+    "notes": "Ескертпелер",
+    "trackOnMap": "Картада қадағалау",
+    "cancelOrder": "Тапсырысты болдырмау",
+    "confirmCancel": "Тапсырысты болдырмауға сенімдісіз бе?",
+    "statuses": {
+      "pending": "Растауды күтуде",
+      "confirmed": "Расталды",
+      "pickupScheduled": "Алу жоспарланған",
+      "pickedUp": "Алынды",
+      "inTransit": "Жолда",
+      "customs": "Кеденде",
+      "outForDelivery": "Жеткізілуде",
+      "delivered": "Жеткізілді",
+      "cancelled": "Болдырылмады"
+    }
+  },
+  "adminSettings": {
+    "title": "Баптаулар",
+    "subtitle": "Платформа баптауларын басқару",
+    "saving": "Сақтауда...",
+    "tabs": {
+      "general": "Жалпы",
+      "commission": "Комиссия",
+      "notifications": "Хабарландырулар",
+      "email": "Email",
+      "security": "Қауіпсіздік",
+      "system": "Жүйе"
+    },
+    "general": {
+      "title": "Жалпы баптаулар",
+      "description": "Платформа туралы негізгі ақпарат",
+      "siteName": "Сайт атауы",
+      "siteDescription": "Сипаттама",
+      "contactEmail": "Байланыс email",
+      "contactPhone": "Байланыс телефоны"
+    },
+    "commission": {
+      "title": "Комиссия баптаулары",
+      "description": "Комиссиялық алымдар параметрлері",
+      "commissionRate": "Комиссия мөлшері (%)",
+      "minOrderAmount": "Ең аз тапсырыс сомасы",
+      "defaultCurrency": "Әдепкі валюта",
+      "currencies": {
+        "usd": "USD - АҚШ доллары",
+        "eur": "EUR - Еуро",
+        "kzt": "KZT - Теңге",
+        "rub": "RUB - Рубль"
+      }
+    },
+    "notifications": {
+      "title": "Хабарландырулар",
+      "description": "Жүйелік хабарландырулар баптаулары",
+      "emailNotifications": "Email хабарландырулары",
+      "emailNotificationsDesc": "Пайдаланушылардың email-ына хабарландырулар жіберу",
+      "orderNotifications": "Тапсырыстар туралы хабарландырулар",
+      "orderNotificationsDesc": "Жаңа тапсырыстар мен күй өзгерістері туралы хабарлау",
+      "paymentNotifications": "Төлемдер туралы хабарландырулар",
+      "paymentNotificationsDesc": "Төлемдер мен шоттар туралы хабарлау"
+    },
+    "email": {
+      "title": "Email баптаулары",
+      "description": "Пошта серверінің конфигурациясы",
+      "infoTitle": "Email баптаулары",
+      "infoText": "Пошта серверінің конфигурациясы сервердегі .env файлы арқылы орындалады."
+    },
+    "security": {
+      "title": "Қауіпсіздік",
+      "description": "Платформа қауіпсіздігінің параметрлері",
+      "emailVerification": "Email верификациясы",
+      "emailVerificationDesc": "Тіркелу кезінде email растауды талап ету",
+      "companyVerification": "Компания верификациясы",
+      "companyVerificationDesc": "Тасымалдаушы компанияларының верификациясын талап ету",
+      "sessionLifetime": "Сеанс өмір сүру уақыты (минут)"
+    },
+    "system": {
+      "title": "Жүйе",
+      "description": "Жүйелік ақпарат және әрекеттер",
+      "appVersion": "Қосымша нұсқасы",
+      "laravelVersion": "Laravel нұсқасы",
+      "phpVersion": "PHP нұсқасы",
+      "database": "Дерекқор",
+      "clearCache": "Кэшті тазалау"
+    }
+  },
+  "carrierSurcharges": {
+    "title": "Үстемеақылар",
+    "subtitle": "Отын, маусымдық және басқа қосымша төлемдер",
+    "addSurcharge": "Үстемеақы қосу",
+    "editSurcharge": "Үстемеақыны өңдеу",
+    "newSurcharge": "Жаңа үстемеақы",
+    "createSurcharge": "Үстемеақы жасау",
+    "searchPlaceholder": "Атауы бойынша іздеу...",
+    "loading": "Үстемеақылар жүктелуде...",
+    "noSurcharges": "Үстемеақылар жоқ",
+    "noSurchargesText": "Қосымша төлемдер үшін үстемеақы қосыңыз",
+    "confirmDelete": "Бұл үстемеақыны жоюға сенімдісіз бе?",
+    "activate": "Белсендіру",
+    "deactivate": "Өшіру",
+    "perKg": "кг",
+    "types": {
+      "fuel": "Отын үстемеақысы",
+      "residential": "Тұрғын үйге жеткізу",
+      "remoteArea": "Шалғай аймақ",
+      "oversize": "Үлкен өлшемді жүк",
+      "dangerousGoods": "Қауіпті жүк",
+      "peakSeason": "Ең көп сұраныс маусымы",
+      "handling": "Жүкті өңдеу",
+      "customs": "Кеден"
+    },
+    "calculationTypes": {
+      "flat": "Тұрақты сома",
+      "percentage": "Базалық бағаның пайызы",
+      "perKg": "Килограммға"
+    },
+    "form": {
+      "surchargeType": "Үстемеақы түрі",
+      "selectType": "Түрін таңдаңыз",
+      "name": "Атауы",
+      "namePlaceholder": "Үстемеақы атауы",
+      "calculationType": "Есептеу әдісі",
+      "percentage": "Пайыз (%)",
+      "amount": "Сома (USD)",
+      "isActive": "Белсенді"
+    }
+  },
+  "carrierSettings": {
+    "title": "Баптаулар",
+    "subtitle": "Есептеу ережелері, тасымалдау түрлері және жүйе конфигурациясы",
+    "saving": "Сақтауда...",
+    "loadingSettings": "Баптаулар жүктелуде...",
+    "messages": {
+      "saveSuccess": "Баптаулар сәтті сақталды",
+      "saveError": "Баптауларды сақтау кезінде қате"
+    },
+    "pricingRules": {
+      "title": "Есептеу ережелері",
+      "dimFactor": "DIM-фактор",
+      "dimFactorHint": "Көлемдік салмақты есептеу үшін бөлгіш (әдетте 5000-6000)",
+      "minRate": "Минималды тариф",
+      "insuranceRate": "Сақтандыру ставкасы",
+      "insuranceRateHint": "Жүктің жарияланған құнынан пайыз",
+      "defaultCurrency": "Әдепкі валюта"
+    },
+    "transportTypes": {
+      "title": "Тасымалдау түрлері",
+      "description": "Сіз ұсынатын тасымалдау түрлерін таңдаңыз",
+      "air": "Әуе тасымалы",
+      "airDesc": "Әуемен жылдам жеткізу",
+      "road": "Автомобиль тасымалы",
+      "roadDesc": "Автомобильмен жеткізу",
+      "rail": "Темір жол тасымалы",
+      "railDesc": "Темір жолмен жеткізу",
+      "sea": "Теңіз тасымалы",
+      "seaDesc": "Теңіз көлігімен жеткізу"
+    },
+    "cargoLimits": {
+      "title": "Жүк шектеулері",
+      "description": "Максималды рұқсат етілген жүк параметрлері",
+      "maxWeight": "Макс. салмағы",
+      "maxLength": "Макс. ұзындығы",
+      "maxWidth": "Макс. ені",
+      "maxHeight": "Макс. биіктігі"
+    },
+    "workingHours": {
+      "title": "Жұмыс уақыты",
+      "start": "Басталуы",
+      "end": "Аяқталуы",
+      "workingDays": "Жұмыс күндері"
+    },
+    "weekdays": {
+      "mon": "Дс",
+      "tue": "Сс",
+      "wed": "Ср",
+      "thu": "Бс",
+      "fri": "Жм",
+      "sat": "Сб",
+      "sun": "Жс"
+    },
+    "notifications": {
+      "title": "Хабарландырулар",
+      "newOrders": "Жаңа тапсырыстар",
+      "newOrdersDesc": "Жаңа тапсырыстар туралы хабарландырулар",
+      "statusUpdates": "Күй өзгерістері",
+      "statusUpdatesDesc": "Тапсырыс күйінің өзгерістері туралы хабарландырулар",
+      "payments": "Төлемдер",
+      "paymentsDesc": "Төлемдер түсімі туралы хабарландырулар"
+    }
+  },
+  "carrierRates": {
+    "title": "Тарифтер",
+    "subtitle": "Салмақ пен бағыттар бойынша баға баптаулары",
+    "importFromExcel": "Excel-ден импорттау",
+    "addRate": "Тариф қосу",
+    "searchByZones": "Аймақтар бойынша іздеу...",
+    "allTypes": "Барлық түрлер",
+    "from": "Қайдан",
+    "to": "Қайда",
+    "reset": "Тазалау",
+    "loadingRates": "Тарифтер жүктелуде...",
+    "noRates": "Тарифтер жоқ",
+    "addRatePrompt": "Тасымалдау құнын есептеу үшін тариф қосыңыз",
+    "confirmDelete": "Бұл тарифті жоюға сенімдісіз бе?",
+    "importError": "Импорттау қатесі",
+    "kg": "кг",
+    "days": "күн",
+    "newRate": "Жаңа тариф",
+    "editRate": "Тарифті өңдеу",
+    "createRate": "Тариф жасау",
+    "transportTypes": {
+      "air": "Әуе",
+      "road": "Авто",
+      "rail": "Темір жол",
+      "sea": "Теңіз"
+    },
+    "tableHeaders": {
+      "from": "Қайдан",
+      "to": "Қайда",
+      "type": "Түрі",
+      "weight": "Салмағы",
+      "rate": "Баға",
+      "transit": "Мерзімі"
+    },
+    "form": {
+      "originZone": "Қайдан (аймақ)",
+      "destinationZone": "Қайда (аймақ)",
+      "selectZone": "Аймақты таңдаңыз",
+      "transportType": "Тасымалдау түрі",
+      "weightFrom": "Салмақ бастап (кг)",
+      "weightTo": "Салмақ дейін (кг)",
+      "noLimit": "Шектеусіз",
+      "ratePerKg": "Кг-ға баға (USD)",
+      "transitMin": "Мерзім мин. (күн)",
+      "transitMax": "Мерзім макс. (күн)"
+    },
+    "import": {
+      "title": "Excel-ден тарифтерді импорттау",
+      "fileFormat": "Файл форматы:",
+      "or": "немесе",
+      "ensureZones": "Файлда көрсетілген кодтары бар аймақтар жасалғанына көз жеткізіңіз",
+      "requiredColumns": "Міндетті бағандар:",
+      "optionalColumns": "Қосымша бағандар:",
+      "originZoneCode": "жөнелту аймағының коды (мысалы: KZ, RU)",
+      "destinationZoneCode": "тағайындау аймағының коды",
+      "ratePerKg": "кг-ға баға (сан)",
+      "transportTypeDesc": "түрі: road, air, rail, sea (әдепкі: road)",
+      "minWeight": "минималды салмақ (әдепкі: 0)",
+      "maxWeight": "максималды салмақ",
+      "currency": "валюта (әдепкі: USD)",
+      "minTransit": "мин. жеткізу мерзімі (күн)",
+      "maxTransit": "макс. жеткізу мерзімі (күн)",
+      "selectFile": "Файлды таңдаңыз",
+      "imported": "Импортталды",
+      "skipped": "Өткізілді",
+      "importing": "Импорттау...",
+      "importButton": "Импорттау"
+    }
+  },
+  "orderCreate": {
+    "title": "Тапсырысты рәсімдеу",
+    "sections": {
+      "contactInfo": "Байланыс деректері",
+      "pickup": "Жүкті алу",
+      "delivery": "Жеткізу",
+      "additional": "Қосымша"
+    },
+    "form": {
+      "fullName": "Толық аты-жөні",
+      "fullNamePlaceholder": "Толық аты-жөнін енгізіңіз",
+      "phone": "Телефон",
+      "phonePlaceholder": "+7 (XXX) XXX-XX-XX",
+      "email": "Email",
+      "emailPlaceholder": "example@mail.com",
+      "useCustomerContact": "Тапсырыс берушінің байланыс деректерін пайдалану",
+      "contactPerson": "Байланыс тұлғасы",
+      "pickupContactPlaceholder": "Алу үшін толық аты-жөні",
+      "pickupPhone": "Алу үшін телефон",
+      "pickupAddress": "Алу мекенжайы",
+      "pickupAddressPlaceholder": "Жүкті алу үшін толық мекенжай",
+      "pickupDate": "Алу күні",
+      "pickupTime": "Алу уақыты",
+      "timeFrom": "Бастап",
+      "timeTo": "Дейін",
+      "deliveryContactPlaceholder": "Алушының толық аты-жөні",
+      "deliveryPhone": "Алушының телефоны",
+      "deliveryAddress": "Жеткізу мекенжайы",
+      "deliveryAddressPlaceholder": "Толық жеткізу мекенжайы",
+      "notes": "Тапсырысқа ескертулер",
+      "notesPlaceholder": "Ерекше тілектер, курьерге нұсқаулар..."
+    },
+    "summary": {
+      "title": "Тапсырыс мәліметтері",
+      "carrier": "Тасымалдаушы",
+      "from": "Қайдан",
+      "to": "Қайда",
+      "billableWeight": "Тарифтік салмақ",
+      "deliveryTime": "Жеткізу мерзімі",
+      "days": "күн",
+      "estimatedDate": "Болжамды күні",
+      "included": "Қосылған:",
+      "baseRate": "Базалық ставка",
+      "surcharges": "Үстемеақылар",
+      "insurance": "Сақтандыру",
+      "validUntil": "Ұсыныс жарамды"
+    },
+    "services": {
+      "pickup": "Алу",
+      "delivery": "Жеткізу",
+      "customs": "Кеден",
+      "insurance": "Сақтандыру"
+    },
+    "submitButton": "Тапсырысты рәсімдеу",
+    "submitting": "Рәсімдеу...",
+    "errors": {
+      "loadQuote": "Ұсынысты жүктеу қатесі",
+      "loadingError": "Жүктеу қатесі",
+      "createOrder": "Тапсырыс жасау қатесі"
+    }
+  },
+  "carrierZones": {
+    "title": "Жеткізу аймақтары",
+    "subtitle": "Тарифтерді есептеу үшін географиялық аймақтарды баптаңыз",
+    "importFromExcel": "Excel-ден импорттау",
+    "addZone": "Аймақ қосу",
+    "searchPlaceholder": "Атауы немесе коды бойынша іздеу...",
+    "loading": "Аймақтар жүктелуде...",
+    "postalCodes": "пошта кодтары",
+    "postalCodesAndCities": "Пошта кодтары мен қалалар",
+    "remoteArea": "Шалғай аймақ",
+    "noZones": "Жеткізу аймақтары жоқ",
+    "addFirstZone": "Тарифтермен жұмыс бастау үшін бірінші аймақты қосыңыз",
+    "editZone": "Аймақты өңдеу",
+    "newZone": "Жаңа жеткізу аймағы",
+    "createZone": "Аймақ жасау",
+    "form": {
+      "country": "Ел",
+      "countryPlaceholder": "Ел атауын енгізуді бастаңыз...",
+      "countryHint": "Елді таңдағанда аймақ коды мен атауы автоматты түрде толтырылады",
+      "zoneCode": "Аймақ коды",
+      "zoneName": "Аймақ атауы",
+      "zoneNamePlaceholder": "Қазақстан",
+      "description": "Сипаттама",
+      "descriptionPlaceholder": "Аймақ сипаттамасы (мысалы: Беларусьтан/Беларусьға жеткізу)",
+      "postalCodes": "Пошта кодтары",
+      "prefix": "Префикс (050)",
+      "city": "Қала",
+      "region": "Өңір",
+      "remote": "Шалғай"
+    },
+    "alerts": {
+      "enterCityOrPostalCode": "Кемінде қаланы немесе пошта кодын енгізіңіз",
+      "confirmDelete": "Бұл аймақты жоюға сенімдісіз бе?"
+    },
+    "import": {
+      "title": "Excel-ден аймақтарды импорттау",
+      "uploadFile": "Excel (.xlsx, .xls) немесе CSV файлын жүктеп салыңыз",
+      "fileFormat": "Файлда мына бағандар болуы керек:",
+      "zoneCode": "Аймақ коды (міндетті)",
+      "zoneName": "Аймақ атауы",
+      "countryCode": "Ел коды ISO (KZ, RU және т.б.)",
+      "description": "Сипаттама",
+      "selectFile": "Файлды таңдаңыз немесе осында апарыңыз",
+      "imported": "Импортталды",
+      "skipped": "Өткізілді",
+      "importing": "Импорттау...",
+      "importButton": "Импорттау",
+      "error": "Импорттау қатесі"
+    },
+    "countries": {
+      "AF": "Ауғанстан",
+      "AL": "Албания",
+      "DZ": "Алжир",
+      "AD": "Андорра",
+      "AO": "Ангола",
+      "AR": "Аргентина",
+      "AM": "Армения",
+      "AU": "Австралия",
+      "AT": "Австрия",
+      "AZ": "Әзірбайжан",
+      "BY": "Беларусь",
+      "BE": "Бельгия",
+      "BD": "Бангладеш",
+      "BR": "Бразилия",
+      "BG": "Болгария",
+      "CA": "Канада",
+      "CL": "Чили",
+      "CN": "Қытай",
+      "CO": "Колумбия",
+      "HR": "Хорватия",
+      "CY": "Кипр",
+      "CZ": "Чехия",
+      "DK": "Дания",
+      "EG": "Мысыр",
+      "EE": "Эстония",
+      "FI": "Финляндия",
+      "FR": "Франция",
+      "GE": "Грузия",
+      "DE": "Германия",
+      "GR": "Греция",
+      "HK": "Гонконг",
+      "HU": "Венгрия",
+      "IS": "Исландия",
+      "IN": "Үндістан",
+      "ID": "Индонезия",
+      "IR": "Иран",
+      "IQ": "Ирак",
+      "IE": "Ирландия",
+      "IL": "Израиль",
+      "IT": "Италия",
+      "JP": "Жапония",
+      "JO": "Иордания",
+      "KZ": "Қазақстан",
+      "KE": "Кения",
+      "KW": "Кувейт",
+      "KG": "Қырғызстан",
+      "LV": "Латвия",
+      "LB": "Ливан",
+      "LT": "Литва",
+      "LU": "Люксембург",
+      "MY": "Малайзия",
+      "MX": "Мексика",
+      "MD": "Молдова",
+      "MN": "Моңғолия",
+      "ME": "Черногория",
+      "MA": "Марокко",
+      "NL": "Нидерланды",
+      "NZ": "Жаңа Зеландия",
+      "NG": "Нигерия",
+      "NO": "Норвегия",
+      "OM": "Оман",
+      "PK": "Пәкістан",
+      "PA": "Панама",
+      "PE": "Перу",
+      "PH": "Филиппиндер",
+      "PL": "Польша",
+      "PT": "Португалия",
+      "QA": "Катар",
+      "RO": "Румыния",
+      "RU": "Ресей",
+      "SA": "Сауд Арабиясы",
+      "RS": "Сербия",
+      "SG": "Сингапур",
+      "SK": "Словакия",
+      "SI": "Словения",
+      "ZA": "ОАР",
+      "KR": "Оңтүстік Корея",
+      "ES": "Испания",
+      "LK": "Шри-Ланка",
+      "SE": "Швеция",
+      "CH": "Швейцария",
+      "TW": "Тайвань",
+      "TJ": "Тәжікстан",
+      "TH": "Тайланд",
+      "TR": "Түркия",
+      "TM": "Түрікменстан",
+      "UA": "Украина",
+      "AE": "БАӘ",
+      "GB": "Ұлыбритания",
+      "US": "АҚШ",
+      "UZ": "Өзбекстан",
+      "VE": "Венесуэла",
+      "VN": "Вьетнам"
+    }
   }
 }

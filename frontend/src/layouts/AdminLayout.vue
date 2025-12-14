@@ -1,6 +1,7 @@
 <script setup>
 import { computed } from 'vue'
 import { RouterLink, RouterView, useRoute } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import { useAuthStore } from '@/stores/auth'
 import {
   LayoutDashboard,
@@ -13,21 +14,23 @@ import {
   LogOut,
   ChevronRight
 } from 'lucide-vue-next'
+import LanguageSwitcher from '@/components/LanguageSwitcher.vue'
 
+const { t } = useI18n()
 const route = useRoute()
 const authStore = useAuthStore()
 
 const iconStrokeWidth = 1.5
 
-const menuItems = [
-  { path: '/admin', icon: LayoutDashboard, label: 'Дашборд', exact: true },
-  { path: '/admin/users', icon: Users, label: 'Пользователи' },
-  { path: '/admin/companies', icon: Building2, label: 'Компании' },
-  { path: '/admin/carriers', icon: Truck, label: 'Перевозчики' },
-  { path: '/admin/orders', icon: Package, label: 'Заказы' },
-  { path: '/admin/invoices', icon: FileText, label: 'Счета' },
-  { path: '/admin/settings', icon: Settings, label: 'Настройки' }
-]
+const menuItems = computed(() => [
+  { path: '/admin', icon: LayoutDashboard, label: t('adminLayout.menu.dashboard'), exact: true },
+  { path: '/admin/users', icon: Users, label: t('adminLayout.menu.users') },
+  { path: '/admin/companies', icon: Building2, label: t('adminLayout.menu.companies') },
+  { path: '/admin/carriers', icon: Truck, label: t('adminLayout.menu.carriers') },
+  { path: '/admin/orders', icon: Package, label: t('adminLayout.menu.orders') },
+  { path: '/admin/invoices', icon: FileText, label: t('adminLayout.menu.invoices') },
+  { path: '/admin/settings', icon: Settings, label: t('adminLayout.menu.settings') }
+])
 
 const isActive = (item) => {
   if (item.exact) {
@@ -37,8 +40,8 @@ const isActive = (item) => {
 }
 
 const pageTitle = computed(() => {
-  const item = menuItems.find(item => isActive(item))
-  return item?.label || 'Админ-панель'
+  const item = menuItems.value.find(item => isActive(item))
+  return item?.label || t('admin.dashboard')
 })
 
 async function handleLogout() {
@@ -76,10 +79,10 @@ async function handleLogout() {
           </div>
           <div class="user-details">
             <span class="user-name">{{ authStore.user?.name || 'Admin' }}</span>
-            <span class="user-role">Администратор</span>
+            <span class="user-role">{{ t('adminLayout.administrator') }}</span>
           </div>
         </div>
-        <button @click="handleLogout" class="logout-btn" title="Выйти">
+        <button @click="handleLogout" class="logout-btn" :title="t('nav.logout')">
           <LogOut :size="18" :stroke-width="iconStrokeWidth" />
         </button>
       </div>
@@ -88,11 +91,14 @@ async function handleLogout() {
     <main class="main-content">
       <header class="main-header">
         <div class="breadcrumb">
-          <RouterLink to="/admin">Админ-панель</RouterLink>
+          <RouterLink to="/admin">{{ t('admin.dashboard') }}</RouterLink>
           <template v-if="route.path !== '/admin'">
             <ChevronRight :size="16" :stroke-width="iconStrokeWidth" />
             <span>{{ pageTitle }}</span>
           </template>
+        </div>
+        <div class="header-actions">
+          <LanguageSwitcher />
         </div>
       </header>
 
@@ -267,6 +273,15 @@ async function handleLogout() {
   position: sticky;
   top: 0;
   z-index: 50;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
 }
 
 .breadcrumb {

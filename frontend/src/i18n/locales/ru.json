@@ -167,7 +167,8 @@
     "pendingConfirmation": "Ожидают подтверждения",
     "inProgress": "В работе",
     "noOrdersYet": "Нет заказов",
-    "ordersWillAppear": "Заказы появятся когда клиенты выберут вашу компанию"
+    "ordersWillAppear": "Заказы появятся когда клиенты выберут вашу компанию",
+    "managementData": "Управление данными"
   },
   "admin": {
     "dashboard": "Админ панель",
@@ -228,5 +229,898 @@
     "paymentSuccessful": "Оплата прошла успешно",
     "statusUpdated": "Статус обновлен",
     "documentUploaded": "Документ загружен"
+  },
+  "home": {
+    "personalCabinet": "Личный кабинет",
+    "hero": {
+      "title": "Найди лучшее логистическое решение",
+      "subtitle": "Сравнивайте цены и сроки доставки от ведущих перевозчиков мира в одном месте",
+      "calculateCost": "Рассчитать стоимость",
+      "trackShipment": "Отследить груз"
+    },
+    "features": {
+      "title": "Почему Vector Express?",
+      "globalNetwork": {
+        "title": "Глобальная сеть",
+        "description": "Доставка в любую точку мира. Более 220 стран и территорий."
+      },
+      "bestPrices": {
+        "title": "Лучшие цены",
+        "description": "Сравнивайте предложения от разных перевозчиков и выбирайте оптимальное."
+      },
+      "allCargoTypes": {
+        "title": "Все типы грузов",
+        "description": "Авиа, морские, ж/д и автомобильные перевозки. Любые габариты."
+      },
+      "reliability": {
+        "title": "Надежность",
+        "description": "Страхование груза, таможенное оформление, доставка до двери."
+      }
+    },
+    "partners": {
+      "title": "Наши партнеры"
+    },
+    "cta": {
+      "title": "Готовы начать?",
+      "subtitle": "Создайте заявку и получите предложения от лучших перевозчиков",
+      "register": "Зарегистрироваться"
+    },
+    "footer": {
+      "tagline": "Логистическая платформа нового поколения",
+      "company": "Компания",
+      "aboutUs": "О нас",
+      "contacts": "Контакты",
+      "services": "Услуги",
+      "airFreight": "Авиаперевозки",
+      "oceanFreight": "Морские перевозки",
+      "support": "Поддержка",
+      "faq": "FAQ",
+      "documents": "Документы",
+      "copyright": "© 2025 Vector Express. Все права защищены."
+    }
+  },
+  "adminDashboard": {
+    "loadingData": "Загрузка данных...",
+    "noData": "Нет данных",
+    "stats": {
+      "users": "Пользователей",
+      "companies": "Компаний",
+      "orders": "Заказов",
+      "revenue": "Выручка",
+      "commission": "Комиссия",
+      "perWeek": "за неделю",
+      "perMonth": "за месяц",
+      "shippers": "заказчиков",
+      "carriers": "перевозчиков"
+    },
+    "alerts": {
+      "companiesAwaitVerification": "компаний ожидают верификации",
+      "overduePayments": "просроченных платежей",
+      "awaitingPayment": "ожидают оплаты"
+    },
+    "charts": {
+      "ordersPerWeek": "Заказы за неделю",
+      "orderStatuses": "Статусы заказов",
+      "topCarriers": "Топ перевозчиков",
+      "ordersCount": "заказов"
+    },
+    "statuses": {
+      "pending": "Ожидают",
+      "confirmed": "Подтверждены",
+      "inTransit": "В пути",
+      "delivered": "Доставлены",
+      "cancelled": "Отменены"
+    }
+  },
+  "adminOrders": {
+    "subtitle": "Управление заказами системы",
+    "stats": {
+      "total": "Всего заказов",
+      "pending": "Ожидают подтверждения",
+      "inProgress": "В процессе",
+      "delivered": "Доставлено"
+    },
+    "searchPlaceholder": "Номер заказа VE-2025-...",
+    "dateFrom": "Дата от",
+    "dateTo": "Дата до",
+    "reset": "Сбросить",
+    "table": {
+      "number": "Номер",
+      "customer": "Заказчик",
+      "carrier": "Перевозчик",
+      "route": "Маршрут",
+      "amount": "Сумма",
+      "status": "Статус",
+      "date": "Дата",
+      "actions": "Действия"
+    },
+    "view": "Просмотр",
+    "changeStatus": "Изменить статус",
+    "noOrders": "Заказы не найдены",
+    "pageInfo": "Страница {current} из {last}",
+    "orderNumber": "Заказ {number}",
+    "deliveryContacts": "Контакты для доставки",
+    "financial": "Финансы",
+    "orderLabel": "Заказ",
+    "newStatus": "Новый статус",
+    "saving": "Сохранение..."
+  },
+  "adminUsers": {
+    "title": "Пользователи",
+    "subtitle": "Управление пользователями системы",
+    "addUser": "Добавить пользователя",
+    "editUser": "Редактировать пользователя",
+    "searchPlaceholder": "Поиск по имени, email...",
+    "noUsers": "Пользователи не найдены",
+    "pageInfo": "Страница {current} из {last}",
+    "create": "Создать",
+    "saving": "Сохранение...",
+    "confirmResetPassword": "Сбросить пароль для {name}?",
+    "confirmDelete": "Удалить пользователя \"{name}\"?",
+    "statusActive": "Активен",
+    "statusBlocked": "Заблокирован",
+    "roles": {
+      "customer": "Заказчик",
+      "carrier": "Перевозчик",
+      "admin": "Администратор"
+    },
+    "filters": {
+      "allRoles": "Все роли",
+      "customers": "Заказчики",
+      "carriers": "Перевозчики",
+      "admins": "Администраторы",
+      "all": "Все",
+      "active": "Активные",
+      "blocked": "Заблокированные"
+    },
+    "table": {
+      "id": "ID",
+      "user": "Пользователь",
+      "role": "Роль",
+      "company": "Компания",
+      "status": "Статус",
+      "registration": "Регистрация",
+      "actions": "Действия"
+    },
+    "form": {
+      "name": "Имя",
+      "email": "Email",
+      "password": "Пароль",
+      "phone": "Телефон",
+      "role": "Роль",
+      "company": "Компания",
+      "noCompany": "Без компании",
+      "isActive": "Активен"
+    },
+    "actions": {
+      "block": "Заблокировать",
+      "activate": "Активировать",
+      "resetPassword": "Сбросить пароль"
+    },
+    "passwordModal": {
+      "title": "Новый пароль",
+      "info": "Пароль для пользователя {name} был сброшен.",
+      "newPassword": "Новый пароль:",
+      "warning": "Сохраните этот пароль и передайте его пользователю. После закрытия окна он не будет показан снова."
+    }
+  },
+  "adminCarriers": {
+    "title": "Перевозчики",
+    "subtitle": "Управление настройками перевозчиков для расчёта цен",
+    "addCarrier": "Добавить перевозчика",
+    "editCarrier": "Редактировать перевозчика",
+    "searchPlaceholder": "Поиск по названию...",
+    "noCarriers": "Перевозчики не найдены",
+    "pageInfo": "Страница {current} из {last}",
+    "confirmDelete": "Удалить перевозчика \"{name}\"?",
+    "infoBanner": "компаний типа \"перевозчик\" без настроек carrier. Нажмите \"Добавить перевозчика\" чтобы настроить.",
+    "inn": "ИНН",
+    "quotes": "предложений",
+    "orders": "заказов",
+    "active": "Активен",
+    "inactive": "Неактивен",
+    "filters": {
+      "active": "Активные",
+      "inactive": "Неактивные"
+    },
+    "table": {
+      "company": "Компания",
+      "apiType": "Тип API",
+      "transportTypes": "Типы перевозок",
+      "countries": "Страны",
+      "stats": "Статистика"
+    },
+    "transportTypes": {
+      "air": "Авиа",
+      "sea": "Морской",
+      "rail": "Ж/Д",
+      "road": "Автомобильный"
+    },
+    "apiTypes": {
+      "manual": "Ручной расчёт",
+      "dhl": "DHL API",
+      "fedex": "FedEx API",
+      "ups": "UPS API",
+      "ponyexpress": "Ponyexpress API",
+      "custom": "Custom API"
+    },
+    "form": {
+      "company": "Компания",
+      "selectCompany": "Выберите компанию",
+      "noInn": "без ИНН",
+      "noAvailableCompanies": "Нет компаний без настроек carrier",
+      "apiType": "Тип API",
+      "transportTypes": "Типы перевозок",
+      "countries": "Страны",
+      "countryPlaceholder": "Введите страну...",
+      "add": "Добавить",
+      "popularCountries": "Популярные: Казахстан, Китай, Россия, США, Германия, Турция",
+      "isActive": "Активен (будет участвовать в расчётах)",
+      "create": "Создать"
+    }
+  },
+  "dashboard": {
+    "title": "Личный кабинет",
+    "createRequest": "Создать заявку",
+    "shipments": "Заявки",
+    "orders": "Заказы",
+    "pending": "Ожидают",
+    "delivered": "Доставлено",
+    "quickActions": "Быстрые действия",
+    "recentOrders": "Последние заказы",
+    "allOrders": "Все заказы",
+    "noOrders": "Пока нет заказов",
+    "createRequestPrompt": "Создайте заявку для расчета стоимости доставки",
+    "actions": {
+      "createRequest": "Создать заявку",
+      "calculateCost": "Рассчитать стоимость доставки",
+      "myShipments": "Мои заявки",
+      "viewManage": "Просмотр и управление",
+      "myOrders": "Мои заказы",
+      "orderHistory": "История заказов",
+      "trackCargo": "Отследить груз",
+      "byTrackingNumber": "По номеру отслеживания"
+    },
+    "table": {
+      "number": "Номер",
+      "amount": "Сумма"
+    }
+  },
+  "adminLayout": {
+    "administrator": "Администратор",
+    "menu": {
+      "dashboard": "Дашборд",
+      "users": "Пользователи",
+      "companies": "Компании",
+      "carriers": "Перевозчики",
+      "orders": "Заказы",
+      "invoices": "Счета",
+      "settings": "Настройки"
+    }
+  },
+  "login": {
+    "title": "Вход в систему",
+    "subtitle": "Войдите для доступа к личному кабинету",
+    "emailPlaceholder": "your@email.com",
+    "passwordPlaceholder": "••••••••",
+    "loggingIn": "Вход..."
+  },
+  "register": {
+    "title": "Регистрация",
+    "subtitle": "Создайте аккаунт для доступа к платформе",
+    "accountType": "Тип аккаунта",
+    "namePlaceholder": "Иван Петров",
+    "emailPlaceholder": "your@email.com",
+    "phonePlaceholder": "+7 777 123 45 67",
+    "companyName": "Название компании",
+    "companyNamePlaceholder": "ООО Логистика",
+    "companyInn": "ИНН/БИН",
+    "companyInnPlaceholder": "123456789012",
+    "passwordPlaceholder": "Минимум 8 символов",
+    "confirmPasswordPlaceholder": "Повторите пароль",
+    "registering": "Регистрация...",
+    "roles": {
+      "customer": "Заказчик",
+      "carrier": "Перевозчик"
+    }
+  },
+  "orderCreate": {
+    "title": "Оформление заказа",
+    "sections": {
+      "contactInfo": "Контактные данные",
+      "pickup": "Забор груза",
+      "delivery": "Доставка",
+      "additional": "Дополнительно"
+    },
+    "form": {
+      "fullName": "ФИО",
+      "fullNamePlaceholder": "Введите ФИО",
+      "phone": "Телефон",
+      "phonePlaceholder": "+7 (XXX) XXX-XX-XX",
+      "email": "Email",
+      "emailPlaceholder": "example@mail.com",
+      "useCustomerContact": "Использовать контактные данные заказчика",
+      "contactPerson": "Контактное лицо",
+      "pickupContactPlaceholder": "ФИО для забора",
+      "pickupPhone": "Телефон для забора",
+      "pickupAddress": "Адрес забора",
+      "pickupAddressPlaceholder": "Полный адрес для забора груза",
+      "pickupDate": "Дата забора",
+      "pickupTime": "Время забора",
+      "timeFrom": "С",
+      "timeTo": "До",
+      "deliveryContactPlaceholder": "ФИО получателя",
+      "deliveryPhone": "Телефон получателя",
+      "deliveryAddress": "Адрес доставки",
+      "deliveryAddressPlaceholder": "Полный адрес доставки",
+      "notes": "Примечания к заказу",
+      "notesPlaceholder": "Особые пожелания, инструкции для курьера..."
+    },
+    "summary": {
+      "title": "Детали заказа",
+      "carrier": "Перевозчик",
+      "from": "Откуда",
+      "to": "Куда",
+      "billableWeight": "Тарифицируемый вес",
+      "deliveryTime": "Срок доставки",
+      "days": "дн.",
+      "estimatedDate": "Ориентировочная дата",
+      "included": "Включено:",
+      "baseRate": "Базовая ставка",
+      "surcharges": "Надбавки",
+      "insurance": "Страхование",
+      "validUntil": "Предложение действительно до"
+    },
+    "services": {
+      "pickup": "Забор",
+      "delivery": "Доставка",
+      "customs": "Таможня",
+      "insurance": "Страховка"
+    },
+    "submitButton": "Оформить заказ",
+    "submitting": "Оформление...",
+    "errors": {
+      "loadQuote": "Ошибка загрузки предложения",
+      "loadingError": "Ошибка загрузки",
+      "createOrder": "Ошибка создания заказа"
+    }
+  },
+  "carrierOrders": {
+    "title": "Мои заказы",
+    "subtitle": "Управление заказами на перевозку",
+    "stats": {
+      "totalOrders": "Всего заказов",
+      "pendingConfirmation": "Ожидают подтверждения",
+      "inProgress": "В работе",
+      "delivered": "Доставлено"
+    },
+    "searchPlaceholder": "Поиск по номеру заказа...",
+    "allStatuses": "Все статусы",
+    "loadingOrders": "Загрузка заказов...",
+    "customer": "Заказчик",
+    "weight": "Вес",
+    "amount": "Сумма",
+    "date": "Дата",
+    "viewDetails": "Подробнее",
+    "noOrders": "Нет заказов",
+    "noOrdersMessage": "Заказы появятся когда клиенты выберут вашу компанию",
+    "orderTitle": "Заказ",
+    "route": "Маршрут",
+    "origin": "Откуда",
+    "destination": "Куда",
+    "cargo": "Груз",
+    "volume": "Объем",
+    "cargoType": "Тип груза",
+    "deliveryContacts": "Контакты для доставки",
+    "contactPerson": "Контактное лицо",
+    "deliveryAddress": "Адрес доставки",
+    "payment": "Оплата",
+    "platformCommission": "Комиссия платформы",
+    "trackingNumber": "Трекинг номер",
+    "errorUpdatingStatus": "Ошибка при обновлении статуса",
+    "actions": {
+      "confirmOrder": "Подтвердить заказ",
+      "schedulePickup": "Назначить забор",
+      "pickedUp": "Груз забран",
+      "inTransit": "В пути",
+      "outForDelivery": "Передать в доставку",
+      "delivered": "Доставлен"
+    }
+  },
+  "adminCompanies": {
+    "title": "Компании",
+    "subtitle": "Управление компаниями заказчиков и перевозчиков",
+    "addCompany": "Добавить компанию",
+    "editCompany": "Редактировать компанию",
+    "searchPlaceholder": "Поиск по названию, ИНН...",
+    "noCompanies": "Компании не найдены",
+    "pageInfo": "Страница {current} из {last}",
+    "create": "Создать",
+    "saving": "Сохранение...",
+    "confirmDelete": "Удалить компанию \"{name}\"?",
+    "users": "пользователей",
+    "typeCarrier": "Перевозчик",
+    "typeShipper": "Заказчик",
+    "verified": "Верифицирована",
+    "verify": "Верифицировать",
+    "verifyCompany": "Верифицировать компанию",
+    "filters": {
+      "allTypes": "Все типы",
+      "shippers": "Заказчики",
+      "carriers": "Перевозчики",
+      "all": "Все",
+      "verified": "Верифицированные",
+      "notVerified": "Не верифицированные"
+    },
+    "table": {
+      "company": "Компания",
+      "inn": "ИНН/БИН",
+      "type": "Тип",
+      "contacts": "Контакты",
+      "rating": "Рейтинг",
+      "verification": "Верификация",
+      "actions": "Действия"
+    },
+    "form": {
+      "name": "Название",
+      "inn": "ИНН/БИН",
+      "type": "Тип",
+      "legalAddress": "Юридический адрес",
+      "actualAddress": "Фактический адрес",
+      "phone": "Телефон",
+      "email": "Email",
+      "website": "Веб-сайт"
+    },
+    "documents": {
+      "title": "Документы",
+      "loading": "Загрузка документов...",
+      "noDocuments": "Документы не загружены",
+      "uploaded": "Загружен",
+      "approve": "Одобрить",
+      "reject": "Отклонить",
+      "approved": "Документ одобрен. Компания верифицирована!",
+      "errorApproving": "Ошибка при одобрении документа",
+      "errorRejecting": "Ошибка при отклонении документа",
+      "provideReason": "Укажите причину отклонения",
+      "reasonPlaceholder": "Причина отклонения...",
+      "statusPending": "На проверке",
+      "statusApproved": "Подтвержден",
+      "statusRejected": "Отклонен"
+    }
+  },
+  "ordersList": {
+    "title": "Мои заказы",
+    "totalOrders": "Всего {count} заказов",
+    "newRequest": "Новая заявка",
+    "searchPlaceholder": "Поиск по номеру заказа, трек-номеру или городу...",
+    "loadingOrders": "Загрузка заказов...",
+    "noOrdersYet": "У вас пока нет заказов",
+    "createRequestPrompt": "Создайте заявку на перевозку и выберите подходящее предложение",
+    "goToRequests": "Перейти к заявкам",
+    "nothingFound": "Ничего не найдено",
+    "tryChangingFilters": "Попробуйте изменить параметры поиска",
+    "resetFilters": "Сбросить фильтры",
+    "pageInfo": "Страница {current} из {last}"
+  },
+  "orderDetail": {
+    "backToOrders": "Назад к заказам",
+    "order": "Заказ",
+    "deliveryStatus": "Статус доставки",
+    "orderInfo": "Информация о заказе",
+    "orderNumber": "Номер заказа",
+    "createdAt": "Дата создания",
+    "carrier": "Перевозчик",
+    "trackingNumber": "Трек-номер",
+    "carrierTrackingNumber": "Трек перевозчика",
+    "cost": "Стоимость",
+    "serviceCommission": "Комиссия сервиса",
+    "pickup": "Забор груза",
+    "contactPerson": "Контактное лицо",
+    "phone": "Телефон",
+    "address": "Адрес",
+    "pickupDate": "Дата забора",
+    "delivery": "Доставка",
+    "deliveryHistory": "История доставки",
+    "notes": "Примечания",
+    "trackOnMap": "Отследить на карте",
+    "cancelOrder": "Отменить заказ",
+    "confirmCancel": "Вы уверены, что хотите отменить заказ?",
+    "statuses": {
+      "pending": "Ожидает подтверждения",
+      "confirmed": "Подтвержден",
+      "pickupScheduled": "Назначен забор",
+      "pickedUp": "Забран",
+      "inTransit": "В пути",
+      "customs": "На таможне",
+      "outForDelivery": "Доставляется",
+      "delivered": "Доставлен",
+      "cancelled": "Отменен"
+    }
+  },
+  "adminSettings": {
+    "title": "Настройки",
+    "subtitle": "Управление настройками платформы",
+    "saving": "Сохранение...",
+    "tabs": {
+      "general": "Общие",
+      "commission": "Комиссия",
+      "notifications": "Уведомления",
+      "email": "Email",
+      "security": "Безопасность",
+      "system": "Система"
+    },
+    "general": {
+      "title": "Общие настройки",
+      "description": "Основная информация о платформе",
+      "siteName": "Название сайта",
+      "siteDescription": "Описание",
+      "contactEmail": "Контактный email",
+      "contactPhone": "Контактный телефон"
+    },
+    "commission": {
+      "title": "Настройки комиссии",
+      "description": "Параметры комиссионных сборов",
+      "commissionRate": "Размер комиссии (%)",
+      "minOrderAmount": "Мин. сумма заказа",
+      "defaultCurrency": "Валюта по умолчанию",
+      "currencies": {
+        "usd": "USD - Доллар США",
+        "eur": "EUR - Евро",
+        "kzt": "KZT - Тенге",
+        "rub": "RUB - Рубль"
+      }
+    },
+    "notifications": {
+      "title": "Уведомления",
+      "description": "Настройки системных уведомлений",
+      "emailNotifications": "Email уведомления",
+      "emailNotificationsDesc": "Отправлять уведомления на email пользователей",
+      "orderNotifications": "Уведомления о заказах",
+      "orderNotificationsDesc": "Уведомлять о новых заказах и изменении статусов",
+      "paymentNotifications": "Уведомления об оплате",
+      "paymentNotificationsDesc": "Уведомлять о платежах и счетах"
+    },
+    "email": {
+      "title": "Настройки Email",
+      "description": "Конфигурация почтового сервера",
+      "infoTitle": "Настройки email",
+      "infoText": "Конфигурация почтового сервера выполняется через файл .env на сервере."
+    },
+    "security": {
+      "title": "Безопасность",
+      "description": "Параметры безопасности платформы",
+      "emailVerification": "Верификация email",
+      "emailVerificationDesc": "Требовать подтверждение email при регистрации",
+      "companyVerification": "Верификация компаний",
+      "companyVerificationDesc": "Требовать верификацию компаний перевозчиков",
+      "sessionLifetime": "Время жизни сессии (минуты)"
+    },
+    "system": {
+      "title": "Система",
+      "description": "Системная информация и действия",
+      "appVersion": "Версия приложения",
+      "laravelVersion": "Версия Laravel",
+      "phpVersion": "Версия PHP",
+      "database": "База данных",
+      "clearCache": "Очистить кэш"
+    }
+  },
+  "carrierSurcharges": {
+    "title": "Надбавки",
+    "subtitle": "Топливные, сезонные и прочие дополнительные сборы",
+    "addSurcharge": "Добавить надбавку",
+    "editSurcharge": "Редактировать надбавку",
+    "newSurcharge": "Новая надбавка",
+    "createSurcharge": "Создать надбавку",
+    "searchPlaceholder": "Поиск по названию...",
+    "loading": "Загрузка надбавок...",
+    "noSurcharges": "Нет надбавок",
+    "noSurchargesText": "Добавьте надбавку для дополнительных сборов",
+    "confirmDelete": "Вы уверены, что хотите удалить эту надбавку?",
+    "activate": "Активировать",
+    "deactivate": "Деактивировать",
+    "perKg": "кг",
+    "types": {
+      "fuel": "Топливная надбавка",
+      "residential": "Доставка на жилой адрес",
+      "remoteArea": "Удаленный район",
+      "oversize": "Негабаритный груз",
+      "dangerousGoods": "Опасный груз",
+      "peakSeason": "Пиковый сезон",
+      "handling": "Обработка груза",
+      "customs": "Таможня"
+    },
+    "calculationTypes": {
+      "flat": "Фиксированная сумма",
+      "percentage": "Процент от базовой ставки",
+      "perKg": "За килограмм"
+    },
+    "form": {
+      "surchargeType": "Тип надбавки",
+      "selectType": "Выберите тип",
+      "name": "Название",
+      "namePlaceholder": "Название надбавки",
+      "calculationType": "Способ расчета",
+      "percentage": "Процент (%)",
+      "amount": "Сумма (USD)",
+      "isActive": "Активна"
+    }
+  },
+  "carrierSettings": {
+    "title": "Настройки",
+    "subtitle": "Правила расчета, типы перевозок и конфигурация системы",
+    "saving": "Сохранение...",
+    "loadingSettings": "Загрузка настроек...",
+    "messages": {
+      "saveSuccess": "Настройки успешно сохранены",
+      "saveError": "Ошибка при сохранении настроек"
+    },
+    "pricingRules": {
+      "title": "Правила расчета",
+      "dimFactor": "DIM-фактор",
+      "dimFactorHint": "Делитель для расчета объемного веса (обычно 5000-6000)",
+      "minRate": "Минимальный тариф",
+      "insuranceRate": "Ставка страхования",
+      "insuranceRateHint": "Процент от объявленной стоимости груза",
+      "defaultCurrency": "Валюта по умолчанию"
+    },
+    "transportTypes": {
+      "title": "Типы перевозок",
+      "description": "Выберите типы перевозок, которые вы предоставляете",
+      "air": "Авиаперевозки",
+      "airDesc": "Быстрая доставка по воздуху",
+      "road": "Автоперевозки",
+      "roadDesc": "Доставка автотранспортом",
+      "rail": "ЖД перевозки",
+      "railDesc": "Железнодорожная доставка",
+      "sea": "Морские перевозки",
+      "seaDesc": "Доставка морским транспортом"
+    },
+    "cargoLimits": {
+      "title": "Ограничения груза",
+      "description": "Максимально допустимые параметры груза",
+      "maxWeight": "Макс. вес",
+      "maxLength": "Макс. длина",
+      "maxWidth": "Макс. ширина",
+      "maxHeight": "Макс. высота"
+    },
+    "workingHours": {
+      "title": "Рабочее время",
+      "start": "Начало",
+      "end": "Окончание",
+      "workingDays": "Рабочие дни"
+    },
+    "weekdays": {
+      "mon": "Пн",
+      "tue": "Вт",
+      "wed": "Ср",
+      "thu": "Чт",
+      "fri": "Пт",
+      "sat": "Сб",
+      "sun": "Вс"
+    },
+    "notifications": {
+      "title": "Уведомления",
+      "newOrders": "Новые заказы",
+      "newOrdersDesc": "Уведомления о новых заказах",
+      "statusUpdates": "Изменения статуса",
+      "statusUpdatesDesc": "Уведомления об изменении статуса заказов",
+      "payments": "Платежи",
+      "paymentsDesc": "Уведомления о поступлении платежей"
+    }
+  },
+  "carrierRates": {
+    "title": "Тарифы",
+    "subtitle": "Настройка ставок по весу и направлениям",
+    "importFromExcel": "Импорт из Excel",
+    "addRate": "Добавить тариф",
+    "searchByZones": "Поиск по зонам...",
+    "allTypes": "Все типы",
+    "from": "Откуда",
+    "to": "Куда",
+    "reset": "Сбросить",
+    "loadingRates": "Загрузка тарифов...",
+    "noRates": "Нет тарифов",
+    "addRatePrompt": "Добавьте тариф для расчета стоимости перевозок",
+    "confirmDelete": "Вы уверены, что хотите удалить этот тариф?",
+    "importError": "Ошибка импорта",
+    "kg": "кг",
+    "days": "дн.",
+    "newRate": "Новый тариф",
+    "editRate": "Редактировать тариф",
+    "createRate": "Создать тариф",
+    "transportTypes": {
+      "air": "Авиа",
+      "road": "Авто",
+      "rail": "ЖД",
+      "sea": "Морские"
+    },
+    "tableHeaders": {
+      "from": "Откуда",
+      "to": "Куда",
+      "type": "Тип",
+      "weight": "Вес",
+      "rate": "Ставка",
+      "transit": "Срок"
+    },
+    "form": {
+      "originZone": "Откуда (зона)",
+      "destinationZone": "Куда (зона)",
+      "selectZone": "Выберите зону",
+      "transportType": "Тип перевозки",
+      "weightFrom": "Вес от (кг)",
+      "weightTo": "Вес до (кг)",
+      "noLimit": "Без ограничения",
+      "ratePerKg": "Ставка за кг (USD)",
+      "transitMin": "Срок мин. (дней)",
+      "transitMax": "Срок макс. (дней)"
+    },
+    "import": {
+      "title": "Импорт тарифов из Excel",
+      "fileFormat": "Формат файла:",
+      "or": "или",
+      "ensureZones": "Убедитесь, что у вас уже созданы зоны с кодами, указанными в файле",
+      "requiredColumns": "Обязательные колонки:",
+      "optionalColumns": "Опциональные колонки:",
+      "originZoneCode": "код зоны отправления (например: KZ, RU)",
+      "destinationZoneCode": "код зоны назначения",
+      "ratePerKg": "ставка за кг (число)",
+      "transportTypeDesc": "тип: road, air, rail, sea (по умолчанию: road)",
+      "minWeight": "минимальный вес (по умолчанию: 0)",
+      "maxWeight": "максимальный вес",
+      "currency": "валюта (по умолчанию: USD)",
+      "minTransit": "мин. срок доставки (дней)",
+      "maxTransit": "макс. срок доставки (дней)",
+      "selectFile": "Выберите файл",
+      "imported": "Импортировано",
+      "skipped": "Пропущено",
+      "importing": "Импорт...",
+      "importButton": "Импортировать"
+    }
+  },
+  "carrierZones": {
+    "title": "Зоны доставки",
+    "subtitle": "Настройте географические зоны для расчета тарифов",
+    "importFromExcel": "Импорт из Excel",
+    "addZone": "Добавить зону",
+    "searchPlaceholder": "Поиск по названию или коду зоны...",
+    "loading": "Загрузка зон...",
+    "postalCodes": "почтовых кодов",
+    "postalCodesAndCities": "Почтовые коды и города",
+    "remoteArea": "Удаленный район",
+    "noZones": "Нет зон доставки",
+    "addFirstZone": "Добавьте первую зону для начала работы с тарифами",
+    "editZone": "Редактировать зону",
+    "newZone": "Новая зона доставки",
+    "createZone": "Создать зону",
+    "form": {
+      "country": "Страна",
+      "countryPlaceholder": "Начните вводить название страны...",
+      "countryHint": "При выборе страны код и название зоны заполнятся автоматически",
+      "zoneCode": "Код зоны",
+      "zoneName": "Название зоны",
+      "zoneNamePlaceholder": "Казахстан",
+      "description": "Описание",
+      "descriptionPlaceholder": "Описание зоны (например: Доставка в/из Беларуси)",
+      "postalCodes": "Почтовые коды",
+      "prefix": "Префикс (050)",
+      "city": "Город",
+      "region": "Регион",
+      "remote": "Удаленный"
+    },
+    "alerts": {
+      "enterCityOrPostalCode": "Введите хотя бы город или почтовый код",
+      "confirmDelete": "Вы уверены, что хотите удалить эту зону?"
+    },
+    "import": {
+      "title": "Импорт зон из Excel",
+      "uploadFile": "Загрузите файл Excel (.xlsx, .xls) или CSV",
+      "fileFormat": "Файл должен содержать колонки:",
+      "zoneCode": "Код зоны (обязательно)",
+      "zoneName": "Название зоны",
+      "countryCode": "Код страны ISO (KZ, RU и т.д.)",
+      "description": "Описание",
+      "selectFile": "Выберите файл или перетащите сюда",
+      "imported": "Импортировано",
+      "skipped": "Пропущено",
+      "importing": "Импорт...",
+      "importButton": "Импортировать",
+      "error": "Ошибка импорта"
+    },
+    "countries": {
+      "AF": "Афганистан",
+      "AL": "Албания",
+      "DZ": "Алжир",
+      "AD": "Андорра",
+      "AO": "Ангола",
+      "AR": "Аргентина",
+      "AM": "Армения",
+      "AU": "Австралия",
+      "AT": "Австрия",
+      "AZ": "Азербайджан",
+      "BY": "Беларусь",
+      "BE": "Бельгия",
+      "BD": "Бангладеш",
+      "BR": "Бразилия",
+      "BG": "Болгария",
+      "CA": "Канада",
+      "CL": "Чили",
+      "CN": "Китай",
+      "CO": "Колумбия",
+      "HR": "Хорватия",
+      "CY": "Кипр",
+      "CZ": "Чехия",
+      "DK": "Дания",
+      "EG": "Египет",
+      "EE": "Эстония",
+      "FI": "Финляндия",
+      "FR": "Франция",
+      "GE": "Грузия",
+      "DE": "Германия",
+      "GR": "Греция",
+      "HK": "Гонконг",
+      "HU": "Венгрия",
+      "IS": "Исландия",
+      "IN": "Индия",
+      "ID": "Индонезия",
+      "IR": "Иран",
+      "IQ": "Ирак",
+      "IE": "Ирландия",
+      "IL": "Израиль",
+      "IT": "Италия",
+      "JP": "Япония",
+      "JO": "Иордания",
+      "KZ": "Казахстан",
+      "KE": "Кения",
+      "KW": "Кувейт",
+      "KG": "Кыргызстан",
+      "LV": "Латвия",
+      "LB": "Ливан",
+      "LT": "Литва",
+      "LU": "Люксембург",
+      "MY": "Малайзия",
+      "MX": "Мексика",
+      "MD": "Молдова",
+      "MN": "Монголия",
+      "ME": "Черногория",
+      "MA": "Марокко",
+      "NL": "Нидерланды",
+      "NZ": "Новая Зеландия",
+      "NG": "Нигерия",
+      "NO": "Норвегия",
+      "OM": "Оман",
+      "PK": "Пакистан",
+      "PA": "Панама",
+      "PE": "Перу",
+      "PH": "Филиппины",
+      "PL": "Польша",
+      "PT": "Португалия",
+      "QA": "Катар",
+      "RO": "Румыния",
+      "RU": "Россия",
+      "SA": "Саудовская Аравия",
+      "RS": "Сербия",
+      "SG": "Сингапур",
+      "SK": "Словакия",
+      "SI": "Словения",
+      "ZA": "ЮАР",
+      "KR": "Южная Корея",
+      "ES": "Испания",
+      "LK": "Шри-Ланка",
+      "SE": "Швеция",
+      "CH": "Швейцария",
+      "TW": "Тайвань",
+      "TJ": "Таджикистан",
+      "TH": "Таиланд",
+      "TR": "Турция",
+      "TM": "Туркменистан",
+      "UA": "Украина",
+      "AE": "ОАЭ",
+      "GB": "Великобритания",
+      "US": "США",
+      "UZ": "Узбекистан",
+      "VE": "Венесуэла",
+      "VN": "Вьетнам"
+    }
   }
 }

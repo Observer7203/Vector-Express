@@ -1,12 +1,15 @@
 <script setup>
 import { RouterLink } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
+import { useI18n } from 'vue-i18n'
 import { Globe, DollarSign, Truck, ShieldCheck, Calculator, Search, UserPlus } from 'lucide-vue-next'
+import LanguageSwitcher from '@/components/LanguageSwitcher.vue'
 
 // Lucide icons с тонкими линиями
 const iconStrokeWidth = 1.2
 
 const authStore = useAuthStore()
+const { t } = useI18n()
 </script>
 
 <template>
@@ -16,12 +19,13 @@ const authStore = useAuthStore()
         <nav class="nav">
           <div class="logo">Vector Express</div>
           <div class="nav-links">
+            <LanguageSwitcher />
             <RouterLink v-if="authStore.isAuthenticated" to="/dashboard" class="btn btn-outline">
-              Личный кабинет
+              {{ t('home.personalCabinet') }}
             </RouterLink>
             <template v-else>
-              <RouterLink to="/login" class="btn btn-text">Войти</RouterLink>
-              <RouterLink to="/register" class="btn btn-primary">Регистрация</RouterLink>
+              <RouterLink to="/login" class="btn btn-text">{{ t('nav.login') }}</RouterLink>
+              <RouterLink to="/register" class="btn btn-primary">{{ t('nav.register') }}</RouterLink>
             </template>
           </div>
         </nav>
@@ -88,18 +92,18 @@ const authStore = useAuthStore()
       </div>
       <div class="container">
         <div class="hero-content">
-          <h1>Найди лучшее логистическое решение</h1>
+          <h1>{{ t('home.hero.title') }}</h1>
           <p class="hero-subtitle">
-            Сравнивайте цены и сроки доставки от ведущих перевозчиков мира в одном месте
+            {{ t('home.hero.subtitle') }}
           </p>
           <div class="hero-actions">
             <RouterLink to="/shipments/new" class="btn btn-primary btn-lg">
               <Calculator :size="18" :stroke-width="iconStrokeWidth" />
-              Рассчитать стоимость
+              {{ t('home.hero.calculateCost') }}
             </RouterLink>
             <RouterLink to="/tracking" class="btn btn-outline-dark btn-lg">
               <Search :size="18" :stroke-width="iconStrokeWidth" />
-              Отследить груз
+              {{ t('home.hero.trackShipment') }}
             </RouterLink>
           </div>
         </div>
@@ -108,35 +112,35 @@ const authStore = useAuthStore()
 
     <section class="features">
       <div class="container">
-        <h2 class="section-title">Почему Vector Express?</h2>
+        <h2 class="section-title">{{ t('home.features.title') }}</h2>
         <div class="features-grid">
           <div class="feature-card">
             <div class="feature-icon">
               <Globe :size="24" :stroke-width="iconStrokeWidth" />
             </div>
-            <h3>Глобальная сеть</h3>
-            <p>Доставка в любую точку мира. Более 220 стран и территорий.</p>
+            <h3>{{ t('home.features.globalNetwork.title') }}</h3>
+            <p>{{ t('home.features.globalNetwork.description') }}</p>
           </div>
           <div class="feature-card">
             <div class="feature-icon">
               <DollarSign :size="24" :stroke-width="iconStrokeWidth" />
             </div>
-            <h3>Лучшие цены</h3>
-            <p>Сравнивайте предложения от разных перевозчиков и выбирайте оптимальное.</p>
+            <h3>{{ t('home.features.bestPrices.title') }}</h3>
+            <p>{{ t('home.features.bestPrices.description') }}</p>
           </div>
           <div class="feature-card">
             <div class="feature-icon">
               <Truck :size="24" :stroke-width="iconStrokeWidth" />
             </div>
-            <h3>Все типы грузов</h3>
-            <p>Авиа, морские, ж/д и автомобильные перевозки. Любые габариты.</p>
+            <h3>{{ t('home.features.allCargoTypes.title') }}</h3>
+            <p>{{ t('home.features.allCargoTypes.description') }}</p>
           </div>
           <div class="feature-card">
             <div class="feature-icon">
               <ShieldCheck :size="24" :stroke-width="iconStrokeWidth" />
             </div>
-            <h3>Надежность</h3>
-            <p>Страхование груза, таможенное оформление, доставка до двери.</p>
+            <h3>{{ t('home.features.reliability.title') }}</h3>
+            <p>{{ t('home.features.reliability.description') }}</p>
           </div>
         </div>
       </div>
@@ -144,7 +148,7 @@ const authStore = useAuthStore()
 
     <section class="carriers">
       <div class="container">
-        <h2 class="section-title">Наши партнеры</h2>
+        <h2 class="section-title">{{ t('home.partners.title') }}</h2>
         <div class="carriers-grid">
           <div class="carrier-item">DHL</div>
           <div class="carrier-item">FedEx</div>
@@ -157,11 +161,11 @@ const authStore = useAuthStore()
     <section class="cta">
       <div class="container">
         <div class="cta-content">
-          <h2>Готовы начать?</h2>
-          <p>Создайте заявку и получите предложения от лучших перевозчиков</p>
+          <h2>{{ t('home.cta.title') }}</h2>
+          <p>{{ t('home.cta.subtitle') }}</p>
           <RouterLink to="/register" class="btn btn-white btn-lg">
             <UserPlus :size="18" :stroke-width="iconStrokeWidth" />
-            Зарегистрироваться
+            {{ t('home.cta.register') }}
           </RouterLink>
         </div>
       </div>
@@ -172,26 +176,26 @@ const authStore = useAuthStore()
         <div class="footer-content">
           <div class="footer-brand">
             <div class="footer-logo">Vector Express</div>
-            <p>Логистическая платформа нового поколения</p>
+            <p>{{ t('home.footer.tagline') }}</p>
           </div>
           <div class="footer-links">
-            <h4>Компания</h4>
-            <a href="#">О нас</a>
-            <a href="#">Контакты</a>
+            <h4>{{ t('home.footer.company') }}</h4>
+            <a href="#">{{ t('home.footer.aboutUs') }}</a>
+            <a href="#">{{ t('home.footer.contacts') }}</a>
           </div>
           <div class="footer-links">
-            <h4>Услуги</h4>
-            <a href="#">Авиаперевозки</a>
-            <a href="#">Морские перевозки</a>
+            <h4>{{ t('home.footer.services') }}</h4>
+            <a href="#">{{ t('home.footer.airFreight') }}</a>
+            <a href="#">{{ t('home.footer.oceanFreight') }}</a>
           </div>
           <div class="footer-links">
-            <h4>Поддержка</h4>
-            <a href="#">FAQ</a>
-            <a href="#">Документы</a>
+            <h4>{{ t('home.footer.support') }}</h4>
+            <a href="#">{{ t('home.footer.faq') }}</a>
+            <a href="#">{{ t('home.footer.documents') }}</a>
           </div>
         </div>
         <div class="footer-bottom">
-          <p>© 2025 Vector Express. Все права защищены.</p>
+          <p>{{ t('home.footer.copyright') }}</p>
         </div>
       </div>
     </footer>

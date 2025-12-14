@@ -1,6 +1,7 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { RouterLink } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import { useOrdersStore } from '@/stores/orders'
 import {
   Plus,
@@ -19,6 +20,8 @@ import {
   FileText
 } from 'lucide-vue-next'
 
+const { t } = useI18n()
+
 const iconStrokeWidth = 1.2
 
 const ordersStore = useOrdersStore()
@@ -29,17 +32,17 @@ onMounted(() => {
   ordersStore.fetchOrders()
 })
 
-const statusLabels = {
-  pending: 'Ожидает подтверждения',
-  confirmed: 'Подтвержден',
-  pickup_scheduled: 'Назначен забор',
-  picked_up: 'Забран',
-  in_transit: 'В пути',
-  customs: 'На таможне',
-  out_for_delivery: 'Доставляется',
-  delivered: 'Доставлен',
-  cancelled: 'Отменен'
-}
+const statusLabels = computed(() => ({
+  pending: t('status.pending'),
+  confirmed: t('status.confirmed'),
+  pickup_scheduled: t('status.pickup_scheduled'),
+  picked_up: t('status.picked_up'),
+  in_transit: t('status.in_transit'),
+  customs: t('status.customs'),
+  out_for_delivery: t('status.out_for_delivery'),
+  delivered: t('status.delivered'),
+  cancelled: t('status.cancelled')
+}))
 
 const statusConfig = {
   pending: { color: 'warning', icon: Clock },
@@ -101,14 +104,14 @@ function getStatusIcon(status) {
       <div class="container">
         <div class="header-content">
           <div class="header-left">
-            <h1>Мои заказы</h1>
+            <h1>{{ t('ordersList.title') }}</h1>
             <p class="subtitle" v-if="ordersStore.orders.length > 0">
-              Всего {{ ordersStore.orders.length }} заказов
+              {{ t('ordersList.totalOrders', { count: ordersStore.orders.length }) }}
             </p>
           </div>
           <RouterLink to="/shipments/new" class="btn btn-primary">
             <Plus :size="18" :stroke-width="iconStrokeWidth" />
-            Новая заявка
+            {{ t('ordersList.newRequest') }}
           </RouterLink>
         </div>
       </div>
@@ -123,13 +126,13 @@ function getStatusIcon(status) {
             <input
               v-model="searchQuery"
               type="text"
-              placeholder="Поиск по номеру заказа, трек-номеру или городу..."
+              :placeholder="t('ordersList.searchPlaceholder')"
             />
           </div>
           <div class="filter-group">
             <Filter :size="16" :stroke-width="iconStrokeWidth" />
             <select v-model="statusFilter">
-              <option value="">Все статусы</option>
+              <option value="">{{ t('status.allStatuses') }}</option>
               <option v-for="(label, status) in statusLabels" :key="status" :value="status">
                 {{ label }}
               </option>
@@ -140,7 +143,7 @@ function getStatusIcon(status) {
         <!-- Loading State -->
         <div v-if="ordersStore.loading" class="loading-state">
           <div class="spinner"></div>
-          <span>Загрузка заказов...</span>
+          <span>{{ t('ordersList.loadingOrders') }}</span>
         </div>
 
         <!-- Empty State -->
@@ -148,10 +151,10 @@ function getStatusIcon(status) {
           <div class="empty-icon">
             <Package :size="48" :stroke-width="iconStrokeWidth" />
           </div>
-          <h3>У вас пока нет заказов</h3>
-          <p>Создайте заявку на перевозку и выберите подходящее предложение</p>
+          <h3>{{ t('ordersList.noOrdersYet') }}</h3>
+          <p>{{ t('ordersList.createRequestPrompt') }}</p>
           <RouterLink to="/shipments" class="btn btn-primary">
-            Перейти к заявкам
+            {{ t('ordersList.goToRequests') }}
           </RouterLink>
         </div>
 
@@ -160,10 +163,10 @@ function getStatusIcon(status) {
           <div class="empty-icon">
             <Search :size="48" :stroke-width="iconStrokeWidth" />
           </div>
-          <h3>Ничего не найдено</h3>
-          <p>Попробуйте изменить параметры поиска</p>
+          <h3>{{ t('ordersList.nothingFound') }}</h3>
+          <p>{{ t('ordersList.tryChangingFilters') }}</p>
           <button @click="searchQuery = ''; statusFilter = ''" class="btn btn-outline">
-            Сбросить фильтры
+            {{ t('ordersList.resetFilters') }}
           </button>
         </div>
 
@@ -223,7 +226,7 @@ function getStatusIcon(status) {
 
             <div class="order-footer">
               <span class="view-details">
-                Подробнее
+                {{ t('common.details') }}
                 <ChevronRight :size="16" :stroke-width="iconStrokeWidth" />
               </span>
             </div>
@@ -237,17 +240,17 @@ function getStatusIcon(status) {
             :disabled="ordersStore.pagination.currentPage <= 1"
             @click="ordersStore.fetchOrders(ordersStore.pagination.currentPage - 1)"
           >
-            Назад
+            {{ t('common.back') }}
           </button>
           <span class="page-info">
-            Страница {{ ordersStore.pagination.currentPage }} из {{ ordersStore.pagination.lastPage }}
+            {{ t('ordersList.pageInfo', { current: ordersStore.pagination.currentPage, last: ordersStore.pagination.lastPage }) }}
           </span>
           <button
             class="btn btn-outline btn-sm"
             :disabled="ordersStore.pagination.currentPage >= ordersStore.pagination.lastPage"
             @click="ordersStore.fetchOrders(ordersStore.pagination.currentPage + 1)"
           >
-            Далее
+            {{ t('common.next') }}
           </button>
         </div>
       </div>

@@ -1,5 +1,6 @@
 <script setup>
 import { ref, onMounted } from 'vue'
+import { useI18n } from 'vue-i18n'
 import {
   Settings,
   Globe,
@@ -12,42 +13,36 @@ import {
   RefreshCw
 } from 'lucide-vue-next'
 
+const { t } = useI18n()
+
 const iconStrokeWidth = 1.5
 const loading = ref(false)
 const saving = ref(false)
 const activeTab = ref('general')
 
-// Настройки
 const settings = ref({
-  // Общие
   site_name: 'Vector Express',
   site_description: 'Метапоисковик логистических услуг',
   contact_email: 'info@vectorexpress.kz',
   contact_phone: '+7 (777) 123-45-67',
-
-  // Комиссия
   commission_rate: 5,
   min_order_amount: 100,
   currency: 'USD',
-
-  // Уведомления
   email_notifications: true,
   order_notifications: true,
   payment_notifications: true,
-
-  // Безопасность
   require_email_verification: true,
   require_company_verification: true,
   session_lifetime: 120
 })
 
 const tabs = [
-  { id: 'general', name: 'Общие', icon: Globe },
-  { id: 'commission', name: 'Комиссия', icon: Percent },
-  { id: 'notifications', name: 'Уведомления', icon: Bell },
-  { id: 'email', name: 'Email', icon: Mail },
-  { id: 'security', name: 'Безопасность', icon: Shield },
-  { id: 'system', name: 'Система', icon: Database }
+  { id: 'general', name: t('adminSettings.tabs.general'), icon: Globe },
+  { id: 'commission', name: t('adminSettings.tabs.commission'), icon: Percent },
+  { id: 'notifications', name: t('adminSettings.tabs.notifications'), icon: Bell },
+  { id: 'email', name: t('adminSettings.tabs.email'), icon: Mail },
+  { id: 'security', name: t('adminSettings.tabs.security'), icon: Shield },
+  { id: 'system', name: t('adminSettings.tabs.system'), icon: Database }
 ]
 
 onMounted(() => {
@@ -68,12 +63,12 @@ async function saveSettings() {
   <div class="settings-page">
     <div class="page-header">
       <div>
-        <h1>Настройки</h1>
-        <p class="subtitle">Управление настройками платформы</p>
+        <h1>{{ t('adminSettings.title') }}</h1>
+        <p class="subtitle">{{ t('adminSettings.subtitle') }}</p>
       </div>
       <button class="btn btn-primary" @click="saveSettings" :disabled="saving">
         <Save :size="16" :stroke-width="iconStrokeWidth" />
-        {{ saving ? 'Сохранение...' : 'Сохранить' }}
+        {{ saving ? t('adminSettings.saving') : t('common.save') }}
       </button>
     </div>
 
@@ -96,70 +91,70 @@ async function saveSettings() {
 
       <!-- Content -->
       <div class="settings-content">
-        <!-- Общие настройки -->
+        <!-- General Settings -->
         <div v-if="activeTab === 'general'" class="settings-section">
-          <h2>Общие настройки</h2>
-          <p class="section-description">Основная информация о платформе</p>
+          <h2>{{ t('adminSettings.general.title') }}</h2>
+          <p class="section-description">{{ t('adminSettings.general.description') }}</p>
 
           <div class="form-group">
-            <label>Название сайта</label>
+            <label>{{ t('adminSettings.general.siteName') }}</label>
             <input type="text" v-model="settings.site_name" class="form-input" />
           </div>
 
           <div class="form-group">
-            <label>Описание</label>
+            <label>{{ t('adminSettings.general.siteDescription') }}</label>
             <textarea v-model="settings.site_description" class="form-input" rows="3"></textarea>
           </div>
 
           <div class="form-row">
             <div class="form-group">
-              <label>Контактный email</label>
+              <label>{{ t('adminSettings.general.contactEmail') }}</label>
               <input type="email" v-model="settings.contact_email" class="form-input" />
             </div>
             <div class="form-group">
-              <label>Контактный телефон</label>
+              <label>{{ t('adminSettings.general.contactPhone') }}</label>
               <input type="tel" v-model="settings.contact_phone" class="form-input" />
             </div>
           </div>
         </div>
 
-        <!-- Комиссия -->
+        <!-- Commission -->
         <div v-if="activeTab === 'commission'" class="settings-section">
-          <h2>Настройки комиссии</h2>
-          <p class="section-description">Параметры комиссионных сборов</p>
+          <h2>{{ t('adminSettings.commission.title') }}</h2>
+          <p class="section-description">{{ t('adminSettings.commission.description') }}</p>
 
           <div class="form-row">
             <div class="form-group">
-              <label>Размер комиссии (%)</label>
+              <label>{{ t('adminSettings.commission.commissionRate') }}</label>
               <input type="number" v-model="settings.commission_rate" class="form-input" min="0" max="100" step="0.1" />
             </div>
             <div class="form-group">
-              <label>Мин. сумма заказа</label>
+              <label>{{ t('adminSettings.commission.minOrderAmount') }}</label>
               <input type="number" v-model="settings.min_order_amount" class="form-input" min="0" />
             </div>
           </div>
 
           <div class="form-group">
-            <label>Валюта по умолчанию</label>
+            <label>{{ t('adminSettings.commission.defaultCurrency') }}</label>
             <select v-model="settings.currency" class="form-input">
-              <option value="USD">USD - Доллар США</option>
-              <option value="EUR">EUR - Евро</option>
-              <option value="KZT">KZT - Тенге</option>
-              <option value="RUB">RUB - Рубль</option>
+              <option value="USD">{{ t('adminSettings.commission.currencies.usd') }}</option>
+              <option value="EUR">{{ t('adminSettings.commission.currencies.eur') }}</option>
+              <option value="KZT">{{ t('adminSettings.commission.currencies.kzt') }}</option>
+              <option value="RUB">{{ t('adminSettings.commission.currencies.rub') }}</option>
             </select>
           </div>
         </div>
 
-        <!-- Уведомления -->
+        <!-- Notifications -->
         <div v-if="activeTab === 'notifications'" class="settings-section">
-          <h2>Уведомления</h2>
-          <p class="section-description">Настройки системных уведомлений</p>
+          <h2>{{ t('adminSettings.notifications.title') }}</h2>
+          <p class="section-description">{{ t('adminSettings.notifications.description') }}</p>
 
           <div class="toggle-group">
             <div class="toggle-item">
               <div class="toggle-info">
-                <span class="toggle-label">Email уведомления</span>
-                <span class="toggle-description">Отправлять уведомления на email пользователей</span>
+                <span class="toggle-label">{{ t('adminSettings.notifications.emailNotifications') }}</span>
+                <span class="toggle-description">{{ t('adminSettings.notifications.emailNotificationsDesc') }}</span>
               </div>
               <label class="toggle">
                 <input type="checkbox" v-model="settings.email_notifications" />
@@ -169,8 +164,8 @@ async function saveSettings() {
 
             <div class="toggle-item">
               <div class="toggle-info">
-                <span class="toggle-label">Уведомления о заказах</span>
-                <span class="toggle-description">Уведомлять о новых заказах и изменении статусов</span>
+                <span class="toggle-label">{{ t('adminSettings.notifications.orderNotifications') }}</span>
+                <span class="toggle-description">{{ t('adminSettings.notifications.orderNotificationsDesc') }}</span>
               </div>
               <label class="toggle">
                 <input type="checkbox" v-model="settings.order_notifications" />
@@ -180,8 +175,8 @@ async function saveSettings() {
 
             <div class="toggle-item">
               <div class="toggle-info">
-                <span class="toggle-label">Уведомления об оплате</span>
-                <span class="toggle-description">Уведомлять о платежах и счетах</span>
+                <span class="toggle-label">{{ t('adminSettings.notifications.paymentNotifications') }}</span>
+                <span class="toggle-description">{{ t('adminSettings.notifications.paymentNotificationsDesc') }}</span>
               </div>
               <label class="toggle">
                 <input type="checkbox" v-model="settings.payment_notifications" />
@@ -191,30 +186,30 @@ async function saveSettings() {
           </div>
         </div>
 
-        <!-- Email настройки -->
+        <!-- Email Settings -->
         <div v-if="activeTab === 'email'" class="settings-section">
-          <h2>Настройки Email</h2>
-          <p class="section-description">Конфигурация почтового сервера</p>
+          <h2>{{ t('adminSettings.email.title') }}</h2>
+          <p class="section-description">{{ t('adminSettings.email.description') }}</p>
 
           <div class="info-card">
             <Mail :size="24" :stroke-width="iconStrokeWidth" />
             <div>
-              <h4>Настройки email</h4>
-              <p>Конфигурация почтового сервера выполняется через файл .env на сервере.</p>
+              <h4>{{ t('adminSettings.email.infoTitle') }}</h4>
+              <p>{{ t('adminSettings.email.infoText') }}</p>
             </div>
           </div>
         </div>
 
-        <!-- Безопасность -->
+        <!-- Security -->
         <div v-if="activeTab === 'security'" class="settings-section">
-          <h2>Безопасность</h2>
-          <p class="section-description">Параметры безопасности платформы</p>
+          <h2>{{ t('adminSettings.security.title') }}</h2>
+          <p class="section-description">{{ t('adminSettings.security.description') }}</p>
 
           <div class="toggle-group">
             <div class="toggle-item">
               <div class="toggle-info">
-                <span class="toggle-label">Верификация email</span>
-                <span class="toggle-description">Требовать подтверждение email при регистрации</span>
+                <span class="toggle-label">{{ t('adminSettings.security.emailVerification') }}</span>
+                <span class="toggle-description">{{ t('adminSettings.security.emailVerificationDesc') }}</span>
               </div>
               <label class="toggle">
                 <input type="checkbox" v-model="settings.require_email_verification" />
@@ -224,8 +219,8 @@ async function saveSettings() {
 
             <div class="toggle-item">
               <div class="toggle-info">
-                <span class="toggle-label">Верификация компаний</span>
-                <span class="toggle-description">Требовать верификацию компаний перевозчиков</span>
+                <span class="toggle-label">{{ t('adminSettings.security.companyVerification') }}</span>
+                <span class="toggle-description">{{ t('adminSettings.security.companyVerificationDesc') }}</span>
               </div>
               <label class="toggle">
                 <input type="checkbox" v-model="settings.require_company_verification" />
@@ -235,31 +230,31 @@ async function saveSettings() {
           </div>
 
           <div class="form-group">
-            <label>Время жизни сессии (минуты)</label>
+            <label>{{ t('adminSettings.security.sessionLifetime') }}</label>
             <input type="number" v-model="settings.session_lifetime" class="form-input" min="1" />
           </div>
         </div>
 
-        <!-- Система -->
+        <!-- System -->
         <div v-if="activeTab === 'system'" class="settings-section">
-          <h2>Система</h2>
-          <p class="section-description">Системная информация и действия</p>
+          <h2>{{ t('adminSettings.system.title') }}</h2>
+          <p class="section-description">{{ t('adminSettings.system.description') }}</p>
 
           <div class="system-info">
             <div class="info-row">
-              <span class="info-label">Версия приложения</span>
+              <span class="info-label">{{ t('adminSettings.system.appVersion') }}</span>
               <span class="info-value">1.0.0</span>
             </div>
             <div class="info-row">
-              <span class="info-label">Версия Laravel</span>
+              <span class="info-label">{{ t('adminSettings.system.laravelVersion') }}</span>
               <span class="info-value">11.x</span>
             </div>
             <div class="info-row">
-              <span class="info-label">Версия PHP</span>
+              <span class="info-label">{{ t('adminSettings.system.phpVersion') }}</span>
               <span class="info-value">8.2</span>
             </div>
             <div class="info-row">
-              <span class="info-label">База данных</span>
+              <span class="info-label">{{ t('adminSettings.system.database') }}</span>
               <span class="info-value">MySQL 8.0</span>
             </div>
           </div>
@@ -267,7 +262,7 @@ async function saveSettings() {
           <div class="system-actions">
             <button class="btn btn-secondary">
               <RefreshCw :size="16" :stroke-width="iconStrokeWidth" />
-              Очистить кэш
+              {{ t('adminSettings.system.clearCache') }}
             </button>
           </div>
         </div>

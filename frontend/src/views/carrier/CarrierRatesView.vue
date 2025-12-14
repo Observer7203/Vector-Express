@@ -2,6 +2,7 @@
 import { onMounted, ref, computed } from 'vue'
 import { RouterLink } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
+import { useI18n } from 'vue-i18n'
 import api from '@/api/client'
 import {
   DollarSign,
@@ -19,6 +20,7 @@ import {
 } from 'lucide-vue-next'
 import AppHeader from '@/components/AppHeader.vue'
 
+const { t } = useI18n()
 const iconStrokeWidth = 1.2
 
 const authStore = useAuthStore()
@@ -46,12 +48,12 @@ const newRateCard = ref({
   transit_days_max: 7
 })
 
-const transportTypes = [
-  { value: 'air', label: 'Авиа' },
-  { value: 'road', label: 'Авто' },
-  { value: 'rail', label: 'ЖД' },
-  { value: 'sea', label: 'Морские' }
-]
+const transportTypes = computed(() => [
+  { value: 'air', label: t('carrierRates.transportTypes.air') },
+  { value: 'road', label: t('carrierRates.transportTypes.road') },
+  { value: 'rail', label: t('carrierRates.transportTypes.rail') },
+  { value: 'sea', label: t('carrierRates.transportTypes.sea') }
+])
 
 // Import functionality
 const showImportModal = ref(false)
@@ -238,7 +240,7 @@ async function saveRateCard() {
 }
 
 async function deleteRateCard(rateCardId) {
-  if (!confirm('Вы уверены, что хотите удалить этот тариф?')) return
+  if (!confirm(t('carrierRates.confirmDelete'))) return
 
   try {
     await api.delete(`/carrier/rate-cards/${rateCardId}`)
@@ -250,15 +252,15 @@ async function deleteRateCard(rateCardId) {
 }
 
 function getTransportLabel(type) {
-  const t = transportTypes.find((tt) => tt.value === type)
-  return t ? t.label : type
+  const transportType = transportTypes.value.find((tt) => tt.value === type)
+  return transportType ? transportType.label : type
 }
 
 function formatWeight(minWeight, maxWeight) {
   if (maxWeight === null || maxWeight === undefined) {
-    return `${minWeight}+ кг`
+    return `${minWeight}+ ${t('carrierRates.kg')}`
   }
-  return `${minWeight}-${maxWeight} кг`
+  return `${minWeight}-${maxWeight} ${t('carrierRates.kg')}`
 }
 
 function clearFilters() {
@@ -316,7 +318,7 @@ async function handleImport() {
     console.error('Import failed:', error)
     importResult.value = {
       success: false,
-      message: error.response?.data?.error || 'Ошибка импорта'
+      message: error.response?.data?.error || t('carrierRates.importError')
     }
   } finally {
     importLoading.value = false
@@ -336,17 +338,17 @@ async function handleLogout() {
       <div class="container">
         <div class="page-header">
           <div class="page-title">
-            <h1>Тарифы</h1>
-            <p class="subtitle">Настройка ставок по весу и направлениям</p>
+            <h1>{{ t('carrierRates.title') }}</h1>
+            <p class="subtitle">{{ t('carrierRates.subtitle') }}</p>
           </div>
           <div class="header-actions">
             <button class="btn btn-outline" @click="openImportModal">
               <Upload :size="18" :stroke-width="iconStrokeWidth" />
-              Импорт из Excel
+              {{ t('carrierRates.importFromExcel') }}
             </button>
             <button class="btn btn-primary" @click="openAddModal">
               <Plus :size="18" :stroke-width="iconStrokeWidth" />
-              Добавить тариф
+              {{ t('carrierRates.addRate') }}
             </button>
           </div>
         </div>
@@ -358,28 +360,28 @@ async function handleLogout() {
             <input
               v-model="searchQuery"
               type="text"
-              placeholder="Поиск по зонам..."
+              :placeholder="t('carrierRates.searchByZones')"
               class="search-input"
             />
           </div>
 
           <div class="filter-group">
             <select v-model="filterTransportType" class="filter-select">
-              <option value="">Все типы</option>
+              <option value="">{{ t('carrierRates.allTypes') }}</option>
               <option v-for="type in transportTypes" :key="type.value" :value="type.value">
                 {{ type.label }}
               </option>
             </select>
 
             <select v-model="filterOriginZone" class="filter-select">
-              <option value="">Откуда</option>
+              <option value="">{{ t('carrierRates.from') }}</option>
               <option v-for="zone in zones" :key="zone.id" :value="zone.id">
                 {{ zone.zone_name }}
               </option>
             </select>
 
             <select v-model="filterDestZone" class="filter-select">
-              <option value="">Куда</option>
+              <option value="">{{ t('carrierRates.to') }}</option>
               <option v-for="zone in zones" :key="zone.id" :value="zone.id">
                 {{ zone.zone_name }}
               </option>
@@ -391,7 +393,7 @@ async function handleLogout() {
               @click="clearFilters"
             >
               <X :size="16" :stroke-width="iconStrokeWidth" />
-              Сбросить
+              {{ t('carrierRates.reset') }}
             </button>
           </div>
         </div>
@@ -399,7 +401,7 @@ async function handleLogout() {
         <!-- Loading -->
         <div v-if="loading" class="loading-state">
           <div class="spinner"></div>
-          <p>Загрузка тарифов...</p>
+          <p>{{ t('carrierRates.loadingRates') }}</p>
         </div>
 
         <!-- Rate Cards Table -->
@@ -407,12 +409,12 @@ async function handleLogout() {
           <table class="rates-table">
             <thead>
               <tr>
-                <th>Откуда</th>
-                <th>Куда</th>
-                <th>Тип</th>
-                <th>Вес</th>
-                <th>Ставка</th>
-                <th>Срок</th>
+                <th>{{ t('carrierRates.tableHeaders.from') }}</th>
+                <th>{{ t('carrierRates.tableHeaders.to') }}</th>
+                <th>{{ t('carrierRates.tableHeaders.type') }}</th>
+                <th>{{ t('carrierRates.tableHeaders.weight') }}</th>
+                <th>{{ t('carrierRates.tableHeaders.rate') }}</th>
+                <th>{{ t('carrierRates.tableHeaders.transit') }}</th>
                 <th></th>
               </tr>
             </thead>
@@ -440,16 +442,16 @@ async function handleLogout() {
                 </td>
                 <td class="rate-cell">
                   <strong>${{ parseFloat(rate.rate || 0).toFixed(2) }}</strong>
-                  <span class="rate-unit">/кг</span>
+                  <span class="rate-unit">/{{ t('carrierRates.kg') }}</span>
                 </td>
                 <td class="transit-cell">
-                  {{ rate.transit_days_min }}-{{ rate.transit_days_max }} дн.
+                  {{ rate.transit_days_min }}-{{ rate.transit_days_max }} {{ t('carrierRates.days') }}
                 </td>
                 <td class="actions-cell">
-                  <button class="btn-icon" @click="openEditModal(rate)" title="Редактировать">
+                  <button class="btn-icon" @click="openEditModal(rate)" :title="t('common.edit')">
                     <Edit2 :size="16" :stroke-width="iconStrokeWidth" />
                   </button>
-                  <button class="btn-icon btn-icon-danger" @click="deleteRateCard(rate.id)" title="Удалить">
+                  <button class="btn-icon btn-icon-danger" @click="deleteRateCard(rate.id)" :title="t('common.delete')">
                     <Trash2 :size="16" :stroke-width="iconStrokeWidth" />
                   </button>
                 </td>
@@ -461,11 +463,11 @@ async function handleLogout() {
         <!-- Empty State -->
         <div v-else class="empty-state">
           <DollarSign :size="48" :stroke-width="iconStrokeWidth" />
-          <h3>Нет тарифов</h3>
-          <p>Добавьте тариф для расчета стоимости перевозок</p>
+          <h3>{{ t('carrierRates.noRates') }}</h3>
+          <p>{{ t('carrierRates.addRatePrompt') }}</p>
           <button class="btn btn-primary" @click="openAddModal">
             <Plus :size="18" :stroke-width="iconStrokeWidth" />
-            Добавить тариф
+            {{ t('carrierRates.addRate') }}
           </button>
         </div>
       </div>
@@ -475,7 +477,7 @@ async function handleLogout() {
     <div v-if="showAddModal" class="modal-overlay" @click.self="closeModal">
       <div class="modal">
         <div class="modal-header">
-          <h2>{{ editingRateCard ? 'Редактировать тариф' : 'Новый тариф' }}</h2>
+          <h2>{{ editingRateCard ? t('carrierRates.editRate') : t('carrierRates.newRate') }}</h2>
           <button class="btn-close" @click="closeModal">
             <X :size="20" :stroke-width="iconStrokeWidth" />
           </button>
@@ -484,18 +486,18 @@ async function handleLogout() {
         <div class="modal-body">
           <div class="form-row">
             <div class="form-group">
-              <label>Откуда (зона)</label>
+              <label>{{ t('carrierRates.form.originZone') }}</label>
               <select v-model="newRateCard.origin_zone_id" class="form-input">
-                <option value="">Выберите зону</option>
+                <option value="">{{ t('carrierRates.form.selectZone') }}</option>
                 <option v-for="zone in zones" :key="zone.id" :value="zone.id">
                   {{ zone.zone_code }} - {{ zone.zone_name }}
                 </option>
               </select>
             </div>
             <div class="form-group">
-              <label>Куда (зона)</label>
+              <label>{{ t('carrierRates.form.destinationZone') }}</label>
               <select v-model="newRateCard.destination_zone_id" class="form-input">
-                <option value="">Выберите зону</option>
+                <option value="">{{ t('carrierRates.form.selectZone') }}</option>
                 <option v-for="zone in zones" :key="zone.id" :value="zone.id">
                   {{ zone.zone_code }} - {{ zone.zone_name }}
                 </option>
@@ -504,7 +506,7 @@ async function handleLogout() {
           </div>
 
           <div class="form-group">
-            <label>Тип перевозки</label>
+            <label>{{ t('carrierRates.form.transportType') }}</label>
             <select v-model="newRateCard.transport_type" class="form-input">
               <option v-for="type in transportTypes" :key="type.value" :value="type.value">
                 {{ type.label }}
@@ -514,7 +516,7 @@ async function handleLogout() {
 
           <div class="form-row">
             <div class="form-group">
-              <label>Вес от (кг)</label>
+              <label>{{ t('carrierRates.form.weightFrom') }}</label>
               <input
                 v-model.number="newRateCard.min_weight"
                 type="number"
@@ -524,13 +526,13 @@ async function handleLogout() {
               />
             </div>
             <div class="form-group">
-              <label>Вес до (кг)</label>
+              <label>{{ t('carrierRates.form.weightTo') }}</label>
               <input
                 v-model.number="newRateCard.max_weight"
                 type="number"
                 min="0"
                 step="0.1"
-                placeholder="Без ограничения"
+                :placeholder="t('carrierRates.form.noLimit')"
                 class="form-input"
               />
             </div>
@@ -538,7 +540,7 @@ async function handleLogout() {
 
           <div class="form-row">
             <div class="form-group">
-              <label>Ставка за кг (USD)</label>
+              <label>{{ t('carrierRates.form.ratePerKg') }}</label>
               <input
                 v-model.number="newRateCard.rate"
                 type="number"
@@ -551,7 +553,7 @@ async function handleLogout() {
 
           <div class="form-row">
             <div class="form-group">
-              <label>Срок мин. (дней)</label>
+              <label>{{ t('carrierRates.form.transitMin') }}</label>
               <input
                 v-model.number="newRateCard.transit_days_min"
                 type="number"
@@ -560,7 +562,7 @@ async function handleLogout() {
               />
             </div>
             <div class="form-group">
-              <label>Срок макс. (дней)</label>
+              <label>{{ t('carrierRates.form.transitMax') }}</label>
               <input
                 v-model.number="newRateCard.transit_days_max"
                 type="number"
@@ -572,10 +574,10 @@ async function handleLogout() {
         </div>
 
         <div class="modal-footer">
-          <button class="btn btn-outline" @click="closeModal">Отмена</button>
+          <button class="btn btn-outline" @click="closeModal">{{ t('common.cancel') }}</button>
           <button class="btn btn-primary" @click="saveRateCard">
             <Save :size="16" :stroke-width="iconStrokeWidth" />
-            {{ editingRateCard ? 'Сохранить' : 'Создать тариф' }}
+            {{ editingRateCard ? t('common.save') : t('carrierRates.createRate') }}
           </button>
         </div>
       </div>
@@ -585,7 +587,7 @@ async function handleLogout() {
     <div v-if="showImportModal" class="modal-overlay" @click.self="closeImportModal">
       <div class="modal">
         <div class="modal-header">
-          <h2>Импорт тарифов из Excel</h2>
+          <h2>{{ t('carrierRates.import.title') }}</h2>
           <button class="btn-close" @click="closeImportModal">
             <X :size="20" :stroke-width="iconStrokeWidth" />
           </button>
@@ -595,31 +597,31 @@ async function handleLogout() {
           <div class="import-info">
             <FileSpreadsheet :size="24" :stroke-width="iconStrokeWidth" />
             <div>
-              <p><strong>Формат файла:</strong> .xlsx, .xls или .csv</p>
-              <p class="import-hint">Убедитесь, что у вас уже созданы зоны с кодами, указанными в файле</p>
+              <p><strong>{{ t('carrierRates.import.fileFormat') }}</strong> .xlsx, .xls {{ t('carrierRates.import.or') }} .csv</p>
+              <p class="import-hint">{{ t('carrierRates.import.ensureZones') }}</p>
             </div>
           </div>
 
           <div class="columns-info">
-            <h4>Обязательные колонки:</h4>
+            <h4>{{ t('carrierRates.import.requiredColumns') }}</h4>
             <ul>
-              <li><code>origin_zone</code> — код зоны отправления (например: KZ, RU)</li>
-              <li><code>destination_zone</code> — код зоны назначения</li>
-              <li><code>rate</code> — ставка за кг (число)</li>
+              <li><code>origin_zone</code> — {{ t('carrierRates.import.originZoneCode') }}</li>
+              <li><code>destination_zone</code> — {{ t('carrierRates.import.destinationZoneCode') }}</li>
+              <li><code>rate</code> — {{ t('carrierRates.import.ratePerKg') }}</li>
             </ul>
-            <h4>Опциональные колонки:</h4>
+            <h4>{{ t('carrierRates.import.optionalColumns') }}</h4>
             <ul>
-              <li><code>transport_type</code> — тип: road, air, rail, sea (по умолчанию: road)</li>
-              <li><code>min_weight</code> — минимальный вес (по умолчанию: 0)</li>
-              <li><code>max_weight</code> — максимальный вес</li>
-              <li><code>currency</code> — валюта (по умолчанию: USD)</li>
-              <li><code>transit_days_min</code> — мин. срок доставки (дней)</li>
-              <li><code>transit_days_max</code> — макс. срок доставки (дней)</li>
+              <li><code>transport_type</code> — {{ t('carrierRates.import.transportTypeDesc') }}</li>
+              <li><code>min_weight</code> — {{ t('carrierRates.import.minWeight') }}</li>
+              <li><code>max_weight</code> — {{ t('carrierRates.import.maxWeight') }}</li>
+              <li><code>currency</code> — {{ t('carrierRates.import.currency') }}</li>
+              <li><code>transit_days_min</code> — {{ t('carrierRates.import.minTransit') }}</li>
+              <li><code>transit_days_max</code> — {{ t('carrierRates.import.maxTransit') }}</li>
             </ul>
           </div>
 
           <div class="form-group">
-            <label>Выберите файл</label>
+            <label>{{ t('carrierRates.import.selectFile') }}</label>
             <input
               type="file"
               accept=".xlsx,.xls,.csv"
@@ -633,14 +635,14 @@ async function handleLogout() {
             <div>
               <p>{{ importResult.message }}</p>
               <p v-if="importResult.success">
-                Импортировано: {{ importResult.imported }}, Пропущено: {{ importResult.skipped }}
+                {{ t('carrierRates.import.imported') }}: {{ importResult.imported }}, {{ t('carrierRates.import.skipped') }}: {{ importResult.skipped }}
               </p>
             </div>
           </div>
         </div>
 
         <div class="modal-footer">
-          <button class="btn btn-outline" @click="closeImportModal">Отмена</button>
+          <button class="btn btn-outline" @click="closeImportModal">{{ t('common.cancel') }}</button>
           <button
             class="btn btn-primary"
             @click="handleImport"
@@ -648,7 +650,7 @@ async function handleLogout() {
           >
             <Upload v-if="!importLoading" :size="16" :stroke-width="iconStrokeWidth" />
             <span v-else class="spinner-small"></span>
-            {{ importLoading ? 'Импорт...' : 'Импортировать' }}
+            {{ importLoading ? t('carrierRates.import.importing') : t('carrierRates.import.importButton') }}
           </button>
         </div>
       </div>

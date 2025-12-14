@@ -1,10 +1,12 @@
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { useRoute } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import { useOrdersStore } from '@/stores/orders'
 
 const route = useRoute()
 const ordersStore = useOrdersStore()
+const { t, locale } = useI18n()
 
 const order = ref(null)
 
@@ -15,25 +17,25 @@ onMounted(async () => {
 
 function formatDate(dateString) {
   if (!dateString) return '-'
-  return new Date(dateString).toLocaleDateString('ru-RU')
+  return new Date(dateString).toLocaleDateString(locale.value)
 }
 
 function formatDateTime(dateString) {
   if (!dateString) return '-'
-  return new Date(dateString).toLocaleString('ru-RU')
+  return new Date(dateString).toLocaleString(locale.value)
 }
 
-const statusLabels = {
-  pending: 'Ожидает подтверждения',
-  confirmed: 'Подтвержден',
-  pickup_scheduled: 'Назначен забор',
-  picked_up: 'Забран',
-  in_transit: 'В пути',
-  customs: 'На таможне',
-  out_for_delivery: 'Доставляется',
-  delivered: 'Доставлен',
-  cancelled: 'Отменен'
-}
+const statusLabels = computed(() => ({
+  pending: t('orderDetail.statuses.pending'),
+  confirmed: t('orderDetail.statuses.confirmed'),
+  pickup_scheduled: t('orderDetail.statuses.pickupScheduled'),
+  picked_up: t('orderDetail.statuses.pickedUp'),
+  in_transit: t('orderDetail.statuses.inTransit'),
+  customs: t('orderDetail.statuses.customs'),
+  out_for_delivery: t('orderDetail.statuses.outForDelivery'),
+  delivered: t('orderDetail.statuses.delivered'),
+  cancelled: t('orderDetail.statuses.cancelled')
+}))
 
 const statusColors = {
   pending: 'warning',
@@ -63,7 +65,7 @@ function getStatusIndex(status) {
 }
 
 async function cancelOrder() {
-  if (confirm('Вы уверены, что хотите отменить заказ?')) {
+  if (confirm(t('orderDetail.confirmCancel'))) {
     await ordersStore.cancelOrder(order.value.id)
     order.value = ordersStore.currentOrder
   }
@@ -74,10 +76,10 @@ async function cancelOrder() {
   <div class="page">
     <header class="page-header">
       <div class="container">
-        <RouterLink to="/orders" class="back-link">← Назад к заказам</RouterLink>
+        <RouterLink to="/orders" class="back-link">← {{ t('orderDetail.backToOrders') }}</RouterLink>
         <div class="header-content">
           <div>
-            <h1>Заказ {{ order?.order_number }}</h1>
+            <h1>{{ t('orderDetail.order') }} {{ order?.order_number }}</h1>
             <p v-if="order?.shipment" class="route">
               {{ order.shipment.origin_city }} → {{ order.shipment.destination_city }}
             </p>
@@ -90,12 +92,12 @@ async function cancelOrder() {
     </header>
 
     <main class="container">
-      <div v-if="ordersStore.loading" class="loading">Загрузка...</div>
+      <div v-if="ordersStore.loading" class="loading">{{ t('common.loading') }}</div>
 
       <div v-else-if="order" class="order-details">
         <!-- Progress -->
         <div class="progress-card" v-if="order.status !== 'cancelled'">
-          <h3>Статус доставки</h3>
+          <h3>{{ t('orderDetail.deliveryStatus') }}</h3>
           <div class="progress-bar">
             <div
               v-for="(step, index) in statusSteps"
@@ -114,26 +116,26 @@ async function cancelOrder() {
         <div class="details-grid">
           <!-- Order Info -->
           <div class="detail-card">
-            <h3>Информация о заказе</h3>
+            <h3>{{ t('orderDetail.orderInfo') }}</h3>
             <div class="info-list">
               <div class="info-row">
-                <span class="label">Номер заказа</span>
+                <span class="label">{{ t('orderDetail.orderNumber') }}</span>
                 <span class="value">{{ order.order_number }}</span>
               </div>
               <div class="info-row">
-                <span class="label">Дата создания</span>
+                <span class="label">{{ t('orderDetail.createdAt') }}</span>
                 <span class="value">{{ formatDateTime(order.created_at) }}</span>
               </div>
               <div class="info-row">
-                <span class="label">Перевозчик</span>
+                <span class="label">{{ t('orderDetail.carrier') }}</span>
                 <span class="value">{{ order.carrier?.name || '-' }}</span>
               </div>
               <div class="info-row" v-if="order.tracking_number">
-                <span class="label">Трек-номер</span>
+                <span class="label">{{ t('orderDetail.trackingNumber') }}</span>
                 <span class="value track">{{ order.tracking_number }}</span>
               </div>
               <div class="info-row" v-if="order.carrier_tracking_number">
-                <span class="label">Трек перевозчика</span>
+                <span class="label">{{ t('orderDetail.carrierTrackingNumber') }}</span>
                 <span class="value track">{{ order.carrier_tracking_number }}</span>
               </div>
             </div>
@@ -141,14 +143,14 @@ async function cancelOrder() {
 
           <!-- Financial -->
           <div class="detail-card">
-            <h3>Стоимость</h3>
+            <h3>{{ t('orderDetail.cost') }}</h3>
             <div class="price-block">
               <span class="price-value">{{ order.total_amount?.toLocaleString() }}</span>
               <span class="price-currency">{{ order.currency }}</span>
             </div>
             <div class="info-list">
               <div class="info-row" v-if="order.commission_amount">
-                <span class="label">Комиссия сервиса</span>
+                <span class="label">{{ t('orderDetail.serviceCommission') }}</span>
                 <span class="value">{{ order.commission_amount }} {{ order.currency }}</span>
               </div>
             </div>
@@ -156,22 +158,22 @@ async function cancelOrder() {
 
           <!-- Pickup -->
           <div class="detail-card">
-            <h3>Забор груза</h3>
+            <h3>{{ t('orderDetail.pickup') }}</h3>
             <div class="info-list">
               <div class="info-row">
-                <span class="label">Контактное лицо</span>
+                <span class="label">{{ t('orderDetail.contactPerson') }}</span>
                 <span class="value">{{ order.pickup_contact_name || order.contact_name || '-' }}</span>
               </div>
               <div class="info-row">
-                <span class="label">Телефон</span>
+                <span class="label">{{ t('orderDetail.phone') }}</span>
                 <span class="value">{{ order.pickup_contact_phone || order.contact_phone || '-' }}</span>
               </div>
               <div class="info-row">
-                <span class="label">Адрес</span>
+                <span class="label">{{ t('orderDetail.address') }}</span>
                 <span class="value">{{ order.pickup_address || order.shipment?.origin_address || '-' }}</span>
               </div>
               <div class="info-row" v-if="order.pickup_date">
-                <span class="label">Дата забора</span>
+                <span class="label">{{ t('orderDetail.pickupDate') }}</span>
                 <span class="value">{{ formatDate(order.pickup_date) }}</span>
               </div>
             </div>
@@ -179,18 +181,18 @@ async function cancelOrder() {
 
           <!-- Delivery -->
           <div class="detail-card">
-            <h3>Доставка</h3>
+            <h3>{{ t('orderDetail.delivery') }}</h3>
             <div class="info-list">
               <div class="info-row">
-                <span class="label">Контактное лицо</span>
+                <span class="label">{{ t('orderDetail.contactPerson') }}</span>
                 <span class="value">{{ order.delivery_contact_name || '-' }}</span>
               </div>
               <div class="info-row">
-                <span class="label">Телефон</span>
+                <span class="label">{{ t('orderDetail.phone') }}</span>
                 <span class="value">{{ order.delivery_contact_phone || '-' }}</span>
               </div>
               <div class="info-row">
-                <span class="label">Адрес</span>
+                <span class="label">{{ t('orderDetail.address') }}</span>
                 <span class="value">{{ order.delivery_address || order.shipment?.destination_address || '-' }}</span>
               </div>
             </div>
@@ -199,7 +201,7 @@ async function cancelOrder() {
 
         <!-- Timeline -->
         <div class="timeline-card" v-if="order.tracking_events?.length">
-          <h3>История доставки</h3>
+          <h3>{{ t('orderDetail.deliveryHistory') }}</h3>
           <div class="timeline">
             <div
               v-for="event in order.tracking_events"
@@ -221,7 +223,7 @@ async function cancelOrder() {
 
         <!-- Notes -->
         <div class="notes-card" v-if="order.notes">
-          <h3>Примечания</h3>
+          <h3>{{ t('orderDetail.notes') }}</h3>
           <p>{{ order.notes }}</p>
         </div>
 
@@ -232,14 +234,14 @@ async function cancelOrder() {
             :to="`/orders/${order.id}/tracking`"
             class="btn btn-primary"
           >
-            Отследить на карте
+            {{ t('orderDetail.trackOnMap') }}
           </RouterLink>
           <button
             v-if="['pending', 'confirmed'].includes(order.status)"
             @click="cancelOrder"
             class="btn btn-danger"
           >
-            Отменить заказ
+            {{ t('orderDetail.cancelOrder') }}
           </button>
         </div>
       </div>

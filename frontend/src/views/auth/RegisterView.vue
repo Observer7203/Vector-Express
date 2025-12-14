@@ -1,9 +1,12 @@
 <script setup>
 import { ref } from 'vue'
 import { RouterLink, useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import { useAuthStore } from '@/stores/auth'
 import { User, Truck } from 'lucide-vue-next'
+import LanguageSwitcher from '@/components/LanguageSwitcher.vue'
 
+const { t } = useI18n()
 const iconStrokeWidth = 1.2
 
 const router = useRouter()
@@ -47,11 +50,12 @@ async function handleSubmit() {
     <div class="auth-container">
       <div class="auth-header">
         <RouterLink to="/" class="logo">Vector Express</RouterLink>
+        <LanguageSwitcher />
       </div>
 
       <div class="auth-card">
-        <h1>Регистрация</h1>
-        <p class="subtitle">Создайте аккаунт для доступа к платформе</p>
+        <h1>{{ t('register.title') }}</h1>
+        <p class="subtitle">{{ t('register.subtitle') }}</p>
 
         <div v-if="authStore.error" class="alert alert-error">
           {{ authStore.error }}
@@ -59,58 +63,58 @@ async function handleSubmit() {
 
         <form @submit.prevent="handleSubmit" class="auth-form">
           <div class="form-group">
-            <label for="role">Тип аккаунта</label>
+            <label for="role">{{ t('register.accountType') }}</label>
             <div class="role-selector">
               <label class="role-option" :class="{ active: form.role === 'customer' }">
                 <input type="radio" v-model="form.role" value="customer" />
                 <div class="role-content">
                   <User :size="24" :stroke-width="iconStrokeWidth" />
-                  <span>Заказчик</span>
+                  <span>{{ t('register.roles.customer') }}</span>
                 </div>
               </label>
               <label class="role-option" :class="{ active: form.role === 'carrier' }">
                 <input type="radio" v-model="form.role" value="carrier" />
                 <div class="role-content">
                   <Truck :size="24" :stroke-width="iconStrokeWidth" />
-                  <span>Перевозчик</span>
+                  <span>{{ t('register.roles.carrier') }}</span>
                 </div>
               </label>
             </div>
           </div>
 
           <div class="form-group">
-            <label for="name">Имя</label>
+            <label for="name">{{ t('auth.name') }}</label>
             <input
               id="name"
               v-model="form.name"
               type="text"
               required
-              placeholder="Иван Петров"
+              :placeholder="t('register.namePlaceholder')"
               :class="{ 'has-error': errors.name }"
             />
             <span v-if="errors.name" class="field-error">{{ errors.name[0] }}</span>
           </div>
 
           <div class="form-group">
-            <label for="email">Email</label>
+            <label for="email">{{ t('auth.email') }}</label>
             <input
               id="email"
               v-model="form.email"
               type="email"
               required
-              placeholder="your@email.com"
+              :placeholder="t('register.emailPlaceholder')"
               :class="{ 'has-error': errors.email }"
             />
             <span v-if="errors.email" class="field-error">{{ errors.email[0] }}</span>
           </div>
 
           <div class="form-group">
-            <label for="phone">Телефон</label>
+            <label for="phone">{{ t('auth.phone') }}</label>
             <input
               id="phone"
               v-model="form.phone"
               type="tel"
-              placeholder="+7 777 123 45 67"
+              :placeholder="t('register.phonePlaceholder')"
               :class="{ 'has-error': errors.phone }"
             />
             <span v-if="errors.phone" class="field-error">{{ errors.phone[0] }}</span>
@@ -118,63 +122,63 @@ async function handleSubmit() {
 
           <template v-if="form.role === 'carrier'">
             <div class="form-group">
-              <label for="company_name">Название компании *</label>
+              <label for="company_name">{{ t('register.companyName') }} *</label>
               <input
                 id="company_name"
                 v-model="form.company_name"
                 type="text"
                 required
-                placeholder="ООО Логистика"
+                :placeholder="t('register.companyNamePlaceholder')"
                 :class="{ 'has-error': errors.company_name }"
               />
               <span v-if="errors.company_name" class="field-error">{{ errors.company_name[0] }}</span>
             </div>
 
             <div class="form-group">
-              <label for="company_inn">ИНН/БИН</label>
+              <label for="company_inn">{{ t('register.companyInn') }}</label>
               <input
                 id="company_inn"
                 v-model="form.company_inn"
                 type="text"
-                placeholder="123456789012"
+                :placeholder="t('register.companyInnPlaceholder')"
               />
             </div>
           </template>
 
           <div class="form-row">
             <div class="form-group">
-              <label for="password">Пароль</label>
+              <label for="password">{{ t('auth.password') }}</label>
               <input
                 id="password"
                 v-model="form.password"
                 type="password"
                 required
-                placeholder="Минимум 8 символов"
+                :placeholder="t('register.passwordPlaceholder')"
                 :class="{ 'has-error': errors.password }"
               />
               <span v-if="errors.password" class="field-error">{{ errors.password[0] }}</span>
             </div>
 
             <div class="form-group">
-              <label for="password_confirmation">Подтверждение</label>
+              <label for="password_confirmation">{{ t('auth.confirmPassword') }}</label>
               <input
                 id="password_confirmation"
                 v-model="form.password_confirmation"
                 type="password"
                 required
-                placeholder="Повторите пароль"
+                :placeholder="t('register.confirmPasswordPlaceholder')"
               />
             </div>
           </div>
 
           <button type="submit" class="btn btn-primary" :disabled="authStore.loading">
             <span v-if="authStore.loading" class="btn-loader"></span>
-            {{ authStore.loading ? 'Регистрация...' : 'Зарегистрироваться' }}
+            {{ authStore.loading ? t('register.registering') : t('auth.registerButton') }}
           </button>
         </form>
 
         <div class="auth-footer">
-          <p>Уже есть аккаунт? <RouterLink to="/login">Войти</RouterLink></p>
+          <p>{{ t('auth.alreadyHaveAccount') }} <RouterLink to="/login">{{ t('auth.loginButton') }}</RouterLink></p>
         </div>
       </div>
     </div>
@@ -199,7 +203,9 @@ async function handleSubmit() {
 }
 
 .auth-header {
-  text-align: center;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   margin-bottom: $spacing-lg;
 }
 

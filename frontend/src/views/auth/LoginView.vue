@@ -1,8 +1,11 @@
 <script setup>
 import { ref } from 'vue'
 import { RouterLink, useRouter, useRoute } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import { useAuthStore } from '@/stores/auth'
+import LanguageSwitcher from '@/components/LanguageSwitcher.vue'
 
+const { t } = useI18n()
 const router = useRouter()
 const route = useRoute()
 const authStore = useAuthStore()
@@ -32,11 +35,12 @@ async function handleSubmit() {
     <div class="auth-container">
       <div class="auth-header">
         <RouterLink to="/" class="logo">Vector Express</RouterLink>
+        <LanguageSwitcher />
       </div>
 
       <div class="auth-card">
-        <h1>Вход в систему</h1>
-        <p class="subtitle">Войдите для доступа к личному кабинету</p>
+        <h1>{{ t('login.title') }}</h1>
+        <p class="subtitle">{{ t('login.subtitle') }}</p>
 
         <div v-if="authStore.error" class="alert alert-error">
           {{ authStore.error }}
@@ -44,26 +48,26 @@ async function handleSubmit() {
 
         <form @submit.prevent="handleSubmit" class="auth-form">
           <div class="form-group">
-            <label for="email">Email</label>
+            <label for="email">{{ t('auth.email') }}</label>
             <input
               id="email"
               v-model="form.email"
               type="email"
               required
-              placeholder="your@email.com"
+              :placeholder="t('login.emailPlaceholder')"
               :class="{ 'has-error': errors.email }"
             />
             <span v-if="errors.email" class="field-error">{{ errors.email[0] }}</span>
           </div>
 
           <div class="form-group">
-            <label for="password">Пароль</label>
+            <label for="password">{{ t('auth.password') }}</label>
             <input
               id="password"
               v-model="form.password"
               type="password"
               required
-              placeholder="••••••••"
+              :placeholder="t('login.passwordPlaceholder')"
               :class="{ 'has-error': errors.password }"
             />
             <span v-if="errors.password" class="field-error">{{ errors.password[0] }}</span>
@@ -71,12 +75,12 @@ async function handleSubmit() {
 
           <button type="submit" class="btn btn-primary" :disabled="authStore.loading">
             <span v-if="authStore.loading" class="btn-loader"></span>
-            {{ authStore.loading ? 'Вход...' : 'Войти' }}
+            {{ authStore.loading ? t('login.loggingIn') : t('auth.loginButton') }}
           </button>
         </form>
 
         <div class="auth-footer">
-          <p>Нет аккаунта? <RouterLink to="/register">Зарегистрироваться</RouterLink></p>
+          <p>{{ t('auth.dontHaveAccount') }} <RouterLink to="/register">{{ t('auth.registerButton') }}</RouterLink></p>
         </div>
       </div>
     </div>
@@ -101,7 +105,9 @@ async function handleSubmit() {
 }
 
 .auth-header {
-  text-align: center;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   margin-bottom: $spacing-lg;
 }
 
