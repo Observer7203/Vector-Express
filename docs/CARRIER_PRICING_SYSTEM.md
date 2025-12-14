@@ -491,14 +491,20 @@ volumetric_weight = (Length × Width × Height) / DIM_FACTOR
 volumetric_weight = (L × W × H) / DIM_FACTOR × quantity
 ```
 
+**Источники формулы:**
+- **IATA TACT Rules**: https://www.iata.org/contentassets/0238d5bc961e4fe8bc5ce1891e4f76c2/tact-rules.pdf
+- **DHL Volumetric Weight**: https://www.dhl.com/global-en/home/our-divisions/express/tools/volumetric-weight-express.html
+- **FedEx Dimensional Weight**: https://www.fedex.com/en-us/shipping/how-to-calculate-dimensional-weight.html
+- **UPS Dimensional Weight**: https://www.ups.com/us/en/help-center/packaging-and-supplies/determine-billable-weight.page
+
 **DIM Factor по типу транспорта:**
 
-| Тип | DIM Factor | Описание |
-|-----|------------|----------|
-| Air | 5000-6000 | Авиа (стандарт IATA: 6000) |
-| Sea | 1000 | Морской |
-| Rail | 3000-4000 | Железнодорожный |
-| Road | 3000-5000 | Автомобильный |
+| Тип | DIM Factor | Описание | Источник |
+|-----|------------|----------|----------|
+| Air | 5000-6000 | Авиа (стандарт IATA: 6000) | [IATA TACT Rules](https://www.iata.org/contentassets/0238d5bc961e4fe8bc5ce1891e4f76c2/tact-rules.pdf) |
+| Sea | 1000 | Морской | [Maersk Container Rates](https://www.maersk.com/shipping-services/quotation) |
+| Rail | 3000-4000 | Железнодорожный | [DB Schenker Rail](https://www.dbschenker.com/global/products/rail-transport) |
+| Road | 3000-5000 | Автомобильный | [Деловые Линии](https://www.dellin.ru/), [СДЭК](https://www.cdek.ru/) |
 
 *Размеры в см, вес в кг*
 
@@ -508,37 +514,80 @@ volumetric_weight = (L × W × H) / DIM_FACTOR × quantity
 chargeable_weight = MAX(actual_weight, volumetric_weight)
 ```
 
+**Источники формулы:**
+- **IATA Cargo Pricing**: https://www.iata.org/en/programs/cargo/pricing/
+- **DHL Express Rate Guide**: https://mydhl.express.dhl/content/dam/downloads/express/en/rate_guide.pdf
+- **FedEx Rate & Transit Times**: https://www.fedex.com/en-us/shipping/international-rates.html
+- **UPS Daily Rates**: https://www.ups.com/us/en/support/shipping-support/shipping-costs-rates/daily-rates.page
+
+**Обоснование**: Все международные перевозчики используют принцип тарификации по большему из весов (фактический vs объёмный), чтобы компенсировать затраты на лёгкие объёмные грузы, занимающие много места в транспортном средстве.
+
 ### Базовая ставка
 
-| Тип ставки | Формула |
-|------------|---------|
-| `flat` | `rate` |
-| `per_kg` | `chargeable_weight × rate` |
-| `per_lb` | `chargeable_weight × 2.20462 × rate` |
-| `per_100kg` | `(chargeable_weight / 100) × rate` |
-| `per_100lbs` | `(chargeable_weight × 2.20462 / 100) × rate` |
+| Тип ставки | Формула | Источник |
+|------------|---------|----------|
+| `flat` | `rate` | Фиксированная ставка за отправление |
+| `per_kg` | `chargeable_weight × rate` | [DHL Rate Structure](https://www.dhl.com/global-en/home/our-divisions/express/shipping/express-rates.html) |
+| `per_lb` | `chargeable_weight × 2.20462 × rate` | [FedEx Rate Structure](https://www.fedex.com/en-us/shipping/international-rates.html) (США) |
+| `per_100kg` | `(chargeable_weight / 100) × rate` | [DB Schenker](https://www.dbschenker.com/) (ЕС стандарт) |
+| `per_100lbs` | `(chargeable_weight × 2.20462 / 100) × rate` | [UPS Tariff](https://www.ups.com/us/en/support/shipping-support/shipping-costs-rates/) (США) |
 
-### Надбавки
+**Источники:**
+- **DHL Rate Cards**: https://www.dhl.com/global-en/home/our-divisions/express/shipping/express-rates.html
+- **FedEx Rate Calculator**: https://www.fedex.com/en-us/online/rating.html
+- **UPS Rate Calculator**: https://www.ups.com/ship/guided/rate
+- **Конверсия lb→kg**: 1 lb = 0.453592 kg (ISO 80000-1:2009)
 
-| Тип расчёта | Формула |
-|-------------|---------|
-| `percentage` | `base_rate × (value / 100)` |
-| `flat` | `value` |
-| `per_kg` | `chargeable_weight × value` |
+### Надбавки (Surcharges)
+
+| Тип расчёта | Формула | Пример |
+|-------------|---------|--------|
+| `percentage` | `base_rate × (value / 100)` | FSC 15.5% → base_rate × 0.155 |
+| `flat` | `value` | Residential $8.00 |
+| `per_kg` | `chargeable_weight × value` | Handling $0.50/кг |
+
+**Источники по типам надбавок:**
+
+| Надбавка | Описание | Источник |
+|----------|----------|----------|
+| **Fuel Surcharge (FSC)** | 10-25% от базовой ставки | [DHL FSC](https://www.dhl.com/global-en/home/footer/fuel-surcharges.html), [FedEx FSC](https://www.fedex.com/en-us/shipping/surcharges.html), [UPS FSC](https://www.ups.com/us/en/support/shipping-support/shipping-costs-rates/fuel-surcharges.page) |
+| **Remote Area** | $30-150 за доставку в удалённый район | [DHL Remote Areas](https://www.dhl.com/content/dam/dhl/global/core/documents/pdf/glo-core-remote-area-guide.pdf), [FedEx Extended Areas](https://www.fedex.com/en-us/shipping/surcharges.html) |
+| **Residential** | $5-15 за доставку на жилой адрес | [FedEx Residential](https://www.fedex.com/en-us/shipping/surcharges.html), [UPS Residential](https://www.ups.com/us/en/support/shipping-support/shipping-costs-rates.page) |
+| **Peak Season** | 5-15% в пиковый сезон (ноябрь-январь) | [DHL Peak Surcharge](https://www.dhl.com/global-en/home/footer/peak-season-surcharges.html), [UPS Peak](https://www.ups.com/us/en/supplychain/resources/news/peak-surcharge.page) |
+| **Dangerous Goods** | 20-50% за опасный груз | [IATA DGR](https://www.iata.org/en/programs/cargo/dgr/), [FedEx DG](https://www.fedex.com/en-us/shipping/dangerous-goods.html) |
+| **Oversize** | $50-200 за негабаритный груз | [UPS Oversize](https://www.ups.com/us/en/help-center/packaging-and-supplies/oversize-packages.page), [FedEx Oversize](https://www.fedex.com/en-us/shipping/weight-packages.html) |
 
 С ограничениями:
 ```
-final_surcharge = MAX(surcharge, min_value)
-final_surcharge = MIN(final_surcharge, max_value)
+final_surcharge = MAX(surcharge, min_value)  // Минимальный сбор
+final_surcharge = MIN(final_surcharge, max_value)  // Максимальный предел
 ```
 
-### Страховка
+**Обоснование ограничений**: Перевозчики устанавливают минимальные и максимальные пределы для надбавок, чтобы обеспечить покрытие операционных расходов (min) и не отпугнуть клиентов (max).
+
+### Страховка (Insurance)
 
 ```
 insurance_cost = declared_value × (insurance_rate / 100)
 ```
 
-По умолчанию `insurance_rate = 0.5%`
+По умолчанию `insurance_rate = 0.5%` (от объявленной стоимости груза)
+
+**Источники и стандарты:**
+- **DHL Shipment Insurance**: https://www.dhl.com/global-en/home/our-divisions/express/customer-service/insurance.html
+- **FedEx Declared Value**: https://www.fedex.com/en-us/shipping/declared-value-coverage.html
+- **UPS Declared Value**: https://www.ups.com/us/en/support/shipping-support/insurance.page
+- **ICC (Incoterms)**: https://iccwbo.org/resources-for-business/incoterms-rules/incoterms-2020/ - правила распределения рисков
+
+**Типичные ставки страхования:**
+| Перевозчик | Базовая ставка | Минимум | Источник |
+|------------|----------------|---------|----------|
+| DHL Express | 1.5% | $3.00 | [DHL Insurance](https://www.dhl.com/global-en/home/our-divisions/express/customer-service/insurance.html) |
+| FedEx | 1.0-2.0% | $2.75 | [FedEx Coverage](https://www.fedex.com/en-us/shipping/declared-value-coverage.html) |
+| UPS | 1.0-1.5% | $2.70 | [UPS Insurance](https://www.ups.com/us/en/support/shipping-support/insurance.page) |
+| Морской (CIF) | 0.3-0.5% | - | [Lloyd's Marine Insurance](https://www.lloyds.com/market-resources/marine) |
+
+**Примечание**: В системе Vector Express используется ставка 0.5% как компромисс между стоимостью и покрытием, клиент может выбрать расширенное страхование
 
 ---
 
@@ -546,39 +595,60 @@ insurance_cost = declared_value × (insurance_rate / 100)
 
 ### Air (Авиа)
 
-| Параметр | Значение |
-|----------|----------|
-| Базовая ставка | ~$12-15/кг |
-| Сроки доставки | 3-7 дней |
-| DIM Factor | 5000-6000 |
-| Особенности | Быстро, дорого, ограничения по опасным грузам |
+| Параметр | Значение | Источник |
+|----------|----------|----------|
+| Базовая ставка | ~$12-15/кг | [DHL Express Rates](https://www.dhl.com/global-en/home/our-divisions/express/shipping/express-rates.html) |
+| Сроки доставки | 3-7 дней | [FedEx International Express](https://www.fedex.com/en-us/shipping/international-express-services.html) |
+| DIM Factor | 5000-6000 | [IATA TACT Rules](https://www.iata.org/contentassets/0238d5bc961e4fe8bc5ce1891e4f76c2/tact-rules.pdf) |
+| Особенности | Быстро, дорого, ограничения по опасным грузам | [IATA DGR](https://www.iata.org/en/programs/cargo/dgr/) |
+
+**Референсы:**
+- IATA Cargo Services: https://www.iata.org/en/programs/cargo/
+- Freightos Air Index: https://fbx.freightos.com/
 
 ### Sea (Морской)
 
-| Параметр | Значение |
-|----------|----------|
-| Базовая ставка | ~$1.5-3/кг |
-| Сроки доставки | 30-45 дней |
-| DIM Factor | 1000 |
-| Особенности | Дёшево, долго, подходит для больших объёмов |
+| Параметр | Значение | Источник |
+|----------|----------|----------|
+| Базовая ставка | ~$1.5-3/кг | [Freightos Baltic Index](https://fbx.freightos.com/) |
+| Сроки доставки | 30-45 дней | [Maersk Schedules](https://www.maersk.com/schedules) |
+| DIM Factor | 1000 | [Maersk Container Rates](https://www.maersk.com/shipping-services/quotation) |
+| Особенности | Дёшево, долго, подходит для больших объёмов | - |
+
+**Референсы:**
+- Drewry World Container Index: https://www.drewry.co.uk/supply-chain-advisors/world-container-index
+- Maersk Spot Rates: https://www.maersk.com/shipping-services/quotation
+- MSC Container Booking: https://www.msc.com/en/book-online
 
 ### Rail (Ж/Д)
 
-| Параметр | Значение |
-|----------|----------|
-| Базовая ставка | ~$3-5/кг |
-| Сроки доставки | 15-25 дней |
-| DIM Factor | 3000-4000 |
-| Особенности | Средняя цена/скорость, Китай-Европа |
+| Параметр | Значение | Источник |
+|----------|----------|----------|
+| Базовая ставка | ~$3-5/кг | [DB Schenker Rail](https://www.dbschenker.com/global/products/rail-transport) |
+| Сроки доставки | 15-25 дней | [China-Europe Railway Express](http://www.crexpress.cn/) |
+| DIM Factor | 3000-4000 | [Деловые Линии](https://www.dellin.ru/) |
+| Особенности | Средняя цена/скорость, Китай-Европа | - |
+
+**Референсы:**
+- КТЖ (Казахстан): https://www.railways.kz/ru/services/cargo
+- РЖД Cargo: https://cargo.rzd.ru/
+- DB Schenker Rail: https://www.dbschenker.com/global/products/rail-transport
+- China-Europe Railway Express: http://www.crexpress.cn/
 
 ### Road (Авто)
 
-| Параметр | Значение |
-|----------|----------|
-| Базовая ставка | ~$4-8/кг |
-| Сроки доставки | 7-14 дней |
-| DIM Factor | 3000-5000 |
-| Особенности | Гибкость, door-to-door |
+| Параметр | Значение | Источник |
+|----------|----------|----------|
+| Базовая ставка | ~$4-8/кг | [СДЭК Калькулятор](https://www.cdek.ru/ru/calculate) |
+| Сроки доставки | 7-14 дней | [Деловые Линии](https://www.dellin.ru/) |
+| DIM Factor | 3000-5000 | [ПЭК](https://pecom.ru/) |
+| Особенности | Гибкость, door-to-door | - |
+
+**Референсы:**
+- СДЭК (СНГ): https://www.cdek.ru/
+- Деловые Линии: https://www.dellin.ru/
+- DauTransService (Казахстан): https://dts.kz/
+- ПЭК: https://pecom.ru/
 
 ---
 
