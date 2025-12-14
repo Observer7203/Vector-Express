@@ -1,6 +1,7 @@
 <script setup>
 import { onMounted, ref, computed } from 'vue'
 import { RouterLink } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import {
   MapPin,
   DollarSign,
@@ -18,6 +19,7 @@ import {
 import AppHeader from '@/components/AppHeader.vue'
 import api from '@/api/client'
 
+const { t } = useI18n()
 const iconStrokeWidth = 1.2
 
 const stats = ref({
@@ -66,49 +68,49 @@ onMounted(async () => {
 
 const menuItems = computed(() => [
   {
-    title: 'Заказы',
-    description: 'Просмотр и обработка заказов клиентов',
+    title: t('carrier.myOrders'),
+    description: t('carrier.ordersWillAppear'),
     icon: ClipboardList,
     route: '/carrier/orders',
     stat: stats.value.activeOrders,
-    statLabel: 'активных заказов',
+    statLabel: t('carrier.activeOrders'),
     highlight: true
   },
   {
-    title: 'Зоны доставки',
-    description: 'Управление географическими зонами и тарифами',
+    title: t('carrier.zones'),
+    description: t('carrier.zones'),
     icon: Globe,
     route: '/carrier/zones',
     stat: stats.value.activeZones,
-    statLabel: 'активных зон'
+    statLabel: t('carrier.activeZones')
   },
   {
-    title: 'Тарифы',
-    description: 'Настройка ставок по весу и направлениям',
+    title: t('carrier.rates'),
+    description: t('carrier.rates'),
     icon: DollarSign,
     route: '/carrier/rates',
     stat: stats.value.rateCards,
-    statLabel: 'тарифных карт'
+    statLabel: t('carrier.rates')
   },
   {
-    title: 'Терминалы',
-    description: 'Точки приема и выдачи грузов',
+    title: t('carrier.terminals'),
+    description: t('carrier.terminals'),
     icon: MapPin,
     route: '/carrier/terminals',
     stat: stats.value.terminals,
-    statLabel: 'терминалов'
+    statLabel: t('carrier.terminals')
   },
   {
-    title: 'Надбавки',
-    description: 'Топливные и прочие надбавки',
+    title: t('carrier.surcharges'),
+    description: t('carrier.surcharges'),
     icon: TrendingUp,
     route: '/carrier/surcharges',
     stat: null,
     statLabel: ''
   },
   {
-    title: 'Документы',
-    description: 'Загрузка документов для верификации',
+    title: t('carrier.documents'),
+    description: t('carrier.documents'),
     icon: FileText,
     route: '/carrier/documents',
     stat: null,
@@ -126,8 +128,8 @@ const menuItems = computed(() => [
       <div class="container">
         <div class="page-header">
           <div class="page-title">
-            <h1>Панель управления перевозчика</h1>
-            <p class="subtitle">Управляйте тарифами, зонами доставки и терминалами</p>
+            <h1>{{ t('carrier.dashboard') }}</h1>
+            <p class="subtitle">{{ t('carrier.zones') }}</p>
           </div>
         </div>
 
@@ -139,7 +141,7 @@ const menuItems = computed(() => [
             </div>
             <div class="stat-content">
               <div class="stat-number">{{ stats.activeOrders }}</div>
-              <div class="stat-label">Активных заказов</div>
+              <div class="stat-label">{{ t('carrier.activeOrders') }}</div>
             </div>
           </div>
           <div class="stat-card">
@@ -148,7 +150,7 @@ const menuItems = computed(() => [
             </div>
             <div class="stat-content">
               <div class="stat-number">{{ stats.completedOrders }}</div>
-              <div class="stat-label">Выполнено</div>
+              <div class="stat-label">{{ t('carrier.completedOrders') }}</div>
             </div>
           </div>
           <div class="stat-card">
@@ -157,7 +159,7 @@ const menuItems = computed(() => [
             </div>
             <div class="stat-content">
               <div class="stat-number">${{ stats.revenue.toLocaleString() }}</div>
-              <div class="stat-label">Доход за месяц</div>
+              <div class="stat-label">{{ t('carrier.revenue') }}</div>
             </div>
           </div>
           <div class="stat-card">
@@ -166,14 +168,14 @@ const menuItems = computed(() => [
             </div>
             <div class="stat-content">
               <div class="stat-number">{{ stats.activeZones }}</div>
-              <div class="stat-label">Зон доставки</div>
+              <div class="stat-label">{{ t('carrier.activeZones') }}</div>
             </div>
           </div>
         </div>
 
         <!-- Management Menu -->
         <section class="management-section">
-          <h2>Управление данными</h2>
+          <h2>{{ t('carrier.managementData') }}</h2>
           <div class="management-grid">
             <RouterLink
               v-for="item in menuItems"

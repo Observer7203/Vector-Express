@@ -1,5 +1,6 @@
 <script setup>
 import { ref, computed, onMounted, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useAuthStore } from '@/stores/auth'
 import api from '@/api/client'
 import AppHeader from '@/components/AppHeader.vue'
@@ -17,6 +18,7 @@ import {
   ChevronRight
 } from 'lucide-vue-next'
 
+const { t } = useI18n()
 const authStore = useAuthStore()
 const iconStrokeWidth = 1.5
 
@@ -28,17 +30,17 @@ const showDetailsModal = ref(false)
 const selectedOrder = ref(null)
 const updatingStatus = ref(false)
 
-const statusLabels = {
-  pending: 'Ожидает подтверждения',
-  confirmed: 'Подтвержден',
-  pickup_scheduled: 'Назначен забор',
-  picked_up: 'Груз забран',
-  in_transit: 'В пути',
-  customs: 'На таможне',
-  out_for_delivery: 'Доставляется',
-  delivered: 'Доставлен',
-  cancelled: 'Отменен'
-}
+const statusLabels = computed(() => ({
+  pending: t('status.pending'),
+  confirmed: t('status.confirmed'),
+  pickup_scheduled: t('status.pickup_scheduled'),
+  picked_up: t('status.picked_up'),
+  in_transit: t('status.in_transit'),
+  customs: t('status.customs'),
+  out_for_delivery: t('status.out_for_delivery'),
+  delivered: t('status.delivered'),
+  cancelled: t('status.cancelled')
+}))
 
 const statusColors = {
   pending: 'warning',
@@ -62,14 +64,14 @@ const nextStatusMap = {
   out_for_delivery: 'delivered'
 }
 
-const nextStatusLabels = {
-  confirmed: 'Подтвердить заказ',
-  pickup_scheduled: 'Назначить забор',
-  picked_up: 'Груз забран',
-  in_transit: 'В пути',
-  out_for_delivery: 'Передать в доставку',
-  delivered: 'Доставлен'
-}
+const nextStatusLabels = computed(() => ({
+  confirmed: t('carrierOrders.actions.confirmOrder'),
+  pickup_scheduled: t('carrierOrders.actions.schedulePickup'),
+  picked_up: t('carrierOrders.actions.pickedUp'),
+  in_transit: t('carrierOrders.actions.inTransit'),
+  out_for_delivery: t('carrierOrders.actions.outForDelivery'),
+  delivered: t('carrierOrders.actions.delivered')
+}))
 
 onMounted(() => {
   fetchOrders()
@@ -122,7 +124,7 @@ async function updateToNextStatus(order) {
     }
   } catch (error) {
     console.error('Failed to update status:', error)
-    alert('Ошибка при обновлении статуса')
+    alert(t('carrierOrders.errorUpdatingStatus'))
   } finally {
     updatingStatus.value = false
   }
@@ -163,8 +165,8 @@ const stats = computed(() => {
     <div class="page-container">
       <div class="page-header">
         <div>
-          <h1>Мои заказы</h1>
-          <p class="subtitle">Управление заказами на перевозку</p>
+          <h1>{{ t('carrierOrders.title') }}</h1>
+          <p class="subtitle">{{ t('carrierOrders.subtitle') }}</p>
         </div>
       </div>
 
@@ -176,7 +178,7 @@ const stats = computed(() => {
           </div>
           <div class="stat-info">
             <span class="stat-value">{{ stats.total }}</span>
-            <span class="stat-label">Всего заказов</span>
+            <span class="stat-label">{{ t('carrierOrders.stats.totalOrders') }}</span>
           </div>
         </div>
         <div class="stat-card">
@@ -185,7 +187,7 @@ const stats = computed(() => {
           </div>
           <div class="stat-info">
             <span class="stat-value">{{ stats.pending }}</span>
-            <span class="stat-label">Ожидают подтверждения</span>
+            <span class="stat-label">{{ t('carrierOrders.stats.pendingConfirmation') }}</span>
           </div>
         </div>
         <div class="stat-card">
@@ -194,7 +196,7 @@ const stats = computed(() => {
           </div>
           <div class="stat-info">
             <span class="stat-value">{{ stats.inProgress }}</span>
-            <span class="stat-label">В работе</span>
+            <span class="stat-label">{{ t('carrierOrders.stats.inProgress') }}</span>
           </div>
         </div>
         <div class="stat-card">
@@ -203,7 +205,7 @@ const stats = computed(() => {
           </div>
           <div class="stat-info">
             <span class="stat-value">{{ stats.delivered }}</span>
-            <span class="stat-label">Доставлено</span>
+            <span class="stat-label">{{ t('carrierOrders.stats.delivered') }}</span>
           </div>
         </div>
       </div>
@@ -215,12 +217,12 @@ const stats = computed(() => {
           <input
             v-model="search"
             type="text"
-            placeholder="Поиск по номеру заказа..."
+            :placeholder="t('carrierOrders.searchPlaceholder')"
           />
         </div>
         <div class="filter-group">
           <select v-model="filterStatus">
-            <option value="">Все статусы</option>
+            <option value="">{{ t('carrierOrders.allStatuses') }}</option>
             <option v-for="(label, key) in statusLabels" :key="key" :value="key">
               {{ label }}
             </option>
@@ -231,7 +233,7 @@ const stats = computed(() => {
       <!-- Loading -->
       <div v-if="loading" class="loading">
         <div class="spinner"></div>
-        <span>Загрузка заказов...</span>
+        <span>{{ t('carrierOrders.loadingOrders') }}</span>
       </div>
 
       <!-- Orders List -->
@@ -258,19 +260,19 @@ const stats = computed(() => {
 
           <div class="order-details">
             <div class="detail-item">
-              <span class="detail-label">Заказчик</span>
+              <span class="detail-label">{{ t('carrierOrders.customer') }}</span>
               <span class="detail-value">{{ order.user?.name || '-' }}</span>
             </div>
             <div class="detail-item">
-              <span class="detail-label">Вес</span>
-              <span class="detail-value">{{ order.quote?.shipment?.total_weight || '-' }} кг</span>
+              <span class="detail-label">{{ t('carrierOrders.weight') }}</span>
+              <span class="detail-value">{{ order.quote?.shipment?.total_weight || '-' }} {{ t('shipment.kg') }}</span>
             </div>
             <div class="detail-item">
-              <span class="detail-label">Сумма</span>
+              <span class="detail-label">{{ t('carrierOrders.amount') }}</span>
               <span class="detail-value price">{{ formatPrice(order.total_amount, order.currency) }}</span>
             </div>
             <div class="detail-item">
-              <span class="detail-label">Дата</span>
+              <span class="detail-label">{{ t('carrierOrders.date') }}</span>
               <span class="detail-value">{{ formatDate(order.created_at) }}</span>
             </div>
           </div>
@@ -278,7 +280,7 @@ const stats = computed(() => {
           <div class="order-actions">
             <button @click="viewOrder(order)" class="btn btn-outline btn-sm">
               <Eye :size="16" :stroke-width="iconStrokeWidth" />
-              Подробнее
+              {{ t('carrierOrders.viewDetails') }}
             </button>
             <button
               v-if="nextStatusMap[order.status]"
@@ -296,8 +298,8 @@ const stats = computed(() => {
       <!-- Empty State -->
       <div v-else class="empty-state">
         <Package :size="48" :stroke-width="1" />
-        <h3>Нет заказов</h3>
-        <p>Заказы появятся когда клиенты выберут вашу компанию</p>
+        <h3>{{ t('carrierOrders.noOrders') }}</h3>
+        <p>{{ t('carrierOrders.noOrdersMessage') }}</p>
       </div>
     </div>
 
@@ -305,7 +307,7 @@ const stats = computed(() => {
     <div v-if="showDetailsModal" class="modal-overlay" @click.self="showDetailsModal = false">
       <div class="modal modal-lg">
         <div class="modal-header">
-          <h2>Заказ {{ selectedOrder?.order_number }}</h2>
+          <h2>{{ t('carrierOrders.orderTitle') }} {{ selectedOrder?.order_number }}</h2>
           <button @click="showDetailsModal = false" class="close-btn">
             <X :size="20" :stroke-width="iconStrokeWidth" />
           </button>
@@ -334,10 +336,10 @@ const stats = computed(() => {
 
           <!-- Route Info -->
           <div class="detail-section">
-            <h3>Маршрут</h3>
+            <h3>{{ t('carrierOrders.route') }}</h3>
             <div class="route-details">
               <div class="route-point-detail">
-                <div class="route-label">Откуда</div>
+                <div class="route-label">{{ t('carrierOrders.origin') }}</div>
                 <div class="route-value">
                   {{ selectedOrder.quote?.shipment?.origin_city }}, {{ selectedOrder.quote?.shipment?.origin_country }}
                 </div>
@@ -345,7 +347,7 @@ const stats = computed(() => {
               </div>
               <div class="route-arrow-lg">→</div>
               <div class="route-point-detail">
-                <div class="route-label">Куда</div>
+                <div class="route-label">{{ t('carrierOrders.destination') }}</div>
                 <div class="route-value">
                   {{ selectedOrder.quote?.shipment?.destination_city }}, {{ selectedOrder.quote?.shipment?.destination_country }}
                 </div>
@@ -356,18 +358,18 @@ const stats = computed(() => {
 
           <!-- Cargo Info -->
           <div class="detail-section">
-            <h3>Груз</h3>
+            <h3>{{ t('carrierOrders.cargo') }}</h3>
             <div class="cargo-grid">
               <div class="cargo-item">
-                <span class="cargo-label">Вес</span>
-                <span class="cargo-value">{{ selectedOrder.quote?.shipment?.total_weight }} кг</span>
+                <span class="cargo-label">{{ t('carrierOrders.weight') }}</span>
+                <span class="cargo-value">{{ selectedOrder.quote?.shipment?.total_weight }} {{ t('shipment.kg') }}</span>
               </div>
               <div class="cargo-item">
-                <span class="cargo-label">Объем</span>
-                <span class="cargo-value">{{ selectedOrder.quote?.shipment?.total_volume }} м³</span>
+                <span class="cargo-label">{{ t('carrierOrders.volume') }}</span>
+                <span class="cargo-value">{{ selectedOrder.quote?.shipment?.total_volume }} {{ t('shipment.cbm') }}</span>
               </div>
               <div class="cargo-item">
-                <span class="cargo-label">Тип груза</span>
+                <span class="cargo-label">{{ t('carrierOrders.cargoType') }}</span>
                 <span class="cargo-value">{{ selectedOrder.quote?.shipment?.cargo_type || '-' }}</span>
               </div>
             </div>
@@ -375,7 +377,7 @@ const stats = computed(() => {
 
           <!-- Customer Info -->
           <div class="detail-section">
-            <h3>Заказчик</h3>
+            <h3>{{ t('carrierOrders.customer') }}</h3>
             <div class="customer-info">
               <div class="customer-name">{{ selectedOrder.user?.name }}</div>
               <div class="customer-contacts">
@@ -393,15 +395,15 @@ const stats = computed(() => {
 
           <!-- Delivery Contacts -->
           <div class="detail-section">
-            <h3>Контакты для доставки</h3>
+            <h3>{{ t('carrierOrders.deliveryContacts') }}</h3>
             <div class="contacts-grid">
               <div>
-                <div class="contact-label">Контактное лицо</div>
+                <div class="contact-label">{{ t('carrierOrders.contactPerson') }}</div>
                 <div class="contact-value">{{ selectedOrder.delivery_contact_name || selectedOrder.contact_name }}</div>
                 <div class="contact-detail">{{ selectedOrder.delivery_contact_phone || selectedOrder.contact_phone }}</div>
               </div>
               <div>
-                <div class="contact-label">Адрес доставки</div>
+                <div class="contact-label">{{ t('carrierOrders.deliveryAddress') }}</div>
                 <div class="contact-value">{{ selectedOrder.delivery_address }}</div>
               </div>
             </div>
@@ -409,17 +411,17 @@ const stats = computed(() => {
 
           <!-- Financial -->
           <div class="detail-section financial-section">
-            <h3>Оплата</h3>
+            <h3>{{ t('carrierOrders.payment') }}</h3>
             <div class="financial-info">
               <div class="total-amount">
                 {{ formatPrice(selectedOrder.total_amount, selectedOrder.currency) }}
               </div>
               <div class="commission-note">
-                Комиссия платформы: {{ formatPrice(selectedOrder.commission_amount, selectedOrder.currency) }}
+                {{ t('carrierOrders.platformCommission') }}: {{ formatPrice(selectedOrder.commission_amount, selectedOrder.currency) }}
               </div>
             </div>
             <div class="tracking-info">
-              <div class="tracking-label">Трекинг номер</div>
+              <div class="tracking-label">{{ t('carrierOrders.trackingNumber') }}</div>
               <code class="tracking-code">{{ selectedOrder.tracking_number }}</code>
             </div>
           </div>

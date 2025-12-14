@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Carrier;
 use App\Models\Company;
 use App\Models\User;
 use Illuminate\Database\Seeder;
@@ -42,6 +43,44 @@ class DatabaseSeeder extends Seeder
         $this->call([
             CarrierSeeder::class,
             CarrierPricingSeeder::class,
+        ]);
+
+        // Create Observer Logistics carrier (id=8 as expected by ObserverLogisticsSeeder)
+        $observerCompany = Company::create([
+            'name' => 'Observer Logistics',
+            'type' => 'carrier',
+            'email' => 'info@observerlogistics.kz',
+            'website' => 'https://observerlogistics.kz',
+            'inn' => '987654321098',
+            'rating' => 4.5,
+            'rating_count' => 350,
+            'verified' => true,
+            'verified_at' => now(),
+        ]);
+
+        Carrier::create([
+            'id' => 8, // Fixed ID for ObserverLogisticsSeeder rates
+            'company_id' => $observerCompany->id,
+            'api_type' => 'manual',
+            'supported_transport_types' => ['road', 'rail'],
+            'supported_countries' => ['Казахстан', 'Россия', 'Китай', 'Узбекистан', 'Кыргызстан', 'Таджикистан', 'Беларусь'],
+            'is_active' => true,
+        ]);
+
+        // Create carrier user for Observer Logistics
+        User::create([
+            'name' => 'Observer Carrier',
+            'email' => 'carrier@observerlogistics.kz',
+            'password' => Hash::make('password'),
+            'role' => 'carrier',
+            'company_id' => $observerCompany->id,
+            'email_verified_at' => now(),
+        ]);
+
+        // Seed Observer Logistics zones and pricing
+        $this->call([
+            ObserverZonesSeeder::class,
+            ObserverLogisticsSeeder::class,
         ]);
     }
 }

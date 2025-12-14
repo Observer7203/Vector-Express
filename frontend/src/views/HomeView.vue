@@ -240,6 +240,7 @@ const { t } = useI18n()
 
 .nav-links {
   display: flex;
+  align-items: center;
   gap: $spacing-sm;
 }
 

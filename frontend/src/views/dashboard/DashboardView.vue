@@ -1,11 +1,13 @@
 <script setup>
 import { onMounted, ref } from 'vue'
 import { RouterLink } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import { useShipmentsStore } from '@/stores/shipments'
 import { useOrdersStore } from '@/stores/orders'
 import { FileText, Truck, Clock, CheckCircle, PlusSquare, MapPin } from 'lucide-vue-next'
 import AppHeader from '@/components/AppHeader.vue'
 
+const { t } = useI18n()
 const iconStrokeWidth = 1.2
 
 const shipmentsStore = useShipmentsStore()
@@ -27,16 +29,8 @@ onMounted(async () => {
   stats.value.delivered = ordersStore.orders.filter((o) => o.status === 'delivered').length
 })
 
-const statusLabels = {
-  pending: 'Ожидает',
-  confirmed: 'Подтвержден',
-  pickup_scheduled: 'Назначен забор',
-  picked_up: 'Забран',
-  in_transit: 'В пути',
-  customs: 'На таможне',
-  out_for_delivery: 'Доставляется',
-  delivered: 'Доставлен',
-  cancelled: 'Отменен'
+function getStatusLabel(status) {
+  return t(`status.${status}`)
 }
 </script>
 
@@ -47,10 +41,10 @@ const statusLabels = {
     <main class="dashboard-main">
       <div class="container">
         <div class="page-header">
-          <h1>Личный кабинет</h1>
+          <h1>{{ t('dashboard.title') }}</h1>
           <RouterLink to="/shipments/new" class="btn btn-primary">
             <PlusSquare :size="18" :stroke-width="iconStrokeWidth" />
-            Создать заявку
+            {{ t('dashboard.createRequest') }}
           </RouterLink>
         </div>
 
@@ -61,7 +55,7 @@ const statusLabels = {
             </div>
             <div class="stat-content">
               <div class="stat-number">{{ stats.shipments }}</div>
-              <div class="stat-label">Заявки</div>
+              <div class="stat-label">{{ t('dashboard.shipments') }}</div>
             </div>
           </div>
           <div class="stat-card">
@@ -70,7 +64,7 @@ const statusLabels = {
             </div>
             <div class="stat-content">
               <div class="stat-number">{{ stats.orders }}</div>
-              <div class="stat-label">Заказы</div>
+              <div class="stat-label">{{ t('dashboard.orders') }}</div>
             </div>
           </div>
           <div class="stat-card">
@@ -79,7 +73,7 @@ const statusLabels = {
             </div>
             <div class="stat-content">
               <div class="stat-number">{{ stats.pending }}</div>
-              <div class="stat-label">Ожидают</div>
+              <div class="stat-label">{{ t('dashboard.pending') }}</div>
             </div>
           </div>
           <div class="stat-card">
@@ -88,58 +82,58 @@ const statusLabels = {
             </div>
             <div class="stat-content">
               <div class="stat-number">{{ stats.delivered }}</div>
-              <div class="stat-label">Доставлено</div>
+              <div class="stat-label">{{ t('dashboard.delivered') }}</div>
             </div>
           </div>
         </div>
 
         <div class="quick-actions">
-          <h2>Быстрые действия</h2>
+          <h2>{{ t('dashboard.quickActions') }}</h2>
           <div class="actions-grid">
             <RouterLink to="/shipments/new" class="action-card">
               <div class="action-icon">
                 <PlusSquare :size="20" :stroke-width="iconStrokeWidth" />
               </div>
-              <span class="action-label">Создать заявку</span>
-              <span class="action-desc">Рассчитать стоимость доставки</span>
+              <span class="action-label">{{ t('dashboard.actions.createRequest') }}</span>
+              <span class="action-desc">{{ t('dashboard.actions.calculateCost') }}</span>
             </RouterLink>
             <RouterLink to="/shipments" class="action-card">
               <div class="action-icon">
                 <FileText :size="20" :stroke-width="iconStrokeWidth" />
               </div>
-              <span class="action-label">Мои заявки</span>
-              <span class="action-desc">Просмотр и управление</span>
+              <span class="action-label">{{ t('dashboard.actions.myShipments') }}</span>
+              <span class="action-desc">{{ t('dashboard.actions.viewManage') }}</span>
             </RouterLink>
             <RouterLink to="/orders" class="action-card">
               <div class="action-icon">
                 <Truck :size="20" :stroke-width="iconStrokeWidth" />
               </div>
-              <span class="action-label">Мои заказы</span>
-              <span class="action-desc">История заказов</span>
+              <span class="action-label">{{ t('dashboard.actions.myOrders') }}</span>
+              <span class="action-desc">{{ t('dashboard.actions.orderHistory') }}</span>
             </RouterLink>
             <RouterLink to="/tracking" class="action-card">
               <div class="action-icon">
                 <MapPin :size="20" :stroke-width="iconStrokeWidth" />
               </div>
-              <span class="action-label">Отследить груз</span>
-              <span class="action-desc">По номеру отслеживания</span>
+              <span class="action-label">{{ t('dashboard.actions.trackCargo') }}</span>
+              <span class="action-desc">{{ t('dashboard.actions.byTrackingNumber') }}</span>
             </RouterLink>
           </div>
         </div>
 
         <div class="recent-orders" v-if="ordersStore.orders.length">
           <div class="section-header">
-            <h2>Последние заказы</h2>
-            <RouterLink to="/orders" class="link-all">Все заказы</RouterLink>
+            <h2>{{ t('dashboard.recentOrders') }}</h2>
+            <RouterLink to="/orders" class="link-all">{{ t('dashboard.allOrders') }}</RouterLink>
           </div>
           <div class="orders-table">
             <table>
               <thead>
                 <tr>
-                  <th>Номер</th>
-                  <th>Статус</th>
-                  <th>Сумма</th>
-                  <th>Дата</th>
+                  <th>{{ t('dashboard.table.number') }}</th>
+                  <th>{{ t('common.status') }}</th>
+                  <th>{{ t('dashboard.table.amount') }}</th>
+                  <th>{{ t('common.date') }}</th>
                   <th></th>
                 </tr>
               </thead>
@@ -148,13 +142,13 @@ const statusLabels = {
                   <td class="order-number">{{ order.order_number }}</td>
                   <td>
                     <span :class="['status', `status-${order.status}`]">
-                      {{ statusLabels[order.status] || order.status }}
+                      {{ getStatusLabel(order.status) }}
                     </span>
                   </td>
                   <td class="order-amount">{{ order.total_amount }} {{ order.currency }}</td>
                   <td class="order-date">{{ new Date(order.created_at).toLocaleDateString('ru-RU') }}</td>
                   <td>
-                    <RouterLink :to="`/orders/${order.id}`" class="btn-view">Подробнее</RouterLink>
+                    <RouterLink :to="`/orders/${order.id}`" class="btn-view">{{ t('common.details') }}</RouterLink>
                   </td>
                 </tr>
               </tbody>
@@ -166,9 +160,9 @@ const statusLabels = {
           <div class="empty-icon">
             <Truck :size="32" :stroke-width="iconStrokeWidth" />
           </div>
-          <h3>Пока нет заказов</h3>
-          <p>Создайте заявку для расчета стоимости доставки</p>
-          <RouterLink to="/shipments/new" class="btn btn-primary">Создать заявку</RouterLink>
+          <h3>{{ t('dashboard.noOrders') }}</h3>
+          <p>{{ t('dashboard.createRequestPrompt') }}</p>
+          <RouterLink to="/shipments/new" class="btn btn-primary">{{ t('dashboard.createRequest') }}</RouterLink>
         </div>
       </div>
     </main>

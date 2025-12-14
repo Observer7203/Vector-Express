@@ -1,5 +1,6 @@
 <script setup>
 import { ref, computed, onMounted, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useAdminStore } from '@/stores/admin'
 import {
   Plus,
@@ -19,6 +20,7 @@ import {
 } from 'lucide-vue-next'
 import { adminApi } from '@/api/admin'
 
+const { t } = useI18n()
 const adminStore = useAdminStore()
 const iconStrokeWidth = 1.5
 
@@ -126,7 +128,7 @@ async function verifyCompany(company) {
 }
 
 async function deleteCompany(company) {
-  if (!confirm(`Удалить компанию "${company.name}"?`)) return
+  if (!confirm(t('adminCompanies.confirmDelete', { name: company.name }))) return
 
   try {
     await adminApi.deleteCompany(company.id)
@@ -177,14 +179,14 @@ async function approveDocument(docId) {
   try {
     const result = await adminApi.approveDocument(docId)
     if (result.company_verified) {
-      alert('Документ одобрен. Компания верифицирована!')
+      alert(t('adminCompanies.documents.approved'))
       await adminStore.fetchCompanies()
     }
     // Reload documents
     await openDocumentsModal(selectedCompany.value)
   } catch (e) {
     console.error('Error approving document:', e)
-    alert('Ошибка при одобрении документа')
+    alert(t('adminCompanies.documents.errorApproving'))
   }
 }
 
@@ -200,7 +202,7 @@ function cancelRejectDocument() {
 
 async function rejectDocument() {
   if (!rejectionReason.value.trim()) {
-    alert('Укажите причину отклонения')
+    alert(t('adminCompanies.documents.provideReason'))
     return
   }
 
@@ -212,7 +214,7 @@ async function rejectDocument() {
     await openDocumentsModal(selectedCompany.value)
   } catch (e) {
     console.error('Error rejecting document:', e)
-    alert('Ошибка при отклонении документа')
+    alert(t('adminCompanies.documents.errorRejecting'))
   }
 }
 
@@ -230,9 +232,9 @@ function getDocumentStatusClass(status) {
 
 function getDocumentStatusLabel(status) {
   const labels = {
-    pending: 'На проверке',
-    approved: 'Подтвержден',
-    rejected: 'Отклонен'
+    pending: t('adminCompanies.documents.statusPending'),
+    approved: t('adminCompanies.documents.statusApproved'),
+    rejected: t('adminCompanies.documents.statusRejected')
   }
   return labels[status] || status
 }
@@ -251,12 +253,12 @@ function formatDate(dateString) {
   <div class="companies-page">
     <div class="page-header">
       <div>
-        <h1>Компании</h1>
-        <p class="subtitle">Управление компаниями заказчиков и перевозчиков</p>
+        <h1>{{ t('adminCompanies.title') }}</h1>
+        <p class="subtitle">{{ t('adminCompanies.subtitle') }}</p>
       </div>
       <button @click="openCreateModal" class="btn btn-primary">
         <Plus :size="18" :stroke-width="iconStrokeWidth" />
-        <span>Добавить компанию</span>
+        <span>{{ t('adminCompanies.addCompany') }}</span>
       </button>
     </div>
 
@@ -267,21 +269,21 @@ function formatDate(dateString) {
         <input
           v-model="search"
           type="text"
-          placeholder="Поиск по названию, ИНН..."
+          :placeholder="t('adminCompanies.searchPlaceholder')"
         />
       </div>
       <div class="filter-group">
         <select v-model="filterType">
-          <option value="">Все типы</option>
-          <option value="shipper">Заказчики</option>
-          <option value="carrier">Перевозчики</option>
+          <option value="">{{ t('adminCompanies.filters.allTypes') }}</option>
+          <option value="shipper">{{ t('adminCompanies.filters.shippers') }}</option>
+          <option value="carrier">{{ t('adminCompanies.filters.carriers') }}</option>
         </select>
       </div>
       <div class="filter-group">
         <select v-model="filterVerified">
-          <option value="">Все</option>
-          <option value="1">Верифицированные</option>
-          <option value="0">Не верифицированные</option>
+          <option value="">{{ t('adminCompanies.filters.all') }}</option>
+          <option value="1">{{ t('adminCompanies.filters.verified') }}</option>
+          <option value="0">{{ t('adminCompanies.filters.notVerified') }}</option>
         </select>
       </div>
     </div>
@@ -289,7 +291,7 @@ function formatDate(dateString) {
     <!-- Loading -->
     <div v-if="loading" class="loading">
       <div class="spinner"></div>
-      <span>Загрузка...</span>
+      <span>{{ t('common.loading') }}</span>
     </div>
 
     <!-- Table -->
@@ -297,13 +299,13 @@ function formatDate(dateString) {
       <table class="data-table">
         <thead>
           <tr>
-            <th>Компания</th>
-            <th>ИНН/БИН</th>
-            <th>Тип</th>
-            <th>Контакты</th>
-            <th>Рейтинг</th>
-            <th>Верификация</th>
-            <th>Действия</th>
+            <th>{{ t('adminCompanies.table.company') }}</th>
+            <th>{{ t('adminCompanies.table.inn') }}</th>
+            <th>{{ t('adminCompanies.table.type') }}</th>
+            <th>{{ t('adminCompanies.table.contacts') }}</th>
+            <th>{{ t('adminCompanies.table.rating') }}</th>
+            <th>{{ t('adminCompanies.table.verification') }}</th>
+            <th>{{ t('adminCompanies.table.actions') }}</th>
           </tr>
         </thead>
         <tbody>
@@ -315,7 +317,7 @@ function formatDate(dateString) {
                 </div>
                 <div>
                   <span class="company-name">{{ company.name }}</span>
-                  <span class="company-users">{{ company.users_count || 0 }} пользователей</span>
+                  <span class="company-users">{{ company.users_count || 0 }} {{ t('adminCompanies.users') }}</span>
                 </div>
               </div>
             </td>
@@ -324,7 +326,7 @@ function formatDate(dateString) {
             </td>
             <td>
               <span class="type-badge" :class="company.type">
-                {{ company.type === 'carrier' ? 'Перевозчик' : 'Заказчик' }}
+                {{ company.type === 'carrier' ? t('adminCompanies.typeCarrier') : t('adminCompanies.typeShipper') }}
               </span>
             </td>
             <td>
@@ -345,7 +347,7 @@ function formatDate(dateString) {
               <div class="verification-cell">
                 <span v-if="company.verified" class="verified">
                   <CheckCircle :size="16" :stroke-width="iconStrokeWidth" />
-                  Верифицирована
+                  {{ t('adminCompanies.verified') }}
                 </span>
                 <button
                   v-else
@@ -353,7 +355,7 @@ function formatDate(dateString) {
                   class="verify-btn"
                 >
                   <Shield :size="16" :stroke-width="iconStrokeWidth" />
-                  Верифицировать
+                  {{ t('adminCompanies.verify') }}
                 </button>
               </div>
             </td>
@@ -363,14 +365,14 @@ function formatDate(dateString) {
                   v-if="company.type === 'carrier'"
                   @click="openDocumentsModal(company)"
                   class="action-btn"
-                  title="Документы"
+                  :title="t('adminCompanies.documents.title')"
                 >
                   <FileText :size="16" :stroke-width="iconStrokeWidth" />
                 </button>
-                <button @click="openEditModal(company)" class="action-btn" title="Редактировать">
+                <button @click="openEditModal(company)" class="action-btn" :title="t('common.edit')">
                   <Edit :size="16" :stroke-width="iconStrokeWidth" />
                 </button>
-                <button @click="deleteCompany(company)" class="action-btn danger" title="Удалить">
+                <button @click="deleteCompany(company)" class="action-btn danger" :title="t('common.delete')">
                   <Trash2 :size="16" :stroke-width="iconStrokeWidth" />
                 </button>
               </div>
@@ -378,7 +380,7 @@ function formatDate(dateString) {
           </tr>
           <tr v-if="companies.length === 0">
             <td colspan="7" class="empty-row">
-              Компании не найдены
+              {{ t('adminCompanies.noCompanies') }}
             </td>
           </tr>
         </tbody>
@@ -392,17 +394,17 @@ function formatDate(dateString) {
         :disabled="pagination.currentPage === 1"
         class="btn btn-sm btn-outline"
       >
-        Назад
+        {{ t('common.back') }}
       </button>
       <span class="page-info">
-        Страница {{ pagination.currentPage }} из {{ pagination.lastPage }}
+        {{ t('adminCompanies.pageInfo', { current: pagination.currentPage, last: pagination.lastPage }) }}
       </span>
       <button
         @click="changePage(pagination.currentPage + 1)"
         :disabled="pagination.currentPage === pagination.lastPage"
         class="btn btn-sm btn-outline"
       >
-        Далее
+        {{ t('common.next') }}
       </button>
     </div>
 
@@ -410,7 +412,7 @@ function formatDate(dateString) {
     <div v-if="showModal" class="modal-overlay" @click.self="closeModal">
       <div class="modal">
         <div class="modal-header">
-          <h2>{{ editingCompany ? 'Редактировать компанию' : 'Добавить компанию' }}</h2>
+          <h2>{{ editingCompany ? t('adminCompanies.editCompany') : t('adminCompanies.addCompany') }}</h2>
           <button @click="closeModal" class="close-btn">
             <X :size="20" :stroke-width="iconStrokeWidth" />
           </button>
@@ -419,59 +421,59 @@ function formatDate(dateString) {
         <div class="modal-body">
           <div class="form-row">
             <div class="form-group">
-              <label>Название *</label>
+              <label>{{ t('adminCompanies.form.name') }} *</label>
               <input v-model="form.name" type="text" required />
             </div>
             <div class="form-group">
-              <label>ИНН/БИН</label>
+              <label>{{ t('adminCompanies.form.inn') }}</label>
               <input v-model="form.inn" type="text" />
             </div>
           </div>
 
           <div class="form-group">
-            <label>Тип *</label>
+            <label>{{ t('adminCompanies.form.type') }} *</label>
             <select v-model="form.type" required>
-              <option value="shipper">Заказчик</option>
-              <option value="carrier">Перевозчик</option>
+              <option value="shipper">{{ t('adminCompanies.typeShipper') }}</option>
+              <option value="carrier">{{ t('adminCompanies.typeCarrier') }}</option>
             </select>
           </div>
 
           <div class="form-group">
-            <label>Юридический адрес</label>
+            <label>{{ t('adminCompanies.form.legalAddress') }}</label>
             <input v-model="form.legal_address" type="text" />
           </div>
 
           <div class="form-group">
-            <label>Фактический адрес</label>
+            <label>{{ t('adminCompanies.form.actualAddress') }}</label>
             <input v-model="form.actual_address" type="text" />
           </div>
 
           <div class="form-row">
             <div class="form-group">
-              <label>Телефон</label>
+              <label>{{ t('adminCompanies.form.phone') }}</label>
               <input v-model="form.phone" type="text" />
             </div>
             <div class="form-group">
-              <label>Email</label>
+              <label>{{ t('adminCompanies.form.email') }}</label>
               <input v-model="form.email" type="email" />
             </div>
           </div>
 
           <div class="form-group">
-            <label>Веб-сайт</label>
+            <label>{{ t('adminCompanies.form.website') }}</label>
             <input v-model="form.website" type="url" placeholder="https://..." />
           </div>
         </div>
 
         <div class="modal-footer">
-          <button @click="closeModal" class="btn btn-outline">Отмена</button>
+          <button @click="closeModal" class="btn btn-outline">{{ t('common.cancel') }}</button>
           <button
             @click="saveCompany"
             class="btn btn-primary"
             :disabled="saving || !form.name"
           >
-            <span v-if="saving">Сохранение...</span>
-            <span v-else>{{ editingCompany ? 'Сохранить' : 'Создать' }}</span>
+            <span v-if="saving">{{ t('adminCompanies.saving') }}</span>
+            <span v-else>{{ editingCompany ? t('common.save') : t('adminCompanies.create') }}</span>
           </button>
         </div>
       </div>
@@ -481,7 +483,7 @@ function formatDate(dateString) {
     <div v-if="showDocumentsModal" class="modal-overlay" @click.self="closeDocumentsModal">
       <div class="modal modal-wide">
         <div class="modal-header">
-          <h2>Документы: {{ selectedCompany?.name }}</h2>
+          <h2>{{ t('adminCompanies.documents.title') }}: {{ selectedCompany?.name }}</h2>
           <button @click="closeDocumentsModal" class="close-btn">
             <X :size="20" :stroke-width="iconStrokeWidth" />
           </button>
@@ -490,12 +492,12 @@ function formatDate(dateString) {
         <div class="modal-body">
           <div v-if="loadingDocuments" class="loading">
             <div class="spinner"></div>
-            <span>Загрузка документов...</span>
+            <span>{{ t('adminCompanies.documents.loading') }}</span>
           </div>
 
           <div v-else-if="companyDocuments.length === 0" class="empty-state">
             <FileText :size="48" :stroke-width="iconStrokeWidth" />
-            <p>Документы не загружены</p>
+            <p>{{ t('adminCompanies.documents.noDocuments') }}</p>
           </div>
 
           <div v-else class="documents-list">
@@ -521,7 +523,7 @@ function formatDate(dateString) {
                 </div>
                 <div class="document-details">
                   <span>{{ doc.file_name }}</span>
-                  <span>Загружен: {{ formatDate(doc.created_at) }}</span>
+                  <span>{{ t('adminCompanies.documents.uploaded') }}: {{ formatDate(doc.created_at) }}</span>
                 </div>
                 <div v-if="doc.rejection_reason" class="rejection-reason">
                   <AlertCircle :size="14" :stroke-width="iconStrokeWidth" />
@@ -530,14 +532,14 @@ function formatDate(dateString) {
               </div>
 
               <div class="document-actions" v-if="rejectingDocumentId !== doc.id">
-                <button @click="downloadDocument(doc.id)" class="action-btn" title="Скачать">
+                <button @click="downloadDocument(doc.id)" class="action-btn" :title="t('common.download')">
                   <Download :size="16" :stroke-width="iconStrokeWidth" />
                 </button>
                 <template v-if="doc.status === 'pending'">
-                  <button @click="approveDocument(doc.id)" class="action-btn success" title="Одобрить">
+                  <button @click="approveDocument(doc.id)" class="action-btn success" :title="t('adminCompanies.documents.approve')">
                     <CheckCircle :size="16" :stroke-width="iconStrokeWidth" />
                   </button>
-                  <button @click="startRejectDocument(doc.id)" class="action-btn danger" title="Отклонить">
+                  <button @click="startRejectDocument(doc.id)" class="action-btn danger" :title="t('adminCompanies.documents.reject')">
                     <XCircle :size="16" :stroke-width="iconStrokeWidth" />
                   </button>
                 </template>
@@ -548,25 +550,25 @@ function formatDate(dateString) {
                 <input
                   v-model="rejectionReason"
                   type="text"
-                  placeholder="Причина отклонения..."
+                  :placeholder="t('adminCompanies.documents.reasonPlaceholder')"
                   @keyup.enter="rejectDocument"
                 />
-                <button @click="rejectDocument" class="btn btn-sm btn-danger">Отклонить</button>
-                <button @click="cancelRejectDocument" class="btn btn-sm btn-outline">Отмена</button>
+                <button @click="rejectDocument" class="btn btn-sm btn-danger">{{ t('adminCompanies.documents.reject') }}</button>
+                <button @click="cancelRejectDocument" class="btn btn-sm btn-outline">{{ t('common.cancel') }}</button>
               </div>
             </div>
           </div>
         </div>
 
         <div class="modal-footer">
-          <button @click="closeDocumentsModal" class="btn btn-outline">Закрыть</button>
+          <button @click="closeDocumentsModal" class="btn btn-outline">{{ t('common.close') }}</button>
           <button
             v-if="selectedCompany && !selectedCompany.verified"
             @click="verifyCompany(selectedCompany); closeDocumentsModal()"
             class="btn btn-primary"
           >
             <Shield :size="18" :stroke-width="iconStrokeWidth" />
-            Верифицировать компанию
+            {{ t('adminCompanies.verifyCompany') }}
           </button>
         </div>
       </div>

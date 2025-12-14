@@ -2,6 +2,7 @@
 import { onMounted, ref, computed } from 'vue'
 import { RouterLink } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
+import { useI18n } from 'vue-i18n'
 import api from '@/api/client'
 import {
   TrendingUp,
@@ -23,6 +24,7 @@ import AppHeader from '@/components/AppHeader.vue'
 
 const iconStrokeWidth = 1.2
 
+const { t } = useI18n()
 const authStore = useAuthStore()
 
 const surcharges = ref([])
@@ -40,22 +42,22 @@ const newSurcharge = ref({
   is_active: true
 })
 
-const surchargeTypes = [
-  { value: 'fuel', label: 'Топливная надбавка', icon: Fuel },
-  { value: 'residential', label: 'Доставка на жилой адрес', icon: Home },
-  { value: 'remote_area', label: 'Удаленный район', icon: MapPin },
-  { value: 'oversize', label: 'Негабаритный груз', icon: Package },
-  { value: 'dangerous_goods', label: 'Опасный груз', icon: AlertTriangle },
-  { value: 'peak_season', label: 'Пиковый сезон', icon: TrendingUp },
-  { value: 'handling', label: 'Обработка груза', icon: Package },
-  { value: 'customs', label: 'Таможня', icon: Package }
-]
+const surchargeTypes = computed(() => [
+  { value: 'fuel', label: t('carrierSurcharges.types.fuel'), icon: Fuel },
+  { value: 'residential', label: t('carrierSurcharges.types.residential'), icon: Home },
+  { value: 'remote_area', label: t('carrierSurcharges.types.remoteArea'), icon: MapPin },
+  { value: 'oversize', label: t('carrierSurcharges.types.oversize'), icon: Package },
+  { value: 'dangerous_goods', label: t('carrierSurcharges.types.dangerousGoods'), icon: AlertTriangle },
+  { value: 'peak_season', label: t('carrierSurcharges.types.peakSeason'), icon: TrendingUp },
+  { value: 'handling', label: t('carrierSurcharges.types.handling'), icon: Package },
+  { value: 'customs', label: t('carrierSurcharges.types.customs'), icon: Package }
+])
 
-const calculationTypes = [
-  { value: 'flat', label: 'Фиксированная сумма' },
-  { value: 'percentage', label: 'Процент от базовой ставки' },
-  { value: 'per_kg', label: 'За килограмм' }
-]
+const calculationTypes = computed(() => [
+  { value: 'flat', label: t('carrierSurcharges.calculationTypes.flat') },
+  { value: 'percentage', label: t('carrierSurcharges.calculationTypes.percentage') },
+  { value: 'per_kg', label: t('carrierSurcharges.calculationTypes.perKg') }
+])
 
 const filteredSurcharges = computed(() => {
   if (!searchQuery.value) return surcharges.value
@@ -83,7 +85,7 @@ async function loadSurcharges() {
       {
         id: 1,
         surcharge_type: 'fuel',
-        name: 'Топливная надбавка',
+        name: t('carrierSurcharges.types.fuel'),
         calculation_type: 'percentage',
         value: 15.5,
         currency: 'USD',
@@ -92,7 +94,7 @@ async function loadSurcharges() {
       {
         id: 2,
         surcharge_type: 'residential',
-        name: 'Доставка на жилой адрес',
+        name: t('carrierSurcharges.types.residential'),
         calculation_type: 'flat',
         value: 8.0,
         currency: 'USD',
@@ -101,7 +103,7 @@ async function loadSurcharges() {
       {
         id: 3,
         surcharge_type: 'remote_area',
-        name: 'Удаленный район',
+        name: t('carrierSurcharges.types.remoteArea'),
         calculation_type: 'flat',
         value: 25.0,
         currency: 'USD',
@@ -110,7 +112,7 @@ async function loadSurcharges() {
       {
         id: 4,
         surcharge_type: 'oversize',
-        name: 'Негабаритный груз',
+        name: t('carrierSurcharges.types.oversize'),
         calculation_type: 'flat',
         value: 50.0,
         currency: 'USD',
@@ -119,7 +121,7 @@ async function loadSurcharges() {
       {
         id: 5,
         surcharge_type: 'dangerous_goods',
-        name: 'Опасный груз',
+        name: t('carrierSurcharges.types.dangerousGoods'),
         calculation_type: 'flat',
         value: 75.0,
         currency: 'USD',
@@ -163,7 +165,7 @@ function closeModal() {
 }
 
 function onTypeSelect() {
-  const selectedType = surchargeTypes.find((t) => t.value === newSurcharge.value.surcharge_type)
+  const selectedType = surchargeTypes.value.find((t) => t.value === newSurcharge.value.surcharge_type)
   if (selectedType && !newSurcharge.value.name) {
     newSurcharge.value.name = selectedType.label
   }
@@ -197,7 +199,7 @@ async function saveSurcharge() {
 }
 
 async function deleteSurcharge(surchargeId) {
-  if (!confirm('Вы уверены, что хотите удалить эту надбавку?')) return
+  if (!confirm(t('carrierSurcharges.confirmDelete'))) return
 
   try {
     await api.delete(`/carrier/surcharges/${surchargeId}`)
@@ -218,22 +220,23 @@ async function toggleSurchargeStatus(surcharge) {
 }
 
 function getSurchargeIcon(type) {
-  const surchargeType = surchargeTypes.find((t) => t.value === type)
+  const surchargeType = surchargeTypes.value.find((t) => t.value === type)
   return surchargeType?.icon || TrendingUp
 }
 
 function getCalculationLabel(type) {
-  const calcType = calculationTypes.find((t) => t.value === type)
+  const calcType = calculationTypes.value.find((t) => t.value === type)
   return calcType?.label || type
 }
 
 function formatValue(surcharge) {
+  const val = Number(surcharge.value) || 0
   if (surcharge.calculation_type === 'percentage') {
-    return `${surcharge.value}%`
+    return `${val}%`
   } else if (surcharge.calculation_type === 'per_kg') {
-    return `$${surcharge.value.toFixed(2)}/кг`
+    return `$${val.toFixed(2)}/${t('carrierSurcharges.perKg')}`
   }
-  return `$${surcharge.value.toFixed(2)}`
+  return `$${val.toFixed(2)}`
 }
 
 async function handleLogout() {
@@ -249,12 +252,12 @@ async function handleLogout() {
       <div class="container">
         <div class="page-header">
           <div class="page-title">
-            <h1>Надбавки</h1>
-            <p class="subtitle">Топливные, сезонные и прочие дополнительные сборы</p>
+            <h1>{{ t('carrierSurcharges.title') }}</h1>
+            <p class="subtitle">{{ t('carrierSurcharges.subtitle') }}</p>
           </div>
           <button class="btn btn-primary" @click="openAddModal">
             <Plus :size="18" :stroke-width="iconStrokeWidth" />
-            Добавить надбавку
+            {{ t('carrierSurcharges.addSurcharge') }}
           </button>
         </div>
 
@@ -264,7 +267,7 @@ async function handleLogout() {
           <input
             v-model="searchQuery"
             type="text"
-            placeholder="Поиск по названию..."
+            :placeholder="t('carrierSurcharges.searchPlaceholder')"
             class="search-input"
           />
         </div>
@@ -272,7 +275,7 @@ async function handleLogout() {
         <!-- Loading -->
         <div v-if="loading" class="loading-state">
           <div class="spinner"></div>
-          <p>Загрузка надбавок...</p>
+          <p>{{ t('carrierSurcharges.loading') }}</p>
         </div>
 
         <!-- Surcharges Grid -->
@@ -291,7 +294,7 @@ async function handleLogout() {
                 class="status-toggle"
                 :class="{ active: surcharge.is_active }"
                 @click="toggleSurchargeStatus(surcharge)"
-                :title="surcharge.is_active ? 'Деактивировать' : 'Активировать'"
+                :title="surcharge.is_active ? t('carrierSurcharges.deactivate') : t('carrierSurcharges.activate')"
               >
                 <ToggleRight v-if="surcharge.is_active" :size="24" :stroke-width="iconStrokeWidth" />
                 <ToggleLeft v-else :size="24" :stroke-width="iconStrokeWidth" />
@@ -312,13 +315,13 @@ async function handleLogout() {
             </div>
 
             <div class="surcharge-actions">
-              <button class="btn-action" @click="openEditModal(surcharge)" title="Редактировать">
+              <button class="btn-action" @click="openEditModal(surcharge)" :title="t('common.edit')">
                 <Edit2 :size="16" :stroke-width="iconStrokeWidth" />
               </button>
               <button
                 class="btn-action btn-action-danger"
                 @click="deleteSurcharge(surcharge.id)"
-                title="Удалить"
+                :title="t('common.delete')"
               >
                 <Trash2 :size="16" :stroke-width="iconStrokeWidth" />
               </button>
@@ -329,11 +332,11 @@ async function handleLogout() {
         <!-- Empty State -->
         <div v-else class="empty-state">
           <TrendingUp :size="48" :stroke-width="iconStrokeWidth" />
-          <h3>Нет надбавок</h3>
-          <p>Добавьте надбавку для дополнительных сборов</p>
+          <h3>{{ t('carrierSurcharges.noSurcharges') }}</h3>
+          <p>{{ t('carrierSurcharges.noSurchargesText') }}</p>
           <button class="btn btn-primary" @click="openAddModal">
             <Plus :size="18" :stroke-width="iconStrokeWidth" />
-            Добавить надбавку
+            {{ t('carrierSurcharges.addSurcharge') }}
           </button>
         </div>
       </div>
@@ -343,7 +346,7 @@ async function handleLogout() {
     <div v-if="showAddModal" class="modal-overlay" @click.self="closeModal">
       <div class="modal">
         <div class="modal-header">
-          <h2>{{ editingSurcharge ? 'Редактировать надбавку' : 'Новая надбавка' }}</h2>
+          <h2>{{ editingSurcharge ? t('carrierSurcharges.editSurcharge') : t('carrierSurcharges.newSurcharge') }}</h2>
           <button class="btn-close" @click="closeModal">
             <X :size="20" :stroke-width="iconStrokeWidth" />
           </button>
@@ -351,9 +354,9 @@ async function handleLogout() {
 
         <div class="modal-body">
           <div class="form-group">
-            <label>Тип надбавки</label>
+            <label>{{ t('carrierSurcharges.form.surchargeType') }}</label>
             <select v-model="newSurcharge.surcharge_type" class="form-input" @change="onTypeSelect">
-              <option value="">Выберите тип</option>
+              <option value="">{{ t('carrierSurcharges.form.selectType') }}</option>
               <option v-for="type in surchargeTypes" :key="type.value" :value="type.value">
                 {{ type.label }}
               </option>
@@ -361,17 +364,17 @@ async function handleLogout() {
           </div>
 
           <div class="form-group">
-            <label>Название</label>
+            <label>{{ t('carrierSurcharges.form.name') }}</label>
             <input
               v-model="newSurcharge.name"
               type="text"
-              placeholder="Название надбавки"
+              :placeholder="t('carrierSurcharges.form.namePlaceholder')"
               class="form-input"
             />
           </div>
 
           <div class="form-group">
-            <label>Способ расчета</label>
+            <label>{{ t('carrierSurcharges.form.calculationType') }}</label>
             <select v-model="newSurcharge.calculation_type" class="form-input">
               <option v-for="type in calculationTypes" :key="type.value" :value="type.value">
                 {{ type.label }}
@@ -381,7 +384,7 @@ async function handleLogout() {
 
           <div class="form-group">
             <label>
-              {{ newSurcharge.calculation_type === 'percentage' ? 'Процент (%)' : 'Сумма (USD)' }}
+              {{ newSurcharge.calculation_type === 'percentage' ? t('carrierSurcharges.form.percentage') : t('carrierSurcharges.form.amount') }}
             </label>
             <input
               v-model.number="newSurcharge.value"
@@ -395,16 +398,16 @@ async function handleLogout() {
           <div class="form-group">
             <label class="checkbox-label">
               <input type="checkbox" v-model="newSurcharge.is_active" />
-              Активна
+              {{ t('carrierSurcharges.form.isActive') }}
             </label>
           </div>
         </div>
 
         <div class="modal-footer">
-          <button class="btn btn-outline" @click="closeModal">Отмена</button>
+          <button class="btn btn-outline" @click="closeModal">{{ t('common.cancel') }}</button>
           <button class="btn btn-primary" @click="saveSurcharge">
             <Save :size="16" :stroke-width="iconStrokeWidth" />
-            {{ editingSurcharge ? 'Сохранить' : 'Создать надбавку' }}
+            {{ editingSurcharge ? t('common.save') : t('carrierSurcharges.createSurcharge') }}
           </button>
         </div>
       </div>

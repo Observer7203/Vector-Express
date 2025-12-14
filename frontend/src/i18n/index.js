@@ -45,7 +45,7 @@ export const getLocale = () => i18n.global.locale.value
 
 // Available locales
 export const availableLocales = [
-  { code: 'ru', name: 'Русский', flag: '🇷🇺' },
-  { code: 'kk', name: 'Қазақша', flag: '🇰🇿' },
-  { code: 'en', name: 'English', flag: '🇬🇧' }
+  { code: 'ru', name: 'Русский' },
+  { code: 'kk', name: 'Қазақша' },
+  { code: 'en', name: 'English' }
 ]

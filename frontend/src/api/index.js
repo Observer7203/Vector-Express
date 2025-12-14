@@ -1,6 +1,6 @@
 export { default as client } from './client'
 export { authApi } from './auth'
-export { shipmentsApi } from './shipments'
+export { shipmentsApi, quotesApi } from './shipments'
 export { ordersApi, trackingApi } from './orders'
 export { adminApi } from './admin'
 export { documentsApi } from './documents'

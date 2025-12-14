@@ -1,6 +1,7 @@
 <script setup>
 import { ref, computed, onMounted, watch } from 'vue'
 import { useAdminStore } from '@/stores/admin'
+import { useI18n } from 'vue-i18n'
 import {
   Search,
   Eye,
@@ -12,6 +13,7 @@ import {
 } from 'lucide-vue-next'
 
 const adminStore = useAdminStore()
+const { t } = useI18n()
 const iconStrokeWidth = 1.5
 
 const search = ref('')
@@ -25,17 +27,17 @@ const statusOrder = ref(null)
 const newStatus = ref('')
 const updatingStatus = ref(false)
 
-const statusLabels = {
-  pending: 'Ожидает подтверждения',
-  confirmed: 'Подтвержден',
-  pickup_scheduled: 'Назначен забор',
-  picked_up: 'Груз забран',
-  in_transit: 'В пути',
-  customs: 'На таможне',
-  out_for_delivery: 'Доставляется',
-  delivered: 'Доставлен',
-  cancelled: 'Отменен'
-}
+const statusLabels = computed(() => ({
+  pending: t('status.pending'),
+  confirmed: t('status.confirmed'),
+  pickup_scheduled: t('status.pickup_scheduled'),
+  picked_up: t('status.picked_up'),
+  in_transit: t('status.in_transit'),
+  customs: t('status.customs'),
+  out_for_delivery: t('status.out_for_delivery'),
+  delivered: t('status.delivered'),
+  cancelled: t('status.cancelled')
+}))
 
 const statusColors = {
   pending: 'warning',
@@ -129,8 +131,8 @@ function formatPrice(amount, currency = 'USD') {
   <div class="orders-page">
     <div class="page-header">
       <div>
-        <h1>Заказы</h1>
-        <p class="subtitle">Управление заказами системы</p>
+        <h1>{{ t('admin.orders') }}</h1>
+        <p class="subtitle">{{ t('adminOrders.subtitle') }}</p>
       </div>
     </div>
 
@@ -142,7 +144,7 @@ function formatPrice(amount, currency = 'USD') {
         </div>
         <div class="stat-info">
           <span class="stat-value">{{ statistics.total || 0 }}</span>
-          <span class="stat-label">Всего заказов</span>
+          <span class="stat-label">{{ t('adminOrders.stats.total') }}</span>
         </div>
       </div>
       <div class="stat-card">
@@ -151,7 +153,7 @@ function formatPrice(amount, currency = 'USD') {
         </div>
         <div class="stat-info">
           <span class="stat-value">{{ statistics.pending || 0 }}</span>
-          <span class="stat-label">Ожидают подтверждения</span>
+          <span class="stat-label">{{ t('adminOrders.stats.pending') }}</span>
         </div>
       </div>
       <div class="stat-card">
@@ -160,7 +162,7 @@ function formatPrice(amount, currency = 'USD') {
         </div>
         <div class="stat-info">
           <span class="stat-value">{{ statistics.in_progress || 0 }}</span>
-          <span class="stat-label">В процессе</span>
+          <span class="stat-label">{{ t('adminOrders.stats.inProgress') }}</span>
         </div>
       </div>
       <div class="stat-card">
@@ -169,7 +171,7 @@ function formatPrice(amount, currency = 'USD') {
         </div>
         <div class="stat-info">
           <span class="stat-value">{{ statistics.delivered || 0 }}</span>
-          <span class="stat-label">Доставлено</span>
+          <span class="stat-label">{{ t('adminOrders.stats.delivered') }}</span>
         </div>
       </div>
     </div>
@@ -181,32 +183,32 @@ function formatPrice(amount, currency = 'USD') {
         <input
           v-model="search"
           type="text"
-          placeholder="Номер заказа VE-2025-..."
+          :placeholder="t('adminOrders.searchPlaceholder')"
         />
       </div>
       <div class="filter-group">
         <select v-model="filterStatus">
-          <option value="">Все статусы</option>
+          <option value="">{{ t('status.allStatuses') }}</option>
           <option v-for="(label, key) in statusLabels" :key="key" :value="key">
             {{ label }}
           </option>
         </select>
       </div>
       <div class="filter-group">
-        <input v-model="dateFrom" type="date" placeholder="Дата от" />
+        <input v-model="dateFrom" type="date" :placeholder="t('adminOrders.dateFrom')" />
       </div>
       <div class="filter-group">
-        <input v-model="dateTo" type="date" placeholder="Дата до" />
+        <input v-model="dateTo" type="date" :placeholder="t('adminOrders.dateTo')" />
       </div>
       <button @click="resetFilters" class="btn btn-sm btn-outline">
-        Сбросить
+        {{ t('adminOrders.reset') }}
       </button>
     </div>
 
     <!-- Loading -->
     <div v-if="loading" class="loading">
       <div class="spinner"></div>
-      <span>Загрузка...</span>
+      <span>{{ t('common.loading') }}</span>
     </div>
 
     <!-- Table -->
@@ -214,14 +216,14 @@ function formatPrice(amount, currency = 'USD') {
       <table class="data-table">
         <thead>
           <tr>
-            <th>Номер</th>
-            <th>Заказчик</th>
-            <th>Перевозчик</th>
-            <th>Маршрут</th>
-            <th>Сумма</th>
-            <th>Статус</th>
-            <th>Дата</th>
-            <th>Действия</th>
+            <th>{{ t('adminOrders.table.number') }}</th>
+            <th>{{ t('adminOrders.table.customer') }}</th>
+            <th>{{ t('adminOrders.table.carrier') }}</th>
+            <th>{{ t('adminOrders.table.route') }}</th>
+            <th>{{ t('adminOrders.table.amount') }}</th>
+            <th>{{ t('adminOrders.table.status') }}</th>
+            <th>{{ t('adminOrders.table.date') }}</th>
+            <th>{{ t('adminOrders.table.actions') }}</th>
           </tr>
         </thead>
         <tbody>
@@ -245,18 +247,18 @@ function formatPrice(amount, currency = 'USD') {
               <div class="route-cell">
                 <div class="route-from">
                   <MapPin :size="12" :stroke-width="iconStrokeWidth" />
-                  <span>{{ order.shipment?.origin_city }}, {{ order.shipment?.origin_country }}</span>
+                  <span>{{ order.quote?.shipment?.origin_city }}, {{ order.quote?.shipment?.origin_country }}</span>
                 </div>
                 <div class="route-to">
                   <MapPin :size="12" :stroke-width="iconStrokeWidth" />
-                  <span>{{ order.shipment?.destination_city }}, {{ order.shipment?.destination_country }}</span>
+                  <span>{{ order.quote?.shipment?.destination_city }}, {{ order.quote?.shipment?.destination_country }}</span>
                 </div>
               </div>
             </td>
             <td>
               <div class="price-cell">
                 <span class="price">{{ formatPrice(order.total_amount, order.currency) }}</span>
-                <span class="commission">Комиссия: {{ formatPrice(order.commission_amount, order.currency) }}</span>
+                <span class="commission">{{ t('order.commission') }}: {{ formatPrice(order.commission_amount, order.currency) }}</span>
               </div>
             </td>
             <td>
@@ -269,10 +271,10 @@ function formatPrice(amount, currency = 'USD') {
             </td>
             <td>
               <div class="actions">
-                <button @click="viewOrder(order)" class="action-btn" title="Просмотр">
+                <button @click="viewOrder(order)" class="action-btn" :title="t('adminOrders.view')">
                   <Eye :size="16" :stroke-width="iconStrokeWidth" />
                 </button>
-                <button @click="openStatusModal(order)" class="action-btn success" title="Изменить статус">
+                <button @click="openStatusModal(order)" class="action-btn success" :title="t('adminOrders.changeStatus')">
                   <CheckCircle :size="16" :stroke-width="iconStrokeWidth" />
                 </button>
               </div>
@@ -280,7 +282,7 @@ function formatPrice(amount, currency = 'USD') {
           </tr>
           <tr v-if="orders.length === 0">
             <td colspan="8" class="empty-row">
-              Заказы не найдены
+              {{ t('adminOrders.noOrders') }}
             </td>
           </tr>
         </tbody>
@@ -294,17 +296,17 @@ function formatPrice(amount, currency = 'USD') {
         :disabled="pagination.currentPage === 1"
         class="btn btn-sm btn-outline"
       >
-        Назад
+        {{ t('common.back') }}
       </button>
       <span class="page-info">
-        Страница {{ pagination.currentPage }} из {{ pagination.lastPage }}
+        {{ t('adminOrders.pageInfo', { current: pagination.currentPage, last: pagination.lastPage }) }}
       </span>
       <button
         @click="changePage(pagination.currentPage + 1)"
         :disabled="pagination.currentPage === pagination.lastPage"
         class="btn btn-sm btn-outline"
       >
-        Далее
+        {{ t('common.next') }}
       </button>
     </div>
 
@@ -312,7 +314,7 @@ function formatPrice(amount, currency = 'USD') {
     <div v-if="showDetailsModal" class="modal-overlay" @click.self="showDetailsModal = false">
       <div class="modal modal-lg">
         <div class="modal-header">
-          <h2>Заказ {{ selectedOrder?.order_number }}</h2>
+          <h2>{{ t('adminOrders.orderNumber', { number: selectedOrder?.order_number }) }}</h2>
           <button @click="showDetailsModal = false" class="close-btn">
             <X :size="20" :stroke-width="iconStrokeWidth" />
           </button>
@@ -329,41 +331,41 @@ function formatPrice(amount, currency = 'USD') {
 
           <!-- Route Info -->
           <div class="detail-section">
-            <h3>Маршрут</h3>
+            <h3>{{ t('order.route') }}</h3>
             <div class="route-details">
               <div class="route-point">
-                <div class="route-label">Откуда</div>
+                <div class="route-label">{{ t('shipment.origin') }}</div>
                 <div class="route-value">
-                  {{ selectedOrder.shipment?.origin_city }}, {{ selectedOrder.shipment?.origin_country }}
+                  {{ selectedOrder.quote?.shipment?.origin_city }}, {{ selectedOrder.quote?.shipment?.origin_country }}
                 </div>
-                <div class="route-address">{{ selectedOrder.shipment?.origin_address }}</div>
+                <div class="route-address">{{ selectedOrder.quote?.shipment?.origin_address }}</div>
               </div>
               <div class="route-arrow">→</div>
               <div class="route-point">
-                <div class="route-label">Куда</div>
+                <div class="route-label">{{ t('shipment.destination') }}</div>
                 <div class="route-value">
-                  {{ selectedOrder.shipment?.destination_city }}, {{ selectedOrder.shipment?.destination_country }}
+                  {{ selectedOrder.quote?.shipment?.destination_city }}, {{ selectedOrder.quote?.shipment?.destination_country }}
                 </div>
-                <div class="route-address">{{ selectedOrder.shipment?.destination_address }}</div>
+                <div class="route-address">{{ selectedOrder.quote?.shipment?.destination_address }}</div>
               </div>
             </div>
           </div>
 
           <!-- Cargo Info -->
           <div class="detail-section">
-            <h3>Груз</h3>
+            <h3>{{ t('order.cargo') }}</h3>
             <div class="cargo-grid">
               <div class="cargo-item">
-                <span class="cargo-label">Вес</span>
-                <span class="cargo-value">{{ selectedOrder.shipment?.total_weight }} кг</span>
+                <span class="cargo-label">{{ t('shipment.weight') }}</span>
+                <span class="cargo-value">{{ selectedOrder.quote?.shipment?.total_weight }} {{ t('shipment.kg') }}</span>
               </div>
               <div class="cargo-item">
-                <span class="cargo-label">Объем</span>
-                <span class="cargo-value">{{ selectedOrder.shipment?.total_volume }} м³</span>
+                <span class="cargo-label">{{ t('shipment.volume') }}</span>
+                <span class="cargo-value">{{ selectedOrder.quote?.shipment?.total_volume }} {{ t('shipment.cbm') }}</span>
               </div>
               <div class="cargo-item">
-                <span class="cargo-label">Тип груза</span>
-                <span class="cargo-value">{{ selectedOrder.shipment?.cargo_type }}</span>
+                <span class="cargo-label">{{ t('shipment.cargoType') }}</span>
+                <span class="cargo-value">{{ selectedOrder.quote?.shipment?.cargo_type }}</span>
               </div>
             </div>
           </div>
@@ -371,7 +373,7 @@ function formatPrice(amount, currency = 'USD') {
           <!-- Parties -->
           <div class="detail-section parties-section">
             <div class="party-block">
-              <h3>Заказчик</h3>
+              <h3>{{ t('order.customer') }}</h3>
               <div class="party-info">
                 <div class="party-name">{{ selectedOrder.user?.name }}</div>
                 <div class="party-detail">{{ selectedOrder.user?.email }}</div>
@@ -379,7 +381,7 @@ function formatPrice(amount, currency = 'USD') {
               </div>
             </div>
             <div class="party-block">
-              <h3>Перевозчик</h3>
+              <h3>{{ t('quote.carrier') }}</h3>
               <div class="party-info">
                 <div class="party-name">{{ selectedOrder.carrier?.company?.name }}</div>
                 <div class="party-detail">{{ selectedOrder.carrier?.company?.phone }}</div>
@@ -389,16 +391,16 @@ function formatPrice(amount, currency = 'USD') {
 
           <!-- Contacts -->
           <div class="detail-section">
-            <h3>Контакты для доставки</h3>
+            <h3>{{ t('adminOrders.deliveryContacts') }}</h3>
             <div class="contacts-grid">
               <div>
-                <div class="contact-label">Контактное лицо</div>
+                <div class="contact-label">{{ t('order.contactPerson') }}</div>
                 <div class="contact-value">{{ selectedOrder.contact_name }}</div>
                 <div class="contact-detail">{{ selectedOrder.contact_phone }}</div>
                 <div class="contact-detail">{{ selectedOrder.contact_email }}</div>
               </div>
               <div>
-                <div class="contact-label">Адрес доставки</div>
+                <div class="contact-label">{{ t('order.deliveryAddress') }}</div>
                 <div class="contact-value">{{ selectedOrder.delivery_contact_name }}</div>
                 <div class="contact-detail">{{ selectedOrder.delivery_address }}</div>
               </div>
@@ -407,17 +409,17 @@ function formatPrice(amount, currency = 'USD') {
 
           <!-- Financial -->
           <div class="detail-section financial-section">
-            <h3>Финансы</h3>
+            <h3>{{ t('adminOrders.financial') }}</h3>
             <div class="financial-info">
               <div class="total-amount">
                 {{ formatPrice(selectedOrder.total_amount, selectedOrder.currency) }}
               </div>
               <div class="commission-info">
-                Комиссия: {{ formatPrice(selectedOrder.commission_amount, selectedOrder.currency) }} (5%)
+                {{ t('order.commission') }}: {{ formatPrice(selectedOrder.commission_amount, selectedOrder.currency) }} (5%)
               </div>
             </div>
             <div class="tracking-info">
-              <div class="tracking-label">Трекинг номер</div>
+              <div class="tracking-label">{{ t('shipment.trackingNumber') }}</div>
               <code class="tracking-code">{{ selectedOrder.tracking_number }}</code>
               <code v-if="selectedOrder.carrier_tracking_number" class="tracking-code secondary">
                 {{ selectedOrder.carrier_tracking_number }}
@@ -432,7 +434,7 @@ function formatPrice(amount, currency = 'USD') {
     <div v-if="showStatusModal" class="modal-overlay" @click.self="showStatusModal = false">
       <div class="modal modal-sm">
         <div class="modal-header">
-          <h2>Изменить статус</h2>
+          <h2>{{ t('adminOrders.changeStatus') }}</h2>
           <button @click="showStatusModal = false" class="close-btn">
             <X :size="20" :stroke-width="iconStrokeWidth" />
           </button>
@@ -440,10 +442,10 @@ function formatPrice(amount, currency = 'USD') {
 
         <div class="modal-body">
           <p class="status-order-info">
-            Заказ: <strong>{{ statusOrder?.order_number }}</strong>
+            {{ t('adminOrders.orderLabel') }}: <strong>{{ statusOrder?.order_number }}</strong>
           </p>
           <div class="form-group">
-            <label>Новый статус</label>
+            <label>{{ t('adminOrders.newStatus') }}</label>
             <select v-model="newStatus">
               <option v-for="(label, key) in statusLabels" :key="key" :value="key">
                 {{ label }}
@@ -453,14 +455,14 @@ function formatPrice(amount, currency = 'USD') {
         </div>
 
         <div class="modal-footer">
-          <button @click="showStatusModal = false" class="btn btn-outline">Отмена</button>
+          <button @click="showStatusModal = false" class="btn btn-outline">{{ t('common.cancel') }}</button>
           <button
             @click="updateStatus"
             class="btn btn-primary"
             :disabled="updatingStatus"
           >
-            <span v-if="updatingStatus">Сохранение...</span>
-            <span v-else>Сохранить</span>
+            <span v-if="updatingStatus">{{ t('adminOrders.saving') }}</span>
+            <span v-else>{{ t('common.save') }}</span>
           </button>
         </div>
       </div>

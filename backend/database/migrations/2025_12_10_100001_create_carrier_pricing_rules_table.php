@@ -21,7 +21,7 @@ return new class extends Migration
             $table->json('config')->nullable(); // Additional complex pricing rules
             $table->timestamps();
 
-            $table->index(['carrier_id', 'effective_from', 'effective_until']);
+            $table->index(['carrier_id', 'effective_from', 'effective_until'], 'cpr_carrier_effective_idx');
         });
     }
 

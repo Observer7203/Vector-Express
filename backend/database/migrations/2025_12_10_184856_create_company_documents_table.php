@@ -52,7 +52,7 @@ return new class extends Migration
             $table->timestamps();
 
             // Индексы
-            $table->index(['company_id', 'document_type']);
+            $table->index(['company_id', 'document_type'], 'cd_company_type_idx');
             $table->index('status');
         });
     }

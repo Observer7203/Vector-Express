@@ -69,6 +69,12 @@ const router = createRouter({
       meta: { requiresAuth: true }
     },
     {
+      path: '/orders/create/:quoteId',
+      name: 'orders-create',
+      component: () => import('@/views/orders/OrderCreateView.vue'),
+      meta: { requiresAuth: true }
+    },
+    {
       path: '/orders/:id',
       name: 'orders-detail',
       component: () => import('@/views/orders/OrderDetailView.vue'),
@@ -115,6 +121,12 @@ const router = createRouter({
       path: '/carrier/documents',
       name: 'carrier-documents',
       component: () => import('@/views/carrier/CarrierDocumentsView.vue'),
+      meta: { requiresAuth: true, requiresRole: 'carrier' }
+    },
+    {
+      path: '/carrier/orders',
+      name: 'carrier-orders',
+      component: () => import('@/views/carrier/CarrierOrdersView.vue'),
       meta: { requiresAuth: true, requiresRole: 'carrier' }
     },
     // Admin routes

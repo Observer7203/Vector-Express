@@ -1,6 +1,7 @@
 <script setup>
 import { computed, onMounted } from 'vue'
 import { useAdminStore } from '@/stores/admin'
+import { useI18n } from 'vue-i18n'
 import {
   Users,
   Building2,
@@ -14,6 +15,7 @@ import {
 } from 'lucide-vue-next'
 
 const adminStore = useAdminStore()
+const { t } = useI18n()
 const iconStrokeWidth = 1.5
 
 onMounted(() => {
@@ -30,11 +32,11 @@ function formatCurrency(value) {
 
 <template>
   <div class="dashboard">
-    <h1>Дашборд</h1>
+    <h1>{{ t('admin.dashboard') }}</h1>
 
     <div v-if="loading" class="loading">
       <div class="spinner"></div>
-      <span>Загрузка данных...</span>
+      <span>{{ t('adminDashboard.loadingData') }}</span>
     </div>
 
     <template v-else-if="data">
@@ -46,8 +48,8 @@ function formatCurrency(value) {
           </div>
           <div class="stat-content">
             <span class="stat-value">{{ data.users.total }}</span>
-            <span class="stat-label">Пользователей</span>
-            <span class="stat-change positive">+{{ data.users.new_this_week }} за неделю</span>
+            <span class="stat-label">{{ t('adminDashboard.stats.users') }}</span>
+            <span class="stat-change positive">+{{ data.users.new_this_week }} {{ t('adminDashboard.stats.perWeek') }}</span>
           </div>
         </div>
 
@@ -57,8 +59,8 @@ function formatCurrency(value) {
           </div>
           <div class="stat-content">
             <span class="stat-value">{{ data.companies.total }}</span>
-            <span class="stat-label">Компаний</span>
-            <span class="stat-meta">{{ data.companies.shippers }} заказчиков · {{ data.companies.carriers }} перевозчиков</span>
+            <span class="stat-label">{{ t('adminDashboard.stats.companies') }}</span>
+            <span class="stat-meta">{{ data.companies.shippers }} {{ t('adminDashboard.stats.shippers') }} · {{ data.companies.carriers }} {{ t('adminDashboard.stats.carriers') }}</span>
           </div>
         </div>
 
@@ -68,8 +70,8 @@ function formatCurrency(value) {
           </div>
           <div class="stat-content">
             <span class="stat-value">{{ data.orders.total }}</span>
-            <span class="stat-label">Заказов</span>
-            <span class="stat-meta">{{ data.orders.this_month }} за месяц</span>
+            <span class="stat-label">{{ t('adminDashboard.stats.orders') }}</span>
+            <span class="stat-meta">{{ data.orders.this_month }} {{ t('adminDashboard.stats.perMonth') }}</span>
           </div>
         </div>
 
@@ -79,8 +81,8 @@ function formatCurrency(value) {
           </div>
           <div class="stat-content">
             <span class="stat-value">${{ formatCurrency(data.financial.total_revenue) }}</span>
-            <span class="stat-label">Выручка</span>
-            <span class="stat-change positive">Комиссия: ${{ formatCurrency(data.financial.total_commission) }}</span>
+            <span class="stat-label">{{ t('adminDashboard.stats.revenue') }}</span>
+            <span class="stat-change positive">{{ t('adminDashboard.stats.commission') }}: ${{ formatCurrency(data.financial.total_commission) }}</span>
           </div>
         </div>
       </div>
@@ -89,15 +91,15 @@ function formatCurrency(value) {
       <div class="secondary-stats">
         <div class="stat-item warning" v-if="data.companies.pending_verification > 0">
           <Clock :size="20" :stroke-width="iconStrokeWidth" />
-          <span><strong>{{ data.companies.pending_verification }}</strong> компаний ожидают верификации</span>
+          <span><strong>{{ data.companies.pending_verification }}</strong> {{ t('adminDashboard.alerts.companiesAwaitVerification') }}</span>
         </div>
         <div class="stat-item danger" v-if="data.financial.overdue_payments > 0">
           <AlertTriangle :size="20" :stroke-width="iconStrokeWidth" />
-          <span><strong>${{ formatCurrency(data.financial.overdue_payments) }}</strong> просроченных платежей</span>
+          <span><strong>${{ formatCurrency(data.financial.overdue_payments) }}</strong> {{ t('adminDashboard.alerts.overduePayments') }}</span>
         </div>
         <div class="stat-item info" v-if="data.financial.pending_payments > 0">
           <DollarSign :size="20" :stroke-width="iconStrokeWidth" />
-          <span><strong>${{ formatCurrency(data.financial.pending_payments) }}</strong> ожидают оплаты</span>
+          <span><strong>${{ formatCurrency(data.financial.pending_payments) }}</strong> {{ t('adminDashboard.alerts.awaitingPayment') }}</span>
         </div>
       </div>
 
@@ -105,7 +107,7 @@ function formatCurrency(value) {
       <div class="charts-row">
         <!-- Orders Trend -->
         <div class="chart-card">
-          <h3>Заказы за неделю</h3>
+          <h3>{{ t('adminDashboard.charts.ordersPerWeek') }}</h3>
           <div class="simple-chart">
             <div class="chart-bars">
               <div
@@ -126,31 +128,31 @@ function formatCurrency(value) {
 
         <!-- Orders by Status -->
         <div class="chart-card">
-          <h3>Статусы заказов</h3>
+          <h3>{{ t('adminDashboard.charts.orderStatuses') }}</h3>
           <div class="status-list">
             <div class="status-item">
               <span class="status-dot pending"></span>
-              <span class="status-name">Ожидают</span>
+              <span class="status-name">{{ t('adminDashboard.statuses.pending') }}</span>
               <span class="status-count">{{ data.orders.by_status?.pending || 0 }}</span>
             </div>
             <div class="status-item">
               <span class="status-dot confirmed"></span>
-              <span class="status-name">Подтверждены</span>
+              <span class="status-name">{{ t('adminDashboard.statuses.confirmed') }}</span>
               <span class="status-count">{{ data.orders.by_status?.confirmed || 0 }}</span>
             </div>
             <div class="status-item">
               <span class="status-dot in_transit"></span>
-              <span class="status-name">В пути</span>
+              <span class="status-name">{{ t('adminDashboard.statuses.inTransit') }}</span>
               <span class="status-count">{{ data.orders.by_status?.in_transit || 0 }}</span>
             </div>
             <div class="status-item">
               <span class="status-dot delivered"></span>
-              <span class="status-name">Доставлены</span>
+              <span class="status-name">{{ t('adminDashboard.statuses.delivered') }}</span>
               <span class="status-count">{{ data.orders.by_status?.delivered || 0 }}</span>
             </div>
             <div class="status-item">
               <span class="status-dot cancelled"></span>
-              <span class="status-name">Отменены</span>
+              <span class="status-name">{{ t('adminDashboard.statuses.cancelled') }}</span>
               <span class="status-count">{{ data.orders.by_status?.cancelled || 0 }}</span>
             </div>
           </div>
@@ -158,7 +160,7 @@ function formatCurrency(value) {
 
         <!-- Top Carriers -->
         <div class="chart-card">
-          <h3>Топ перевозчиков</h3>
+          <h3>{{ t('adminDashboard.charts.topCarriers') }}</h3>
           <div class="top-list">
             <div
               v-for="(carrier, index) in data.top_carriers"
@@ -170,10 +172,10 @@ function formatCurrency(value) {
                 <Truck :size="18" :stroke-width="iconStrokeWidth" />
               </div>
               <span class="top-name">{{ carrier.name }}</span>
-              <span class="top-value">{{ carrier.orders }} заказов</span>
+              <span class="top-value">{{ carrier.orders }} {{ t('adminDashboard.charts.ordersCount') }}</span>
             </div>
             <div v-if="!data.top_carriers?.length" class="empty-list">
-              Нет данных
+              {{ t('adminDashboard.noData') }}
             </div>
           </div>
         </div>

@@ -24,7 +24,7 @@ return new class extends Migration
             $table->boolean('is_active')->default(true);
             $table->timestamps();
 
-            $table->index(['carrier_id', 'surcharge_type', 'is_active']);
+            $table->index(['carrier_id', 'surcharge_type', 'is_active'], 'cs_carrier_type_idx');
         });
     }
 

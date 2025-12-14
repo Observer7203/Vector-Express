@@ -28,7 +28,7 @@ return new class extends Migration
             $table->boolean('is_active')->default(true);
             $table->timestamps();
 
-            $table->index(['carrier_id', 'type', 'is_active']);
+            $table->index(['carrier_id', 'type', 'is_active'], 'ct_carrier_type_idx');
             $table->index(['country_code', 'city']);
             $table->unique(['carrier_id', 'terminal_code']);
         });

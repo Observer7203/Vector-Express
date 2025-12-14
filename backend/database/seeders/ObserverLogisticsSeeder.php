@@ -6,13 +6,18 @@ use Illuminate\Database\Seeder;
 use App\Models\CarrierRateCard;
 use App\Models\CarrierSurcharge;
 use App\Models\CarrierPricingRule;
+use App\Models\CarrierZone;
 
 class ObserverLogisticsSeeder extends Seeder
 {
     public function run(): void
     {
         $carrierId = 8;
-        $zones = ['KZ' => 57, 'RU' => 58, 'UZ' => 59, 'KG' => 60, 'TJ' => 61, 'BY' => 62, 'CN' => 63];
+
+        // Получаем зоны динамически по zone_code
+        $zones = CarrierZone::where('carrier_id', $carrierId)
+            ->pluck('id', 'zone_code')
+            ->toArray();
 
         // Удалим старые данные
         CarrierRateCard::where('carrier_id', $carrierId)->delete();

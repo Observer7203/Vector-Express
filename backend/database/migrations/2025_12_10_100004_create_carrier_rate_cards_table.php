@@ -26,7 +26,7 @@ return new class extends Migration
             $table->date('effective_until')->nullable();
             $table->timestamps();
 
-            $table->index(['carrier_id', 'origin_zone_id', 'destination_zone_id']);
+            $table->index(['carrier_id', 'origin_zone_id', 'destination_zone_id'], 'crc_zones_idx');
             $table->index('transport_type');
         });
     }

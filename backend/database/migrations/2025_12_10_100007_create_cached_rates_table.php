@@ -16,7 +16,7 @@ return new class extends Migration
             $table->timestamp('expires_at');
             $table->timestamps();
 
-            $table->index(['carrier_id', 'route_hash', 'expires_at']);
+            $table->index(['carrier_id', 'route_hash', 'expires_at'], 'cr_carrier_route_idx');
         });
     }
 

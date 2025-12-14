@@ -1,5 +1,6 @@
 <script setup>
 import { ref, computed, onMounted, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useAdminStore } from '@/stores/admin'
 import {
   Plus,
@@ -14,6 +15,7 @@ import {
   AlertCircle
 } from 'lucide-vue-next'
 
+const { t } = useI18n()
 const adminStore = useAdminStore()
 const iconStrokeWidth = 1.5
 
@@ -33,21 +35,21 @@ const form = ref({
 
 const newCountry = ref('')
 
-const transportTypes = [
-  { value: 'air', label: 'Авиа' },
-  { value: 'sea', label: 'Морской' },
-  { value: 'rail', label: 'Ж/Д' },
-  { value: 'road', label: 'Автомобильный' }
-]
+const transportTypes = computed(() => [
+  { value: 'air', label: t('adminCarriers.transportTypes.air') },
+  { value: 'sea', label: t('adminCarriers.transportTypes.sea') },
+  { value: 'rail', label: t('adminCarriers.transportTypes.rail') },
+  { value: 'road', label: t('adminCarriers.transportTypes.road') }
+])
 
-const apiTypes = [
-  { value: 'manual', label: 'Ручной расчёт' },
-  { value: 'dhl', label: 'DHL API' },
-  { value: 'fedex', label: 'FedEx API' },
-  { value: 'ups', label: 'UPS API' },
-  { value: 'ponyexpress', label: 'Ponyexpress API' },
-  { value: 'custom', label: 'Custom API' }
-]
+const apiTypes = computed(() => [
+  { value: 'manual', label: t('adminCarriers.apiTypes.manual') },
+  { value: 'dhl', label: t('adminCarriers.apiTypes.dhl') },
+  { value: 'fedex', label: t('adminCarriers.apiTypes.fedex') },
+  { value: 'ups', label: t('adminCarriers.apiTypes.ups') },
+  { value: 'ponyexpress', label: t('adminCarriers.apiTypes.ponyexpress') },
+  { value: 'custom', label: t('adminCarriers.apiTypes.custom') }
+])
 
 onMounted(() => {
   adminStore.fetchCarriers()
@@ -133,7 +135,7 @@ async function toggleActive(carrier) {
 }
 
 async function deleteCarrier(carrier) {
-  if (!confirm(`Удалить перевозчика "${carrier.company?.name}"?`)) return
+  if (!confirm(t('adminCarriers.confirmDelete', { name: carrier.company?.name }))) return
 
   try {
     await adminStore.deleteCarrier(carrier.id)
@@ -145,11 +147,11 @@ async function deleteCarrier(carrier) {
 }
 
 function getTransportLabel(type) {
-  return transportTypes.find(t => t.value === type)?.label || type
+  return transportTypes.value.find(t => t.value === type)?.label || type
 }
 
 function getApiTypeLabel(type) {
-  return apiTypes.find(t => t.value === type)?.label || type
+  return apiTypes.value.find(t => t.value === type)?.label || type
 }
 
 function changePage(page) {
@@ -161,12 +163,12 @@ function changePage(page) {
   <div class="carriers-page">
     <div class="page-header">
       <div>
-        <h1>Перевозчики</h1>
-        <p class="subtitle">Управление настройками перевозчиков для расчёта цен</p>
+        <h1>{{ t('adminCarriers.title') }}</h1>
+        <p class="subtitle">{{ t('adminCarriers.subtitle') }}</p>
       </div>
       <button @click="openCreateModal" class="btn btn-primary">
         <Plus :size="18" :stroke-width="iconStrokeWidth" />
-        <span>Добавить перевозчика</span>
+        <span>{{ t('adminCarriers.addCarrier') }}</span>
       </button>
     </div>
 
@@ -177,14 +179,14 @@ function changePage(page) {
         <input
           v-model="search"
           type="text"
-          placeholder="Поиск по названию..."
+          :placeholder="t('adminCarriers.searchPlaceholder')"
         />
       </div>
       <div class="filter-group">
         <select v-model="filterActive">
-          <option value="">Все статусы</option>
-          <option value="1">Активные</option>
-          <option value="0">Неактивные</option>
+          <option value="">{{ t('status.allStatuses') }}</option>
+          <option value="1">{{ t('adminCarriers.filters.active') }}</option>
+          <option value="0">{{ t('adminCarriers.filters.inactive') }}</option>
         </select>
       </div>
     </div>
@@ -193,15 +195,14 @@ function changePage(page) {
     <div v-if="availableCompanies.length > 0" class="info-banner">
       <AlertCircle :size="20" :stroke-width="iconStrokeWidth" />
       <span>
-        <strong>{{ availableCompanies.length }}</strong> компаний типа "перевозчик" без настроек carrier.
-        Нажмите "Добавить перевозчика" чтобы настроить.
+        <strong>{{ availableCompanies.length }}</strong> {{ t('adminCarriers.infoBanner') }}
       </span>
     </div>
 
     <!-- Loading -->
     <div v-if="loading" class="loading">
       <div class="spinner"></div>
-      <span>Загрузка...</span>
+      <span>{{ t('common.loading') }}</span>
     </div>
 
     <!-- Table -->
@@ -209,13 +210,13 @@ function changePage(page) {
       <table class="data-table">
         <thead>
           <tr>
-            <th>Компания</th>
-            <th>Тип API</th>
-            <th>Типы перевозок</th>
-            <th>Страны</th>
-            <th>Статистика</th>
-            <th>Статус</th>
-            <th>Действия</th>
+            <th>{{ t('adminCarriers.table.company') }}</th>
+            <th>{{ t('adminCarriers.table.apiType') }}</th>
+            <th>{{ t('adminCarriers.table.transportTypes') }}</th>
+            <th>{{ t('adminCarriers.table.countries') }}</th>
+            <th>{{ t('adminCarriers.table.stats') }}</th>
+            <th>{{ t('common.status') }}</th>
+            <th>{{ t('common.actions') }}</th>
           </tr>
         </thead>
         <tbody>
@@ -227,7 +228,7 @@ function changePage(page) {
                 </div>
                 <div>
                   <span class="company-name">{{ carrier.company?.name || 'N/A' }}</span>
-                  <span class="company-inn">ИНН: {{ carrier.company?.inn || '-' }}</span>
+                  <span class="company-inn">{{ t('adminCarriers.inn') }}: {{ carrier.company?.inn || '-' }}</span>
                 </div>
               </div>
             </td>
@@ -260,8 +261,8 @@ function changePage(page) {
             </td>
             <td>
               <div class="stats-cell">
-                <span>{{ carrier.quotes_count || 0 }} предложений</span>
-                <span>{{ carrier.orders_count || 0 }} заказов</span>
+                <span>{{ carrier.quotes_count || 0 }} {{ t('adminCarriers.quotes') }}</span>
+                <span>{{ carrier.orders_count || 0 }} {{ t('adminCarriers.orders') }}</span>
               </div>
             </td>
             <td>
@@ -272,15 +273,15 @@ function changePage(page) {
               >
                 <ToggleRight v-if="carrier.is_active" :size="24" :stroke-width="iconStrokeWidth" />
                 <ToggleLeft v-else :size="24" :stroke-width="iconStrokeWidth" />
-                <span>{{ carrier.is_active ? 'Активен' : 'Неактивен' }}</span>
+                <span>{{ carrier.is_active ? t('adminCarriers.active') : t('adminCarriers.inactive') }}</span>
               </button>
             </td>
             <td>
               <div class="actions">
-                <button @click="openEditModal(carrier)" class="action-btn" title="Редактировать">
+                <button @click="openEditModal(carrier)" class="action-btn" :title="t('common.edit')">
                   <Edit :size="16" :stroke-width="iconStrokeWidth" />
                 </button>
-                <button @click="deleteCarrier(carrier)" class="action-btn danger" title="Удалить">
+                <button @click="deleteCarrier(carrier)" class="action-btn danger" :title="t('common.delete')">
                   <Trash2 :size="16" :stroke-width="iconStrokeWidth" />
                 </button>
               </div>
@@ -288,7 +289,7 @@ function changePage(page) {
           </tr>
           <tr v-if="carriers.length === 0">
             <td colspan="7" class="empty-row">
-              Перевозчики не найдены
+              {{ t('adminCarriers.noCarriers') }}
             </td>
           </tr>
         </tbody>
@@ -302,17 +303,17 @@ function changePage(page) {
         :disabled="pagination.currentPage === 1"
         class="btn btn-sm btn-outline"
       >
-        Назад
+        {{ t('common.back') }}
       </button>
       <span class="page-info">
-        Страница {{ pagination.currentPage }} из {{ pagination.lastPage }}
+        {{ t('adminCarriers.pageInfo', { current: pagination.currentPage, last: pagination.lastPage }) }}
       </span>
       <button
         @click="changePage(pagination.currentPage + 1)"
         :disabled="pagination.currentPage === pagination.lastPage"
         class="btn btn-sm btn-outline"
       >
-        Далее
+        {{ t('common.next') }}
       </button>
     </div>
 
@@ -320,7 +321,7 @@ function changePage(page) {
     <div v-if="showModal" class="modal-overlay" @click.self="closeModal">
       <div class="modal">
         <div class="modal-header">
-          <h2>{{ editingCarrier ? 'Редактировать перевозчика' : 'Добавить перевозчика' }}</h2>
+          <h2>{{ editingCarrier ? t('adminCarriers.editCarrier') : t('adminCarriers.addCarrier') }}</h2>
           <button @click="closeModal" class="close-btn">
             <X :size="20" :stroke-width="iconStrokeWidth" />
           </button>
@@ -328,25 +329,25 @@ function changePage(page) {
 
         <div class="modal-body">
           <div class="form-group" v-if="!editingCarrier">
-            <label>Компания *</label>
+            <label>{{ t('adminCarriers.form.company') }} *</label>
             <select v-model="form.company_id" required>
-              <option value="">Выберите компанию</option>
+              <option value="">{{ t('adminCarriers.form.selectCompany') }}</option>
               <option
                 v-for="company in availableCompanies"
                 :key="company.id"
                 :value="company.id"
               >
-                {{ company.name }} ({{ company.inn || 'без ИНН' }})
+                {{ company.name }} ({{ company.inn || t('adminCarriers.form.noInn') }})
                 {{ company.verified ? '✓' : '' }}
               </option>
             </select>
             <p class="form-hint" v-if="availableCompanies.length === 0">
-              Нет компаний без настроек carrier
+              {{ t('adminCarriers.form.noAvailableCompanies') }}
             </p>
           </div>
 
           <div class="form-group">
-            <label>Тип API *</label>
+            <label>{{ t('adminCarriers.form.apiType') }} *</label>
             <select v-model="form.api_type" required>
               <option v-for="type in apiTypes" :key="type.value" :value="type.value">
                 {{ type.label }}
@@ -355,7 +356,7 @@ function changePage(page) {
           </div>
 
           <div class="form-group">
-            <label>Типы перевозок *</label>
+            <label>{{ t('adminCarriers.form.transportTypes') }} *</label>
             <div class="checkbox-group">
               <label v-for="type in transportTypes" :key="type.value" class="checkbox-label">
                 <input
@@ -369,7 +370,7 @@ function changePage(page) {
           </div>
 
           <div class="form-group">
-            <label>Страны *</label>
+            <label>{{ t('adminCarriers.form.countries') }} *</label>
             <div class="tags-input">
               <div class="tags-list">
                 <span
@@ -387,34 +388,34 @@ function changePage(page) {
                 <input
                   v-model="newCountry"
                   type="text"
-                  placeholder="Введите страну..."
+                  :placeholder="t('adminCarriers.form.countryPlaceholder')"
                   @keyup.enter="addCountry"
                 />
                 <button @click="addCountry" class="btn btn-sm btn-outline">
-                  Добавить
+                  {{ t('adminCarriers.form.add') }}
                 </button>
               </div>
             </div>
-            <p class="form-hint">Популярные: Казахстан, Китай, Россия, США, Германия, Турция</p>
+            <p class="form-hint">{{ t('adminCarriers.form.popularCountries') }}</p>
           </div>
 
           <div class="form-group">
             <label class="checkbox-label">
               <input type="checkbox" v-model="form.is_active" />
-              <span>Активен (будет участвовать в расчётах)</span>
+              <span>{{ t('adminCarriers.form.isActive') }}</span>
             </label>
           </div>
         </div>
 
         <div class="modal-footer">
-          <button @click="closeModal" class="btn btn-outline">Отмена</button>
+          <button @click="closeModal" class="btn btn-outline">{{ t('common.cancel') }}</button>
           <button
             @click="saveCarrier"
             class="btn btn-primary"
             :disabled="saving || !form.company_id && !editingCarrier || form.supported_transport_types.length === 0 || form.supported_countries.length === 0"
           >
-            <span v-if="saving">Сохранение...</span>
-            <span v-else>{{ editingCarrier ? 'Сохранить' : 'Создать' }}</span>
+            <span v-if="saving">{{ t('common.loading') }}</span>
+            <span v-else>{{ editingCarrier ? t('common.save') : t('adminCarriers.form.create') }}</span>
           </button>
         </div>
       </div>

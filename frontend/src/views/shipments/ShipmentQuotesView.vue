@@ -2,7 +2,6 @@
 import { ref, computed, onMounted } from 'vue'
 import { RouterLink, useRoute, useRouter } from 'vue-router'
 import { useShipmentsStore } from '@/stores/shipments'
-import { useOrdersStore } from '@/stores/orders'
 import { ArrowLeft, Star, FileText, ChevronDown, ChevronUp, Package, Fuel, Home, MapPin, Shield, FileCheck, Scale } from 'lucide-vue-next'
 
 const iconStrokeWidth = 1.2
@@ -10,12 +9,10 @@ const iconStrokeWidth = 1.2
 const route = useRoute()
 const router = useRouter()
 const shipmentsStore = useShipmentsStore()
-const ordersStore = useOrdersStore()
 
 const sortBy = ref('price')
 const filterTransport = ref('')
 const expandedQuote = ref(null)
-const selectingQuote = ref(null)
 
 onMounted(async () => {
   try {
@@ -83,21 +80,8 @@ function togglePriceBreakdown(quoteId) {
   expandedQuote.value = expandedQuote.value === quoteId ? null : quoteId
 }
 
-async function selectQuote(quote) {
-  selectingQuote.value = quote.id
-  try {
-    const order = await ordersStore.createOrder({
-      quote_id: quote.id,
-      contact_name: '',
-      contact_phone: '',
-      contact_email: ''
-    })
-    router.push(`/orders/${order.id}`)
-  } catch (e) {
-    console.error('Error creating order:', e)
-  } finally {
-    selectingQuote.value = null
-  }
+function selectQuote(quote) {
+  router.push(`/orders/create/${quote.id}`)
 }
 
 function getSurchargeIcon(type) {
@@ -320,10 +304,8 @@ function getSurchargeIcon(type) {
                   <button
                     @click="selectQuote(quote)"
                     class="btn btn-primary"
-                    :disabled="selectingQuote === quote.id"
                   >
-                    <span v-if="selectingQuote === quote.id">Оформление...</span>
-                    <span v-else>Выбрать</span>
+                    Выбрать
                   </button>
                 </div>
               </div>

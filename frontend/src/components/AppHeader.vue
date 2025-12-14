@@ -2,9 +2,11 @@
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { RouterLink } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
+import { useI18n } from 'vue-i18n'
 import { User, Settings, ChevronDown, LogOut, Shield } from 'lucide-vue-next'
 import LanguageSwitcher from './LanguageSwitcher.vue'
 
+const { t } = useI18n()
 const iconStrokeWidth = 1.2
 const authStore = useAuthStore()
 
@@ -37,11 +39,11 @@ onUnmounted(() => {
           <RouterLink to="/dashboard" class="logo">Vector Express</RouterLink>
         </div>
         <nav class="header-nav">
-          <RouterLink to="/shipments" class="nav-link">Заявки</RouterLink>
-          <RouterLink to="/orders" class="nav-link">Заказы</RouterLink>
-          <RouterLink to="/tracking" class="nav-link">Отслеживание</RouterLink>
-          <RouterLink v-if="isCarrier" to="/carrier" class="nav-link">Панель перевозчика</RouterLink>
-          <RouterLink v-if="isAdmin" to="/admin" class="nav-link nav-link-admin">Админ-панель</RouterLink>
+          <RouterLink to="/shipments" class="nav-link">{{ t('nav.shipments') }}</RouterLink>
+          <RouterLink to="/orders" class="nav-link">{{ t('nav.orders') }}</RouterLink>
+          <RouterLink to="/tracking" class="nav-link">{{ t('nav.tracking') }}</RouterLink>
+          <RouterLink v-if="isCarrier" to="/carrier" class="nav-link">{{ t('nav.carrier') }}</RouterLink>
+          <RouterLink v-if="isAdmin" to="/admin" class="nav-link nav-link-admin">{{ t('nav.admin') }}</RouterLink>
         </nav>
         <div class="header-actions">
           <LanguageSwitcher />
@@ -56,20 +58,20 @@ onUnmounted(() => {
             <div class="user-dropdown" v-if="showUserMenu">
               <RouterLink to="/profile" class="dropdown-item" @click="showUserMenu = false">
                 <User :size="16" :stroke-width="iconStrokeWidth" />
-                Профиль
+                {{ t('nav.profile') }}
               </RouterLink>
               <RouterLink v-if="isCarrier" to="/carrier" class="dropdown-item" @click="showUserMenu = false">
                 <Settings :size="16" :stroke-width="iconStrokeWidth" />
-                Панель перевозчика
+                {{ t('carrier.dashboard') }}
               </RouterLink>
               <RouterLink v-if="isAdmin" to="/admin" class="dropdown-item dropdown-item-admin" @click="showUserMenu = false">
                 <Shield :size="16" :stroke-width="iconStrokeWidth" />
-                Админ-панель
+                {{ t('admin.dashboard') }}
               </RouterLink>
               <div class="dropdown-divider"></div>
               <button @click="handleLogout" class="dropdown-item dropdown-item-danger">
                 <LogOut :size="16" :stroke-width="iconStrokeWidth" />
-                Выход
+                {{ t('nav.logout') }}
               </button>
             </div>
           </div>

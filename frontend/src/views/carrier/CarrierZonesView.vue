@@ -1,6 +1,6 @@
 <script setup>
 import { onMounted, ref, computed } from 'vue'
-import { RouterLink } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import api from '@/api/client'
 import {
   Globe,
@@ -18,6 +18,8 @@ import {
   FileSpreadsheet
 } from 'lucide-vue-next'
 import AppHeader from '@/components/AppHeader.vue'
+
+const { t } = useI18n()
 
 const iconStrokeWidth = 1.2
 
@@ -49,111 +51,35 @@ const importFile = ref(null)
 const importLoading = ref(false)
 const importResult = ref(null)
 
-// Полный список стран
-const allCountries = [
-  { code: 'AF', name: 'Афганистан' },
-  { code: 'AL', name: 'Албания' },
-  { code: 'DZ', name: 'Алжир' },
-  { code: 'AD', name: 'Андорра' },
-  { code: 'AO', name: 'Ангола' },
-  { code: 'AR', name: 'Аргентина' },
-  { code: 'AM', name: 'Армения' },
-  { code: 'AU', name: 'Австралия' },
-  { code: 'AT', name: 'Австрия' },
-  { code: 'AZ', name: 'Азербайджан' },
-  { code: 'BY', name: 'Беларусь' },
-  { code: 'BE', name: 'Бельгия' },
-  { code: 'BD', name: 'Бангладеш' },
-  { code: 'BR', name: 'Бразилия' },
-  { code: 'BG', name: 'Болгария' },
-  { code: 'CA', name: 'Канада' },
-  { code: 'CL', name: 'Чили' },
-  { code: 'CN', name: 'Китай' },
-  { code: 'CO', name: 'Колумбия' },
-  { code: 'HR', name: 'Хорватия' },
-  { code: 'CY', name: 'Кипр' },
-  { code: 'CZ', name: 'Чехия' },
-  { code: 'DK', name: 'Дания' },
-  { code: 'EG', name: 'Египет' },
-  { code: 'EE', name: 'Эстония' },
-  { code: 'FI', name: 'Финляндия' },
-  { code: 'FR', name: 'Франция' },
-  { code: 'GE', name: 'Грузия' },
-  { code: 'DE', name: 'Германия' },
-  { code: 'GR', name: 'Греция' },
-  { code: 'HK', name: 'Гонконг' },
-  { code: 'HU', name: 'Венгрия' },
-  { code: 'IS', name: 'Исландия' },
-  { code: 'IN', name: 'Индия' },
-  { code: 'ID', name: 'Индонезия' },
-  { code: 'IR', name: 'Иран' },
-  { code: 'IQ', name: 'Ирак' },
-  { code: 'IE', name: 'Ирландия' },
-  { code: 'IL', name: 'Израиль' },
-  { code: 'IT', name: 'Италия' },
-  { code: 'JP', name: 'Япония' },
-  { code: 'JO', name: 'Иордания' },
-  { code: 'KZ', name: 'Казахстан' },
-  { code: 'KE', name: 'Кения' },
-  { code: 'KW', name: 'Кувейт' },
-  { code: 'KG', name: 'Кыргызстан' },
-  { code: 'LV', name: 'Латвия' },
-  { code: 'LB', name: 'Ливан' },
-  { code: 'LT', name: 'Литва' },
-  { code: 'LU', name: 'Люксембург' },
-  { code: 'MY', name: 'Малайзия' },
-  { code: 'MX', name: 'Мексика' },
-  { code: 'MD', name: 'Молдова' },
-  { code: 'MN', name: 'Монголия' },
-  { code: 'ME', name: 'Черногория' },
-  { code: 'MA', name: 'Марокко' },
-  { code: 'NL', name: 'Нидерланды' },
-  { code: 'NZ', name: 'Новая Зеландия' },
-  { code: 'NG', name: 'Нигерия' },
-  { code: 'NO', name: 'Норвегия' },
-  { code: 'OM', name: 'Оман' },
-  { code: 'PK', name: 'Пакистан' },
-  { code: 'PA', name: 'Панама' },
-  { code: 'PE', name: 'Перу' },
-  { code: 'PH', name: 'Филиппины' },
-  { code: 'PL', name: 'Польша' },
-  { code: 'PT', name: 'Португалия' },
-  { code: 'QA', name: 'Катар' },
-  { code: 'RO', name: 'Румыния' },
-  { code: 'RU', name: 'Россия' },
-  { code: 'SA', name: 'Саудовская Аравия' },
-  { code: 'RS', name: 'Сербия' },
-  { code: 'SG', name: 'Сингапур' },
-  { code: 'SK', name: 'Словакия' },
-  { code: 'SI', name: 'Словения' },
-  { code: 'ZA', name: 'ЮАР' },
-  { code: 'KR', name: 'Южная Корея' },
-  { code: 'ES', name: 'Испания' },
-  { code: 'LK', name: 'Шри-Ланка' },
-  { code: 'SE', name: 'Швеция' },
-  { code: 'CH', name: 'Швейцария' },
-  { code: 'TW', name: 'Тайвань' },
-  { code: 'TJ', name: 'Таджикистан' },
-  { code: 'TH', name: 'Таиланд' },
-  { code: 'TR', name: 'Турция' },
-  { code: 'TM', name: 'Туркменистан' },
-  { code: 'UA', name: 'Украина' },
-  { code: 'AE', name: 'ОАЭ' },
-  { code: 'GB', name: 'Великобритания' },
-  { code: 'US', name: 'США' },
-  { code: 'UZ', name: 'Узбекистан' },
-  { code: 'VE', name: 'Венесуэла' },
-  { code: 'VN', name: 'Вьетнам' }
+// Country codes
+const countryCodes = [
+  'AF', 'AL', 'DZ', 'AD', 'AO', 'AR', 'AM', 'AU', 'AT', 'AZ',
+  'BY', 'BE', 'BD', 'BR', 'BG', 'CA', 'CL', 'CN', 'CO', 'HR',
+  'CY', 'CZ', 'DK', 'EG', 'EE', 'FI', 'FR', 'GE', 'DE', 'GR',
+  'HK', 'HU', 'IS', 'IN', 'ID', 'IR', 'IQ', 'IE', 'IL', 'IT',
+  'JP', 'JO', 'KZ', 'KE', 'KW', 'KG', 'LV', 'LB', 'LT', 'LU',
+  'MY', 'MX', 'MD', 'MN', 'ME', 'MA', 'NL', 'NZ', 'NG', 'NO',
+  'OM', 'PK', 'PA', 'PE', 'PH', 'PL', 'PT', 'QA', 'RO', 'RU',
+  'SA', 'RS', 'SG', 'SK', 'SI', 'ZA', 'KR', 'ES', 'LK', 'SE',
+  'CH', 'TW', 'TJ', 'TH', 'TR', 'TM', 'UA', 'AE', 'GB', 'US',
+  'UZ', 'VE', 'VN'
 ]
 
-// Поиск страны
+// Full list of countries with translations
+const allCountries = computed(() =>
+  countryCodes.map(code => ({
+    code,
+    name: t(`carrierZones.countries.${code}`)
+  }))
+)
+
 const countrySearch = ref('')
 const showCountryDropdown = ref(false)
 
 const filteredCountries = computed(() => {
-  if (!countrySearch.value) return allCountries
+  if (!countrySearch.value) return allCountries.value
   const query = countrySearch.value.toLowerCase()
-  return allCountries.filter(
+  return allCountries.value.filter(
     (c) =>
       c.name.toLowerCase().includes(query) ||
       c.code.toLowerCase().includes(query)
@@ -165,7 +91,7 @@ function selectCountry(country) {
   countrySearch.value = country.name
   showCountryDropdown.value = false
 
-  // Автозаполнение кода и названия зоны
+  // Auto-fill zone code and name
   if (!editingZone.value || !newZone.value.zone_code) {
     newZone.value.zone_code = country.code
   }
@@ -179,13 +105,12 @@ function onCountrySearchFocus() {
 }
 
 function onCountrySearchBlur() {
-  // Небольшая задержка, чтобы клик по опции успел сработать
+  // Small delay to allow click on option
   setTimeout(() => {
     showCountryDropdown.value = false
   }, 200)
 }
 
-// Обновим для совместимости
 const countries = allCountries
 
 const filteredZones = computed(() => {
@@ -274,7 +199,7 @@ function openEditModal(zone) {
   editingZone.value = zone.id
 
   // Находим страну по коду и заполняем поле поиска
-  const country = allCountries.find((c) => c.code === zone.country_code)
+  const country = allCountries.value.find((c) => c.code === zone.country_code)
   countrySearch.value = country ? country.name : zone.country_code
 
   newZone.value = {
@@ -300,15 +225,14 @@ function closeModal() {
 }
 
 function addPostalCode() {
-  // Требуем хотя бы город
   if (!newPostalCode.value.city && !newPostalCode.value.postal_code_prefix) {
-    alert('Введите хотя бы город или почтовый код')
+    alert(t('carrierZones.alerts.enterCityOrPostalCode'))
     return
   }
 
   newZone.value.postal_codes.push({
     ...newPostalCode.value,
-    id: Date.now() // Temporary ID
+    id: Date.now()
   })
 
   newPostalCode.value = {
@@ -351,20 +275,19 @@ async function saveZone() {
 }
 
 async function deleteZone(zoneId) {
-  if (!confirm('Вы уверены, что хотите удалить эту зону?')) return
+  if (!confirm(t('carrierZones.alerts.confirmDelete'))) return
 
   try {
     await api.delete(`/carrier/zones/${zoneId}`)
     await loadZones()
   } catch (error) {
     console.error('Failed to delete zone:', error)
-    // For development, remove from local state
     zones.value = zones.value.filter((z) => z.id !== zoneId)
   }
 }
 
 function getCountryName(code) {
-  const country = countries.find((c) => c.code === code)
+  const country = countries.value.find((c) => c.code === code)
   return country ? country.name : code
 }
 
@@ -416,15 +339,11 @@ async function handleImport() {
     console.error('Import failed:', error)
     importResult.value = {
       success: false,
-      message: error.response?.data?.error || 'Ошибка импорта'
+      message: error.response?.data?.error || t('carrierZones.import.error')
     }
   } finally {
     importLoading.value = false
   }
-}
-
-async function handleLogout() {
-  await authStore.logout()
 }
 </script>
 
@@ -436,17 +355,17 @@ async function handleLogout() {
       <div class="container">
         <div class="page-header">
           <div class="page-title">
-            <h1>Зоны доставки</h1>
-            <p class="subtitle">Настройте географические зоны для расчета тарифов</p>
+            <h1>{{ t('carrierZones.title') }}</h1>
+            <p class="subtitle">{{ t('carrierZones.subtitle') }}</p>
           </div>
           <div class="header-actions">
             <button class="btn btn-outline" @click="openImportModal">
               <Upload :size="18" :stroke-width="iconStrokeWidth" />
-              Импорт из Excel
+              {{ t('carrierZones.importFromExcel') }}
             </button>
             <button class="btn btn-primary" @click="openAddModal">
               <Plus :size="18" :stroke-width="iconStrokeWidth" />
-              Добавить зону
+              {{ t('carrierZones.addZone') }}
             </button>
           </div>
         </div>
@@ -457,7 +376,7 @@ async function handleLogout() {
           <input
             v-model="searchQuery"
             type="text"
-            placeholder="Поиск по названию или коду зоны..."
+            :placeholder="t('carrierZones.searchPlaceholder')"
             class="search-input"
           />
         </div>
@@ -465,7 +384,7 @@ async function handleLogout() {
         <!-- Loading -->
         <div v-if="loading" class="loading-state">
           <div class="spinner"></div>
-          <p>Загрузка зон...</p>
+          <p>{{ t('carrierZones.loading') }}</p>
         </div>
 
         <!-- Zones List -->
@@ -488,15 +407,15 @@ async function handleLogout() {
                 <div class="zone-meta">
                   <span class="country-badge">{{ getCountryName(zone.country_code) }}</span>
                   <span class="postal-count">
-                    {{ zone.postal_codes?.length || 0 }} почтовых кодов
+                    {{ zone.postal_codes?.length || 0 }} {{ t('carrierZones.postalCodes') }}
                   </span>
                 </div>
               </div>
               <div class="zone-actions">
-                <button class="btn-icon" @click.stop="openEditModal(zone)" title="Редактировать">
+                <button class="btn-icon" @click.stop="openEditModal(zone)" :title="t('common.edit')">
                   <Edit2 :size="18" :stroke-width="iconStrokeWidth" />
                 </button>
-                <button class="btn-icon btn-icon-danger" @click.stop="deleteZone(zone.id)" title="Удалить">
+                <button class="btn-icon btn-icon-danger" @click.stop="deleteZone(zone.id)" :title="t('common.delete')">
                   <Trash2 :size="18" :stroke-width="iconStrokeWidth" />
                 </button>
                 <div class="expand-icon">
@@ -514,7 +433,7 @@ async function handleLogout() {
               <p class="zone-description" v-if="zone.description">{{ zone.description }}</p>
 
               <div class="postal-codes-section">
-                <h4>Почтовые коды и города</h4>
+                <h4>{{ t('carrierZones.postalCodesAndCities') }}</h4>
                 <div class="postal-codes-grid">
                   <div
                     v-for="pc in zone.postal_codes"
@@ -527,7 +446,7 @@ async function handleLogout() {
                     <div class="postal-region">{{ pc.region }}</div>
                     <span v-if="pc.is_remote_area" class="remote-badge">
                       <MapPin :size="12" :stroke-width="iconStrokeWidth" />
-                      Удаленный район
+                      {{ t('carrierZones.remoteArea') }}
                     </span>
                   </div>
                 </div>
@@ -539,11 +458,11 @@ async function handleLogout() {
         <!-- Empty State -->
         <div v-else class="empty-state">
           <Globe :size="48" :stroke-width="iconStrokeWidth" />
-          <h3>Нет зон доставки</h3>
-          <p>Добавьте первую зону для начала работы с тарифами</p>
+          <h3>{{ t('carrierZones.noZones') }}</h3>
+          <p>{{ t('carrierZones.addFirstZone') }}</p>
           <button class="btn btn-primary" @click="openAddModal">
             <Plus :size="18" :stroke-width="iconStrokeWidth" />
-            Добавить зону
+            {{ t('carrierZones.addZone') }}
           </button>
         </div>
       </div>
@@ -553,7 +472,7 @@ async function handleLogout() {
     <div v-if="showAddModal" class="modal-overlay" @click.self="closeModal">
       <div class="modal">
         <div class="modal-header">
-          <h2>{{ editingZone ? 'Редактировать зону' : 'Новая зона доставки' }}</h2>
+          <h2>{{ editingZone ? t('carrierZones.editZone') : t('carrierZones.newZone') }}</h2>
           <button class="btn-close" @click="closeModal">
             <X :size="20" :stroke-width="iconStrokeWidth" />
           </button>
@@ -561,12 +480,12 @@ async function handleLogout() {
 
         <div class="modal-body">
           <div class="form-group">
-            <label>Страна</label>
+            <label>{{ t('carrierZones.form.country') }}</label>
             <div class="country-autocomplete">
               <input
                 v-model="countrySearch"
                 type="text"
-                placeholder="Начните вводить название страны..."
+                :placeholder="t('carrierZones.form.countryPlaceholder')"
                 class="form-input"
                 @focus="onCountrySearchFocus"
                 @blur="onCountrySearchBlur"
@@ -584,12 +503,12 @@ async function handleLogout() {
                 </div>
               </div>
             </div>
-            <span class="form-hint">При выборе страны код и название зоны заполнятся автоматически</span>
+            <span class="form-hint">{{ t('carrierZones.form.countryHint') }}</span>
           </div>
 
           <div class="form-row">
             <div class="form-group">
-              <label>Код зоны</label>
+              <label>{{ t('carrierZones.form.zoneCode') }}</label>
               <input
                 v-model="newZone.zone_code"
                 type="text"
@@ -598,51 +517,51 @@ async function handleLogout() {
               />
             </div>
             <div class="form-group">
-              <label>Название зоны</label>
+              <label>{{ t('carrierZones.form.zoneName') }}</label>
               <input
                 v-model="newZone.zone_name"
                 type="text"
-                placeholder="Казахстан"
+                :placeholder="t('carrierZones.form.zoneNamePlaceholder')"
                 class="form-input"
               />
             </div>
           </div>
 
           <div class="form-group">
-            <label>Описание</label>
+            <label>{{ t('carrierZones.form.description') }}</label>
             <textarea
               v-model="newZone.description"
-              placeholder="Описание зоны (например: Доставка в/из Беларуси)"
+              :placeholder="t('carrierZones.form.descriptionPlaceholder')"
               class="form-input"
               rows="2"
             ></textarea>
           </div>
 
           <div class="postal-codes-form">
-            <h4>Почтовые коды</h4>
+            <h4>{{ t('carrierZones.form.postalCodes') }}</h4>
 
             <div class="add-postal-row">
               <input
                 v-model="newPostalCode.postal_code_prefix"
                 type="text"
-                placeholder="Префикс (050)"
+                :placeholder="t('carrierZones.form.prefix')"
                 class="form-input"
               />
               <input
                 v-model="newPostalCode.city"
                 type="text"
-                placeholder="Город"
+                :placeholder="t('carrierZones.form.city')"
                 class="form-input"
               />
               <input
                 v-model="newPostalCode.region"
                 type="text"
-                placeholder="Регион"
+                :placeholder="t('carrierZones.form.region')"
                 class="form-input"
               />
               <label class="checkbox-label">
                 <input type="checkbox" v-model="newPostalCode.is_remote_area" />
-                Удаленный
+                {{ t('carrierZones.form.remote') }}
               </label>
               <button class="btn btn-secondary" @click="addPostalCode">
                 <Plus :size="16" :stroke-width="iconStrokeWidth" />
@@ -658,7 +577,7 @@ async function handleLogout() {
                 <span class="postal-prefix">{{ pc.postal_code_prefix }}</span>
                 <span class="postal-city">{{ pc.city }}</span>
                 <span class="postal-region">{{ pc.region }}</span>
-                <span v-if="pc.is_remote_area" class="remote-badge-small">Удаленный</span>
+                <span v-if="pc.is_remote_area" class="remote-badge-small">{{ t('carrierZones.form.remote') }}</span>
                 <button class="btn-remove" @click="removePostalCode(index)">
                   <X :size="14" :stroke-width="iconStrokeWidth" />
                 </button>
@@ -668,10 +587,10 @@ async function handleLogout() {
         </div>
 
         <div class="modal-footer">
-          <button class="btn btn-outline" @click="closeModal">Отмена</button>
+          <button class="btn btn-outline" @click="closeModal">{{ t('common.cancel') }}</button>
           <button class="btn btn-primary" @click="saveZone">
             <Save :size="16" :stroke-width="iconStrokeWidth" />
-            {{ editingZone ? 'Сохранить' : 'Создать зону' }}
+            {{ editingZone ? t('common.save') : t('carrierZones.createZone') }}
           </button>
         </div>
       </div>
@@ -681,7 +600,7 @@ async function handleLogout() {
     <div v-if="showImportModal" class="modal-overlay" @click.self="closeImportModal">
       <div class="modal import-modal">
         <div class="modal-header">
-          <h2>Импорт зон из Excel</h2>
+          <h2>{{ t('carrierZones.import.title') }}</h2>
           <button class="btn-close" @click="closeImportModal">
             <X :size="20" :stroke-width="iconStrokeWidth" />
           </button>
@@ -690,13 +609,13 @@ async function handleLogout() {
         <div class="modal-body">
           <div class="import-info">
             <FileSpreadsheet :size="48" :stroke-width="iconStrokeWidth" class="import-icon" />
-            <h3>Загрузите файл Excel (.xlsx, .xls) или CSV</h3>
-            <p>Файл должен содержать колонки:</p>
+            <h3>{{ t('carrierZones.import.uploadFile') }}</h3>
+            <p>{{ t('carrierZones.import.fileFormat') }}</p>
             <ul class="columns-list">
-              <li><strong>zone_code</strong> - Код зоны (обязательно)</li>
-              <li><strong>zone_name</strong> - Название зоны</li>
-              <li><strong>country_code</strong> - Код страны ISO (KZ, RU и т.д.)</li>
-              <li><strong>description</strong> - Описание</li>
+              <li><strong>zone_code</strong> - {{ t('carrierZones.import.zoneCode') }}</li>
+              <li><strong>zone_name</strong> - {{ t('carrierZones.import.zoneName') }}</li>
+              <li><strong>country_code</strong> - {{ t('carrierZones.import.countryCode') }}</li>
+              <li><strong>description</strong> - {{ t('carrierZones.import.description') }}</li>
             </ul>
           </div>
 
@@ -711,7 +630,7 @@ async function handleLogout() {
             <label for="import-file" class="file-label">
               <Upload :size="20" :stroke-width="iconStrokeWidth" />
               <span v-if="importFile">{{ importFile.name }}</span>
-              <span v-else>Выберите файл или перетащите сюда</span>
+              <span v-else>{{ t('carrierZones.import.selectFile') }}</span>
             </label>
           </div>
 
@@ -720,14 +639,14 @@ async function handleLogout() {
             <div class="result-content">
               <p>{{ importResult.message }}</p>
               <p v-if="importResult.success">
-                Импортировано: {{ importResult.imported }}, Пропущено: {{ importResult.skipped }}
+                {{ t('carrierZones.import.imported') }}: {{ importResult.imported }}, {{ t('carrierZones.import.skipped') }}: {{ importResult.skipped }}
               </p>
             </div>
           </div>
         </div>
 
         <div class="modal-footer">
-          <button class="btn btn-outline" @click="closeImportModal">Отмена</button>
+          <button class="btn btn-outline" @click="closeImportModal">{{ t('common.cancel') }}</button>
           <button
             class="btn btn-primary"
             @click="handleImport"
@@ -735,7 +654,7 @@ async function handleLogout() {
           >
             <Upload v-if="!importLoading" :size="16" :stroke-width="iconStrokeWidth" />
             <span v-if="importLoading" class="spinner-small"></span>
-            {{ importLoading ? 'Импорт...' : 'Импортировать' }}
+            {{ importLoading ? t('carrierZones.import.importing') : t('carrierZones.import.importButton') }}
           </button>
         </div>
       </div>

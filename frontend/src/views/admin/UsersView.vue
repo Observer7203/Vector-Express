@@ -1,5 +1,6 @@
 <script setup>
 import { ref, computed, onMounted, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useAdminStore } from '@/stores/admin'
 import {
   Plus,
@@ -13,6 +14,7 @@ import {
   X
 } from 'lucide-vue-next'
 
+const { t } = useI18n()
 const adminStore = useAdminStore()
 const iconStrokeWidth = 1.5
 
@@ -36,11 +38,11 @@ const form = ref({
   is_active: true
 })
 
-const roleLabels = {
-  customer: 'Заказчик',
-  carrier: 'Перевозчик',
-  admin: 'Администратор'
-}
+const roleLabels = computed(() => ({
+  customer: t('adminUsers.roles.customer'),
+  carrier: t('adminUsers.roles.carrier'),
+  admin: t('adminUsers.roles.admin')
+}))
 
 onMounted(() => {
   adminStore.fetchUsers()
@@ -123,7 +125,7 @@ async function toggleActive(user) {
 }
 
 async function resetPassword(user) {
-  if (!confirm(`Сбросить пароль для ${user.name}?`)) return
+  if (!confirm(t('adminUsers.confirmResetPassword', { name: user.name }))) return
 
   try {
     const result = await adminStore.resetUserPassword(user.id)
@@ -136,7 +138,7 @@ async function resetPassword(user) {
 }
 
 async function deleteUser(user) {
-  if (!confirm(`Удалить пользователя "${user.name}"?`)) return
+  if (!confirm(t('adminUsers.confirmDelete', { name: user.name }))) return
 
   try {
     await adminStore.deleteUser(user.id)
@@ -163,12 +165,12 @@ function formatDate(dateString) {
   <div class="users-page">
     <div class="page-header">
       <div>
-        <h1>Пользователи</h1>
-        <p class="subtitle">Управление пользователями системы</p>
+        <h1>{{ t('adminUsers.title') }}</h1>
+        <p class="subtitle">{{ t('adminUsers.subtitle') }}</p>
       </div>
       <button @click="openCreateModal" class="btn btn-primary">
         <Plus :size="18" :stroke-width="iconStrokeWidth" />
-        <span>Добавить пользователя</span>
+        <span>{{ t('adminUsers.addUser') }}</span>
       </button>
     </div>
 
@@ -179,22 +181,22 @@ function formatDate(dateString) {
         <input
           v-model="search"
           type="text"
-          placeholder="Поиск по имени, email..."
+          :placeholder="t('adminUsers.searchPlaceholder')"
         />
       </div>
       <div class="filter-group">
         <select v-model="filterRole">
-          <option value="">Все роли</option>
-          <option value="customer">Заказчики</option>
-          <option value="carrier">Перевозчики</option>
-          <option value="admin">Администраторы</option>
+          <option value="">{{ t('adminUsers.filters.allRoles') }}</option>
+          <option value="customer">{{ t('adminUsers.filters.customers') }}</option>
+          <option value="carrier">{{ t('adminUsers.filters.carriers') }}</option>
+          <option value="admin">{{ t('adminUsers.filters.admins') }}</option>
         </select>
       </div>
       <div class="filter-group">
         <select v-model="filterActive">
-          <option value="">Все</option>
-          <option value="1">Активные</option>
-          <option value="0">Заблокированные</option>
+          <option value="">{{ t('adminUsers.filters.all') }}</option>
+          <option value="1">{{ t('adminUsers.filters.active') }}</option>
+          <option value="0">{{ t('adminUsers.filters.blocked') }}</option>
         </select>
       </div>
     </div>
@@ -202,7 +204,7 @@ function formatDate(dateString) {
     <!-- Loading -->
     <div v-if="loading" class="loading">
       <div class="spinner"></div>
-      <span>Загрузка...</span>
+      <span>{{ t('common.loading') }}</span>
     </div>
 
     <!-- Table -->
@@ -210,13 +212,13 @@ function formatDate(dateString) {
       <table class="data-table">
         <thead>
           <tr>
-            <th>ID</th>
-            <th>Пользователь</th>
-            <th>Роль</th>
-            <th>Компания</th>
-            <th>Статус</th>
-            <th>Регистрация</th>
-            <th>Действия</th>
+            <th>{{ t('adminUsers.table.id') }}</th>
+            <th>{{ t('adminUsers.table.user') }}</th>
+            <th>{{ t('adminUsers.table.role') }}</th>
+            <th>{{ t('adminUsers.table.company') }}</th>
+            <th>{{ t('adminUsers.table.status') }}</th>
+            <th>{{ t('adminUsers.table.registration') }}</th>
+            <th>{{ t('adminUsers.table.actions') }}</th>
           </tr>
         </thead>
         <tbody>
@@ -237,7 +239,7 @@ function formatDate(dateString) {
             </td>
             <td>
               <span class="role-badge" :class="user.role">
-                {{ roleLabels[user.role] }}
+                {{ roleLabels.value[user.role] }}
               </span>
             </td>
             <td>
@@ -248,7 +250,7 @@ function formatDate(dateString) {
               <span class="status-badge" :class="user.is_active ? 'active' : 'blocked'">
                 <CheckCircle v-if="user.is_active" :size="14" :stroke-width="iconStrokeWidth" />
                 <Ban v-else :size="14" :stroke-width="iconStrokeWidth" />
-                {{ user.is_active ? 'Активен' : 'Заблокирован' }}
+                {{ user.is_active ? t('adminUsers.statusActive') : t('adminUsers.statusBlocked') }}
               </span>
             </td>
             <td>
@@ -256,17 +258,17 @@ function formatDate(dateString) {
             </td>
             <td>
               <div class="actions">
-                <button @click="openEditModal(user)" class="action-btn" title="Редактировать">
+                <button @click="openEditModal(user)" class="action-btn" :title="t('common.edit')">
                   <Edit :size="16" :stroke-width="iconStrokeWidth" />
                 </button>
-                <button @click="toggleActive(user)" class="action-btn" :class="user.is_active ? 'warning' : 'success'" :title="user.is_active ? 'Заблокировать' : 'Активировать'">
+                <button @click="toggleActive(user)" class="action-btn" :class="user.is_active ? 'warning' : 'success'" :title="user.is_active ? t('adminUsers.actions.block') : t('adminUsers.actions.activate')">
                   <Ban v-if="user.is_active" :size="16" :stroke-width="iconStrokeWidth" />
                   <CheckCircle v-else :size="16" :stroke-width="iconStrokeWidth" />
                 </button>
-                <button @click="resetPassword(user)" class="action-btn" title="Сбросить пароль">
+                <button @click="resetPassword(user)" class="action-btn" :title="t('adminUsers.actions.resetPassword')">
                   <Key :size="16" :stroke-width="iconStrokeWidth" />
                 </button>
-                <button @click="deleteUser(user)" class="action-btn danger" title="Удалить">
+                <button @click="deleteUser(user)" class="action-btn danger" :title="t('common.delete')">
                   <Trash2 :size="16" :stroke-width="iconStrokeWidth" />
                 </button>
               </div>
@@ -274,7 +276,7 @@ function formatDate(dateString) {
           </tr>
           <tr v-if="users.length === 0">
             <td colspan="7" class="empty-row">
-              Пользователи не найдены
+              {{ t('adminUsers.noUsers') }}
             </td>
           </tr>
         </tbody>
@@ -288,17 +290,17 @@ function formatDate(dateString) {
         :disabled="pagination.currentPage === 1"
         class="btn btn-sm btn-outline"
       >
-        Назад
+        {{ t('common.back') }}
       </button>
       <span class="page-info">
-        Страница {{ pagination.currentPage }} из {{ pagination.lastPage }}
+        {{ t('adminUsers.pageInfo', { current: pagination.currentPage, last: pagination.lastPage }) }}
       </span>
       <button
         @click="changePage(pagination.currentPage + 1)"
         :disabled="pagination.currentPage === pagination.lastPage"
         class="btn btn-sm btn-outline"
       >
-        Далее
+        {{ t('common.next') }}
       </button>
     </div>
 
@@ -306,7 +308,7 @@ function formatDate(dateString) {
     <div v-if="showModal" class="modal-overlay" @click.self="closeModal">
       <div class="modal">
         <div class="modal-header">
-          <h2>{{ editingUser ? 'Редактировать пользователя' : 'Добавить пользователя' }}</h2>
+          <h2>{{ editingUser ? t('adminUsers.editUser') : t('adminUsers.addUser') }}</h2>
           <button @click="closeModal" class="close-btn">
             <X :size="20" :stroke-width="iconStrokeWidth" />
           </button>
@@ -315,39 +317,39 @@ function formatDate(dateString) {
         <div class="modal-body">
           <div class="form-row">
             <div class="form-group">
-              <label>Имя *</label>
+              <label>{{ t('adminUsers.form.name') }} *</label>
               <input v-model="form.name" type="text" required />
             </div>
             <div class="form-group">
-              <label>Email *</label>
+              <label>{{ t('adminUsers.form.email') }} *</label>
               <input v-model="form.email" type="email" required />
             </div>
           </div>
 
           <div class="form-group" v-if="!editingUser">
-            <label>Пароль *</label>
+            <label>{{ t('adminUsers.form.password') }} *</label>
             <input v-model="form.password" type="password" required />
           </div>
 
           <div class="form-row">
             <div class="form-group">
-              <label>Телефон</label>
+              <label>{{ t('adminUsers.form.phone') }}</label>
               <input v-model="form.phone" type="tel" />
             </div>
             <div class="form-group">
-              <label>Роль *</label>
+              <label>{{ t('adminUsers.form.role') }} *</label>
               <select v-model="form.role" required>
-                <option value="customer">Заказчик</option>
-                <option value="carrier">Перевозчик</option>
-                <option value="admin">Администратор</option>
+                <option value="customer">{{ t('adminUsers.roles.customer') }}</option>
+                <option value="carrier">{{ t('adminUsers.roles.carrier') }}</option>
+                <option value="admin">{{ t('adminUsers.roles.admin') }}</option>
               </select>
             </div>
           </div>
 
           <div class="form-group">
-            <label>Компания</label>
+            <label>{{ t('adminUsers.form.company') }}</label>
             <select v-model="form.company_id">
-              <option :value="null">Без компании</option>
+              <option :value="null">{{ t('adminUsers.form.noCompany') }}</option>
               <option v-for="company in companies" :key="company.id" :value="company.id">
                 {{ company.name }}
               </option>
@@ -357,20 +359,20 @@ function formatDate(dateString) {
           <div class="form-group checkbox-group">
             <label class="checkbox-label">
               <input v-model="form.is_active" type="checkbox" />
-              <span>Активен</span>
+              <span>{{ t('adminUsers.form.isActive') }}</span>
             </label>
           </div>
         </div>
 
         <div class="modal-footer">
-          <button @click="closeModal" class="btn btn-outline">Отмена</button>
+          <button @click="closeModal" class="btn btn-outline">{{ t('common.cancel') }}</button>
           <button
             @click="saveUser"
             class="btn btn-primary"
             :disabled="saving || !form.name || !form.email || (!editingUser && !form.password)"
           >
-            <span v-if="saving">Сохранение...</span>
-            <span v-else>{{ editingUser ? 'Сохранить' : 'Создать' }}</span>
+            <span v-if="saving">{{ t('adminUsers.saving') }}</span>
+            <span v-else>{{ editingUser ? t('common.save') : t('adminUsers.create') }}</span>
           </button>
         </div>
       </div>
@@ -380,7 +382,7 @@ function formatDate(dateString) {
     <div v-if="showPasswordModal" class="modal-overlay" @click.self="showPasswordModal = false">
       <div class="modal modal-sm">
         <div class="modal-header">
-          <h2>Новый пароль</h2>
+          <h2>{{ t('adminUsers.passwordModal.title') }}</h2>
           <button @click="showPasswordModal = false" class="close-btn">
             <X :size="20" :stroke-width="iconStrokeWidth" />
           </button>
@@ -388,20 +390,20 @@ function formatDate(dateString) {
 
         <div class="modal-body">
           <p class="password-info">
-            Пароль для пользователя <strong>{{ passwordUser?.name }}</strong> был сброшен.
+            {{ t('adminUsers.passwordModal.info', { name: passwordUser?.name }) }}
           </p>
           <div class="password-display">
-            <span class="password-label">Новый пароль:</span>
+            <span class="password-label">{{ t('adminUsers.passwordModal.newPassword') }}</span>
             <code class="password-value">{{ newPassword }}</code>
           </div>
           <p class="password-warning">
-            Сохраните этот пароль и передайте его пользователю. После закрытия окна он не будет показан снова.
+            {{ t('adminUsers.passwordModal.warning') }}
           </p>
         </div>
 
         <div class="modal-footer">
           <button @click="showPasswordModal = false" class="btn btn-primary">
-            Закрыть
+            {{ t('common.close') }}
           </button>
         </div>
       </div>

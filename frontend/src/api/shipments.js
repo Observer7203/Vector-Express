@@ -36,3 +36,20 @@ export const shipmentsApi = {
     return response.data
   }
 }
+
+export const quotesApi = {
+  async get(id) {
+    const response = await client.get(`/quotes/${id}`)
+    return response.data
+  },
+
+  async select(id, data) {
+    const response = await client.post(`/quotes/${id}/select`, data)
+    return response.data
+  },
+
+  async compare(quoteIds) {
+    const response = await client.post('/quotes/compare', { quote_ids: quoteIds })
+    return response.data
+  }
+}

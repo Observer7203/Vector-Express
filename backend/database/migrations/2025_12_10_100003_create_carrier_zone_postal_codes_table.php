@@ -20,7 +20,7 @@ return new class extends Migration
             $table->boolean('is_remote_area')->default(false);
             $table->timestamps();
 
-            $table->index(['carrier_zone_id', 'postal_code_prefix']);
+            $table->index(['carrier_zone_id', 'postal_code_prefix'], 'czpc_zone_prefix_idx');
             $table->index('country_code');
         });
     }

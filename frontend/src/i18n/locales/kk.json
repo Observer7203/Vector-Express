@@ -501,7 +501,7 @@
   "login": {
     "title": "Жүйеге кіру",
     "subtitle": "Жеке кабинетке кіру үшін жүйеге кіріңіз",
-    "emailPlaceholder": "your@email.com",
+    "emailPlaceholder": "your{'@'}email.com",
     "passwordPlaceholder": "••••••••",
     "loggingIn": "Кіру..."
   },
@@ -510,7 +510,7 @@
     "subtitle": "Платформаға қол жеткізу үшін тіркелгі жасаңыз",
     "accountType": "Тіркелгі түрі",
     "namePlaceholder": "Иван Петров",
-    "emailPlaceholder": "your@email.com",
+    "emailPlaceholder": "your{'@'}email.com",
     "phonePlaceholder": "+7 777 123 45 67",
     "companyName": "Компания атауы",
     "companyNamePlaceholder": "ЖШС Логистика",
@@ -931,7 +931,7 @@
       "phone": "Телефон",
       "phonePlaceholder": "+7 (XXX) XXX-XX-XX",
       "email": "Email",
-      "emailPlaceholder": "example@mail.com",
+      "emailPlaceholder": "example{'@'}mail.com",
       "useCustomerContact": "Тапсырыс берушінің байланыс деректерін пайдалану",
       "contactPerson": "Байланыс тұлғасы",
       "pickupContactPlaceholder": "Алу үшін толық аты-жөні",

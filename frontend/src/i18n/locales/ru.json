@@ -501,7 +501,7 @@
   "login": {
     "title": "Вход в систему",
     "subtitle": "Войдите для доступа к личному кабинету",
-    "emailPlaceholder": "your@email.com",
+    "emailPlaceholder": "your{'@'}email.com",
     "passwordPlaceholder": "••••••••",
     "loggingIn": "Вход..."
   },
@@ -510,7 +510,7 @@
     "subtitle": "Создайте аккаунт для доступа к платформе",
     "accountType": "Тип аккаунта",
     "namePlaceholder": "Иван Петров",
-    "emailPlaceholder": "your@email.com",
+    "emailPlaceholder": "your{'@'}email.com",
     "phonePlaceholder": "+7 777 123 45 67",
     "companyName": "Название компании",
     "companyNamePlaceholder": "ООО Логистика",
@@ -538,7 +538,7 @@
       "phone": "Телефон",
       "phonePlaceholder": "+7 (XXX) XXX-XX-XX",
       "email": "Email",
-      "emailPlaceholder": "example@mail.com",
+      "emailPlaceholder": "example{'@'}mail.com",
       "useCustomerContact": "Использовать контактные данные заказчика",
       "contactPerson": "Контактное лицо",
       "pickupContactPlaceholder": "ФИО для забора",

@@ -414,5 +414,712 @@
       "VE": "Venezuela",
       "VN": "Vietnam"
     }
+  },
+  "home": {
+    "personalCabinet": "Dashboard",
+    "hero": {
+      "title": "Find the Best Logistics Solution",
+      "subtitle": "Compare prices and delivery times from leading carriers worldwide in one place",
+      "calculateCost": "Calculate Cost",
+      "trackShipment": "Track Shipment"
+    },
+    "features": {
+      "title": "Why Vector Express?",
+      "globalNetwork": {
+        "title": "Global Network",
+        "description": "Delivery to any point in the world. More than 220 countries and territories."
+      },
+      "bestPrices": {
+        "title": "Best Prices",
+        "description": "Compare offers from different carriers and choose the optimal one."
+      },
+      "allCargoTypes": {
+        "title": "All Cargo Types",
+        "description": "Air, sea, rail and road transportation. Any dimensions."
+      },
+      "reliability": {
+        "title": "Reliability",
+        "description": "Cargo insurance, customs clearance, door-to-door delivery."
+      }
+    },
+    "partners": {
+      "title": "Our Partners"
+    },
+    "cta": {
+      "title": "Ready to Start?",
+      "subtitle": "Create a request and receive offers from the best carriers",
+      "register": "Register"
+    },
+    "footer": {
+      "tagline": "Next-generation logistics platform",
+      "company": "Company",
+      "aboutUs": "About Us",
+      "contacts": "Contacts",
+      "services": "Services",
+      "airFreight": "Air Freight",
+      "oceanFreight": "Ocean Freight",
+      "support": "Support",
+      "faq": "FAQ",
+      "documents": "Documents",
+      "copyright": "© 2025 Vector Express. All rights reserved."
+    }
+  },
+  "adminDashboard": {
+    "loadingData": "Loading data...",
+    "noData": "No data",
+    "stats": {
+      "users": "Users",
+      "companies": "Companies",
+      "orders": "Orders",
+      "revenue": "Revenue",
+      "commission": "Commission",
+      "perWeek": "per week",
+      "perMonth": "per month",
+      "shippers": "shippers",
+      "carriers": "carriers"
+    },
+    "alerts": {
+      "companiesAwaitVerification": "companies awaiting verification",
+      "overduePayments": "overdue payments",
+      "awaitingPayment": "awaiting payment"
+    },
+    "charts": {
+      "ordersPerWeek": "Orders per Week",
+      "orderStatuses": "Order Statuses",
+      "topCarriers": "Top Carriers",
+      "ordersCount": "orders"
+    },
+    "statuses": {
+      "pending": "Pending",
+      "confirmed": "Confirmed",
+      "inTransit": "In Transit",
+      "delivered": "Delivered",
+      "cancelled": "Cancelled"
+    }
+  },
+  "adminOrders": {
+    "subtitle": "Manage system orders",
+    "stats": {
+      "total": "Total Orders",
+      "pending": "Pending Confirmation",
+      "inProgress": "In Progress",
+      "delivered": "Delivered"
+    },
+    "searchPlaceholder": "Order number VE-2025-...",
+    "dateFrom": "Date From",
+    "dateTo": "Date To",
+    "reset": "Reset",
+    "table": {
+      "number": "Number",
+      "customer": "Customer",
+      "carrier": "Carrier",
+      "route": "Route",
+      "amount": "Amount",
+      "status": "Status",
+      "date": "Date",
+      "actions": "Actions"
+    },
+    "view": "View",
+    "changeStatus": "Change Status",
+    "noOrders": "No orders found",
+    "pageInfo": "Page {current} of {last}",
+    "orderNumber": "Order {number}",
+    "deliveryContacts": "Delivery Contacts",
+    "financial": "Financial",
+    "orderLabel": "Order",
+    "newStatus": "New Status",
+    "saving": "Saving..."
+  },
+  "adminUsers": {
+    "title": "Users",
+    "subtitle": "Manage system users",
+    "addUser": "Add User",
+    "editUser": "Edit User",
+    "searchPlaceholder": "Search by name, email...",
+    "noUsers": "No users found",
+    "pageInfo": "Page {current} of {last}",
+    "create": "Create",
+    "saving": "Saving...",
+    "confirmResetPassword": "Reset password for {name}?",
+    "confirmDelete": "Delete user \"{name}\"?",
+    "statusActive": "Active",
+    "statusBlocked": "Blocked",
+    "roles": {
+      "customer": "Customer",
+      "carrier": "Carrier",
+      "admin": "Administrator"
+    },
+    "filters": {
+      "allRoles": "All Roles",
+      "customers": "Customers",
+      "carriers": "Carriers",
+      "admins": "Administrators",
+      "all": "All",
+      "active": "Active",
+      "blocked": "Blocked"
+    },
+    "table": {
+      "id": "ID",
+      "user": "User",
+      "role": "Role",
+      "company": "Company",
+      "status": "Status",
+      "registration": "Registration",
+      "actions": "Actions"
+    },
+    "form": {
+      "name": "Name",
+      "email": "Email",
+      "password": "Password",
+      "phone": "Phone",
+      "role": "Role",
+      "company": "Company",
+      "noCompany": "No company",
+      "isActive": "Active"
+    },
+    "actions": {
+      "block": "Block",
+      "activate": "Activate",
+      "resetPassword": "Reset Password"
+    },
+    "passwordModal": {
+      "title": "New Password",
+      "info": "Password for user {name} has been reset.",
+      "newPassword": "New password:",
+      "warning": "Save this password and give it to the user. It will not be shown again after closing this window."
+    }
+  },
+  "adminCarriers": {
+    "title": "Carriers",
+    "subtitle": "Manage carrier settings for price calculation",
+    "addCarrier": "Add Carrier",
+    "editCarrier": "Edit Carrier",
+    "searchPlaceholder": "Search by name...",
+    "noCarriers": "No carriers found",
+    "pageInfo": "Page {current} of {last}",
+    "confirmDelete": "Delete carrier \"{name}\"?",
+    "infoBanner": "carrier type companies without carrier settings. Click \"Add Carrier\" to configure.",
+    "inn": "TIN",
+    "quotes": "quotes",
+    "orders": "orders",
+    "active": "Active",
+    "inactive": "Inactive",
+    "filters": {
+      "active": "Active",
+      "inactive": "Inactive"
+    },
+    "table": {
+      "company": "Company",
+      "apiType": "API Type",
+      "transportTypes": "Transport Types",
+      "countries": "Countries",
+      "stats": "Statistics"
+    },
+    "transportTypes": {
+      "air": "Air",
+      "sea": "Sea",
+      "rail": "Rail",
+      "road": "Road"
+    },
+    "apiTypes": {
+      "manual": "Manual Calculation",
+      "dhl": "DHL API",
+      "fedex": "FedEx API",
+      "ups": "UPS API",
+      "ponyexpress": "Ponyexpress API",
+      "custom": "Custom API"
+    },
+    "form": {
+      "company": "Company",
+      "selectCompany": "Select company",
+      "noInn": "No TIN",
+      "noAvailableCompanies": "No companies without carrier settings",
+      "apiType": "API Type",
+      "transportTypes": "Transport Types",
+      "countries": "Countries",
+      "countryPlaceholder": "Enter country...",
+      "add": "Add",
+      "popularCountries": "Popular: Kazakhstan, China, Russia, USA, Germany, Turkey",
+      "isActive": "Active (participates in calculations)",
+      "create": "Create"
+    }
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "createRequest": "Create Request",
+    "shipments": "Shipments",
+    "orders": "Orders",
+    "pending": "Pending",
+    "delivered": "Delivered",
+    "quickActions": "Quick Actions",
+    "recentOrders": "Recent Orders",
+    "allOrders": "All Orders",
+    "noOrders": "No Orders",
+    "createRequestPrompt": "Create a request to calculate delivery cost",
+    "actions": {
+      "createRequest": "Create Request",
+      "calculateCost": "Calculate Delivery Cost",
+      "myShipments": "My Shipments",
+      "viewManage": "View and Manage",
+      "myOrders": "My Orders",
+      "orderHistory": "Order History",
+      "trackCargo": "Track Cargo",
+      "byTrackingNumber": "By Tracking Number"
+    },
+    "table": {
+      "number": "Number",
+      "amount": "Amount"
+    }
+  },
+  "adminLayout": {
+    "administrator": "Administrator",
+    "menu": {
+      "dashboard": "Dashboard",
+      "users": "Users",
+      "companies": "Companies",
+      "carriers": "Carriers",
+      "orders": "Orders",
+      "invoices": "Invoices",
+      "settings": "Settings"
+    }
+  },
+  "login": {
+    "title": "Login",
+    "subtitle": "Sign in to access your dashboard",
+    "emailPlaceholder": "your{'@'}email.com",
+    "passwordPlaceholder": "••••••••",
+    "loggingIn": "Signing in..."
+  },
+  "register": {
+    "title": "Register",
+    "subtitle": "Create an account to access the platform",
+    "accountType": "Account Type",
+    "namePlaceholder": "John Smith",
+    "emailPlaceholder": "your{'@'}email.com",
+    "phonePlaceholder": "+7 777 123 45 67",
+    "companyName": "Company Name",
+    "companyNamePlaceholder": "Logistics LLC",
+    "companyInn": "TIN/BIN",
+    "companyInnPlaceholder": "123456789012",
+    "passwordPlaceholder": "Minimum 8 characters",
+    "confirmPasswordPlaceholder": "Repeat password",
+    "registering": "Registering...",
+    "roles": {
+      "customer": "Customer",
+      "carrier": "Carrier"
+    }
+  },
+  "carrierOrders": {
+    "title": "My Orders",
+    "subtitle": "Manage transportation orders",
+    "stats": {
+      "totalOrders": "Total Orders",
+      "pendingConfirmation": "Pending Confirmation",
+      "inProgress": "In Progress",
+      "delivered": "Delivered"
+    },
+    "searchPlaceholder": "Search by order number...",
+    "allStatuses": "All Statuses",
+    "loadingOrders": "Loading orders...",
+    "customer": "Customer",
+    "weight": "Weight",
+    "amount": "Amount",
+    "date": "Date",
+    "viewDetails": "View Details",
+    "noOrders": "No Orders",
+    "noOrdersMessage": "Orders will appear when customers choose your company",
+    "orderTitle": "Order",
+    "route": "Route",
+    "origin": "Origin",
+    "destination": "Destination",
+    "cargo": "Cargo",
+    "volume": "Volume",
+    "cargoType": "Cargo Type",
+    "deliveryContacts": "Delivery Contacts",
+    "contactPerson": "Contact Person",
+    "deliveryAddress": "Delivery Address",
+    "payment": "Payment",
+    "platformCommission": "Platform Commission",
+    "trackingNumber": "Tracking Number",
+    "errorUpdatingStatus": "Error updating status",
+    "actions": {
+      "confirmOrder": "Confirm Order",
+      "schedulePickup": "Schedule Pickup",
+      "pickedUp": "Picked Up",
+      "inTransit": "In Transit",
+      "outForDelivery": "Out for Delivery",
+      "delivered": "Delivered"
+    }
+  },
+  "adminCompanies": {
+    "title": "Companies",
+    "subtitle": "Manage shipper and carrier companies",
+    "addCompany": "Add Company",
+    "editCompany": "Edit Company",
+    "searchPlaceholder": "Search by name, TIN...",
+    "noCompanies": "No companies found",
+    "pageInfo": "Page {current} of {last}",
+    "create": "Create",
+    "saving": "Saving...",
+    "confirmDelete": "Delete company \"{name}\"?",
+    "users": "users",
+    "typeCarrier": "Carrier",
+    "typeShipper": "Shipper",
+    "verified": "Verified",
+    "verify": "Verify",
+    "verifyCompany": "Verify Company",
+    "filters": {
+      "allTypes": "All Types",
+      "shippers": "Shippers",
+      "carriers": "Carriers",
+      "all": "All",
+      "verified": "Verified",
+      "notVerified": "Not Verified"
+    },
+    "table": {
+      "company": "Company",
+      "inn": "TIN",
+      "type": "Type",
+      "contacts": "Contacts",
+      "rating": "Rating",
+      "verification": "Verification",
+      "actions": "Actions"
+    },
+    "form": {
+      "name": "Name",
+      "inn": "TIN",
+      "type": "Type",
+      "legalAddress": "Legal Address",
+      "actualAddress": "Actual Address",
+      "phone": "Phone",
+      "email": "Email",
+      "website": "Website"
+    },
+    "documents": {
+      "title": "Documents",
+      "loading": "Loading documents...",
+      "noDocuments": "No documents uploaded",
+      "uploaded": "Uploaded",
+      "approve": "Approve",
+      "reject": "Reject",
+      "approved": "Document approved. Company verified!",
+      "errorApproving": "Error approving document",
+      "errorRejecting": "Error rejecting document",
+      "provideReason": "Provide rejection reason",
+      "reasonPlaceholder": "Rejection reason...",
+      "statusPending": "Pending Review",
+      "statusApproved": "Approved",
+      "statusRejected": "Rejected"
+    }
+  },
+  "ordersList": {
+    "title": "My Orders",
+    "totalOrders": "Total {count} orders",
+    "newRequest": "New Request",
+    "searchPlaceholder": "Search by order number, tracking, or city...",
+    "loadingOrders": "Loading orders...",
+    "noOrdersYet": "You have no orders yet",
+    "createRequestPrompt": "Create a shipping request and choose a suitable offer",
+    "goToRequests": "Go to Requests",
+    "nothingFound": "Nothing Found",
+    "tryChangingFilters": "Try changing your search parameters",
+    "resetFilters": "Reset Filters",
+    "pageInfo": "Page {current} of {last}"
+  },
+  "orderDetail": {
+    "backToOrders": "Back to Orders",
+    "order": "Order",
+    "deliveryStatus": "Delivery Status",
+    "orderInfo": "Order Information",
+    "orderNumber": "Order Number",
+    "createdAt": "Created At",
+    "carrier": "Carrier",
+    "trackingNumber": "Tracking Number",
+    "carrierTrackingNumber": "Carrier Tracking Number",
+    "cost": "Cost",
+    "serviceCommission": "Service Commission",
+    "pickup": "Pickup",
+    "contactPerson": "Contact Person",
+    "phone": "Phone",
+    "address": "Address",
+    "pickupDate": "Pickup Date",
+    "delivery": "Delivery",
+    "deliveryHistory": "Delivery History",
+    "notes": "Notes",
+    "trackOnMap": "Track on Map",
+    "cancelOrder": "Cancel Order",
+    "confirmCancel": "Are you sure you want to cancel this order?",
+    "statuses": {
+      "pending": "Pending Confirmation",
+      "confirmed": "Confirmed",
+      "pickupScheduled": "Pickup Scheduled",
+      "pickedUp": "Picked Up",
+      "inTransit": "In Transit",
+      "customs": "At Customs",
+      "outForDelivery": "Out for Delivery",
+      "delivered": "Delivered",
+      "cancelled": "Cancelled"
+    }
+  },
+  "adminSettings": {
+    "title": "Settings",
+    "subtitle": "Manage platform settings",
+    "saving": "Saving...",
+    "tabs": {
+      "general": "General",
+      "commission": "Commission",
+      "notifications": "Notifications",
+      "email": "Email",
+      "security": "Security",
+      "system": "System"
+    },
+    "general": {
+      "title": "General Settings",
+      "description": "Basic platform information",
+      "siteName": "Site Name",
+      "siteDescription": "Description",
+      "contactEmail": "Contact Email",
+      "contactPhone": "Contact Phone"
+    },
+    "commission": {
+      "title": "Commission Settings",
+      "description": "Commission fee parameters",
+      "commissionRate": "Commission Rate (%)",
+      "minOrderAmount": "Minimum Order Amount",
+      "defaultCurrency": "Default Currency",
+      "currencies": {
+        "usd": "USD - US Dollar",
+        "eur": "EUR - Euro",
+        "kzt": "KZT - Tenge",
+        "rub": "RUB - Ruble"
+      }
+    },
+    "notifications": {
+      "title": "Notifications",
+      "description": "System notification settings",
+      "emailNotifications": "Email Notifications",
+      "emailNotificationsDesc": "Send notifications to user emails",
+      "orderNotifications": "Order Notifications",
+      "orderNotificationsDesc": "Notify about new orders and status changes",
+      "paymentNotifications": "Payment Notifications",
+      "paymentNotificationsDesc": "Notify about payments and invoices"
+    },
+    "email": {
+      "title": "Email Settings",
+      "description": "Mail server configuration",
+      "infoTitle": "Email Settings",
+      "infoText": "Mail server configuration is done via .env file on the server."
+    },
+    "security": {
+      "title": "Security",
+      "description": "Platform security parameters",
+      "emailVerification": "Email Verification",
+      "emailVerificationDesc": "Require email confirmation during registration",
+      "companyVerification": "Company Verification",
+      "companyVerificationDesc": "Require verification of carrier companies",
+      "sessionLifetime": "Session Lifetime (minutes)"
+    },
+    "system": {
+      "title": "System",
+      "description": "System information and actions",
+      "appVersion": "App Version",
+      "laravelVersion": "Laravel Version",
+      "phpVersion": "PHP Version",
+      "database": "Database",
+      "clearCache": "Clear Cache"
+    }
+  },
+  "carrierSettings": {
+    "title": "Settings",
+    "subtitle": "Calculation rules, transport types and system configuration",
+    "saving": "Saving...",
+    "loadingSettings": "Loading settings...",
+    "messages": {
+      "saveSuccess": "Settings saved successfully",
+      "saveError": "Error saving settings"
+    },
+    "pricingRules": {
+      "title": "Pricing Rules",
+      "dimFactor": "DIM Factor",
+      "dimFactorHint": "Divisor for volumetric weight calculation (usually 5000-6000)",
+      "minRate": "Minimum Rate",
+      "insuranceRate": "Insurance Rate",
+      "insuranceRateHint": "Percentage of declared cargo value",
+      "defaultCurrency": "Default Currency"
+    },
+    "transportTypes": {
+      "title": "Transport Types",
+      "description": "Select transport types you provide",
+      "air": "Air Transport",
+      "airDesc": "Fast delivery by air",
+      "road": "Road Transport",
+      "roadDesc": "Delivery by road",
+      "rail": "Rail Transport",
+      "railDesc": "Delivery by rail",
+      "sea": "Sea Transport",
+      "seaDesc": "Delivery by sea"
+    },
+    "cargoLimits": {
+      "title": "Cargo Limits",
+      "description": "Maximum allowed cargo parameters",
+      "maxWeight": "Max Weight",
+      "maxLength": "Max Length",
+      "maxWidth": "Max Width",
+      "maxHeight": "Max Height"
+    },
+    "workingHours": {
+      "title": "Working Hours",
+      "start": "Start",
+      "end": "End",
+      "workingDays": "Working Days"
+    },
+    "weekdays": {
+      "mon": "Mon",
+      "tue": "Tue",
+      "wed": "Wed",
+      "thu": "Thu",
+      "fri": "Fri",
+      "sat": "Sat",
+      "sun": "Sun"
+    },
+    "notifications": {
+      "title": "Notifications",
+      "newOrders": "New Orders",
+      "newOrdersDesc": "Notifications about new orders",
+      "statusUpdates": "Status Updates",
+      "statusUpdatesDesc": "Notifications about order status changes",
+      "payments": "Payments",
+      "paymentsDesc": "Notifications about payment receipts"
+    }
+  },
+  "carrierRates": {
+    "title": "Rates",
+    "subtitle": "Price settings by weight and routes",
+    "importFromExcel": "Import from Excel",
+    "addRate": "Add Rate",
+    "searchByZones": "Search by zones...",
+    "allTypes": "All Types",
+    "from": "From",
+    "to": "To",
+    "reset": "Reset",
+    "loadingRates": "Loading rates...",
+    "noRates": "No Rates",
+    "addRatePrompt": "Add a rate to calculate transportation cost",
+    "confirmDelete": "Are you sure you want to delete this rate?",
+    "importError": "Import error",
+    "kg": "kg",
+    "days": "days",
+    "newRate": "New Rate",
+    "editRate": "Edit Rate",
+    "createRate": "Create Rate",
+    "transportTypes": {
+      "air": "Air",
+      "road": "Road",
+      "rail": "Rail",
+      "sea": "Sea"
+    },
+    "tableHeaders": {
+      "from": "From",
+      "to": "To",
+      "type": "Type",
+      "weight": "Weight",
+      "rate": "Rate",
+      "transit": "Transit"
+    },
+    "form": {
+      "originZone": "From (Zone)",
+      "destinationZone": "To (Zone)",
+      "selectZone": "Select zone",
+      "transportType": "Transport Type",
+      "weightFrom": "Weight From (kg)",
+      "weightTo": "Weight To (kg)",
+      "noLimit": "No Limit",
+      "ratePerKg": "Rate per kg (USD)",
+      "transitMin": "Transit Min (days)",
+      "transitMax": "Transit Max (days)"
+    },
+    "import": {
+      "title": "Import Rates from Excel",
+      "fileFormat": "File format:",
+      "or": "or",
+      "ensureZones": "Ensure zones with the codes specified in the file are created",
+      "requiredColumns": "Required columns:",
+      "optionalColumns": "Optional columns:",
+      "originZoneCode": "origin zone code (e.g.: KZ, RU)",
+      "destinationZoneCode": "destination zone code",
+      "ratePerKg": "rate per kg (number)",
+      "transportTypeDesc": "type: road, air, rail, sea (default: road)",
+      "minWeight": "minimum weight (default: 0)",
+      "maxWeight": "maximum weight",
+      "currency": "currency (default: USD)",
+      "minTransit": "min transit time (days)",
+      "maxTransit": "max transit time (days)",
+      "selectFile": "Select file",
+      "imported": "Imported",
+      "skipped": "Skipped",
+      "importing": "Importing...",
+      "importButton": "Import"
+    }
+  },
+  "orderCreate": {
+    "title": "Create Order",
+    "sections": {
+      "contactInfo": "Contact Information",
+      "pickup": "Pickup",
+      "delivery": "Delivery",
+      "additional": "Additional"
+    },
+    "form": {
+      "fullName": "Full Name",
+      "fullNamePlaceholder": "Enter full name",
+      "phone": "Phone",
+      "phonePlaceholder": "+7 (XXX) XXX-XX-XX",
+      "email": "Email",
+      "emailPlaceholder": "example{'@'}mail.com",
+      "useCustomerContact": "Use customer contact details",
+      "contactPerson": "Contact Person",
+      "pickupContactPlaceholder": "Full name for pickup",
+      "pickupPhone": "Pickup Phone",
+      "pickupAddress": "Pickup Address",
+      "pickupAddressPlaceholder": "Full address for cargo pickup",
+      "pickupDate": "Pickup Date",
+      "pickupTime": "Pickup Time",
+      "timeFrom": "From",
+      "timeTo": "To",
+      "deliveryContactPlaceholder": "Recipient full name",
+      "deliveryPhone": "Recipient Phone",
+      "deliveryAddress": "Delivery Address",
+      "deliveryAddressPlaceholder": "Full delivery address",
+      "notes": "Order Notes",
+      "notesPlaceholder": "Special requests, courier instructions..."
+    },
+    "summary": {
+      "title": "Order Details",
+      "carrier": "Carrier",
+      "from": "From",
+      "to": "To",
+      "billableWeight": "Billable Weight",
+      "deliveryTime": "Delivery Time",
+      "days": "days",
+      "estimatedDate": "Estimated Date",
+      "included": "Included:",
+      "baseRate": "Base Rate",
+      "surcharges": "Surcharges",
+      "insurance": "Insurance",
+      "validUntil": "Quote valid until"
+    },
+    "services": {
+      "pickup": "Pickup",
+      "delivery": "Delivery",
+      "customs": "Customs",
+      "insurance": "Insurance"
+    },
+    "submitButton": "Create Order",
+    "submitting": "Creating...",
+    "errors": {
+      "loadQuote": "Error loading quote",
+      "loadingError": "Loading error",
+      "createOrder": "Error creating order"
+    }
   }
 }
