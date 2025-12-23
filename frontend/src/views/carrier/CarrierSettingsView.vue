@@ -859,3 +859,379 @@ function toggleNotification(key) {
   }
 }
 </style>
+
+<style lang="scss">
+/* Dark theme styles for CarrierSettingsView */
+[data-theme="dark"] {
+  .carrier-settings {
+    background: #1a1a1a !important;
+  }
+
+  .carrier-settings .dashboard-main {
+    background: #1a1a1a !important;
+  }
+
+  .carrier-settings .page-title h1 {
+    color: #f5f5f5 !important;
+  }
+
+  .carrier-settings .page-title .subtitle {
+    color: #999999 !important;
+  }
+
+  /* Settings cards */
+  .carrier-settings .settings-card {
+    background: #0f0f0f !important;
+    border-color: #2a2a2a !important;
+  }
+
+  .carrier-settings .card-header {
+    border-color: #2a2a2a !important;
+
+    h3 {
+      color: #f5f5f5 !important;
+    }
+
+    svg {
+      color: #f97316 !important;
+    }
+  }
+
+  .carrier-settings .card-body {
+    background: #0f0f0f !important;
+  }
+
+  .carrier-settings .form-group label {
+    color: #f5f5f5 !important;
+  }
+
+  .carrier-settings .form-input {
+    background: #1a1a1a !important;
+    border-color: #2a2a2a !important;
+    color: #f5f5f5 !important;
+
+    &:focus {
+      border-color: #f97316 !important;
+    }
+
+    option {
+      background: #1a1a1a !important;
+      color: #f5f5f5 !important;
+    }
+  }
+
+  .carrier-settings .input-suffix {
+    color: #999999 !important;
+  }
+
+  .carrier-settings .hint {
+    color: #666666 !important;
+  }
+
+  /* Transport types */
+  .carrier-settings .transport-types {
+    background: #1a1a1a !important;
+    border-color: #2a2a2a !important;
+  }
+
+  .carrier-settings .transport-item {
+    background: #0f0f0f !important;
+    border-color: #2a2a2a !important;
+    color: #f5f5f5 !important;
+
+    &.active {
+      border-color: #f97316 !important;
+      background: rgba(249, 115, 22, 0.1) !important;
+    }
+
+    svg {
+      color: #999999 !important;
+    }
+
+    &.active svg {
+      color: #f97316 !important;
+    }
+  }
+
+  /* Working hours */
+  .carrier-settings .time-inputs {
+    background: #1a1a1a !important;
+  }
+
+  .carrier-settings .time-inputs input {
+    background: #0f0f0f !important;
+    border-color: #2a2a2a !important;
+    color: #f5f5f5 !important;
+  }
+
+  /* Weekdays */
+  .carrier-settings .weekdays-grid {
+    background: #1a1a1a !important;
+  }
+
+  .carrier-settings .weekday-item {
+    background: #0f0f0f !important;
+    border-color: #2a2a2a !important;
+    color: #999999 !important;
+
+    &.active {
+      background: #f97316 !important;
+      border-color: #f97316 !important;
+      color: #ffffff !important;
+    }
+  }
+
+  /* Notifications */
+  .carrier-settings .notifications-list {
+    background: #1a1a1a !important;
+  }
+
+  .carrier-settings .notification-item {
+    border-color: #2a2a2a !important;
+
+    .notification-label {
+      color: #f5f5f5 !important;
+    }
+
+    .notification-description {
+      color: #999999 !important;
+    }
+  }
+
+  /* Limits */
+  .carrier-settings .limits-grid {
+    background: #1a1a1a !important;
+  }
+
+  .carrier-settings .limit-item {
+    background: #0f0f0f !important;
+    border-color: #2a2a2a !important;
+
+    label {
+      color: #999999 !important;
+    }
+
+    input {
+      background: #1a1a1a !important;
+      border-color: #2a2a2a !important;
+      color: #f5f5f5 !important;
+    }
+
+    .limit-unit {
+      color: #666666 !important;
+    }
+  }
+
+  /* Message box */
+  .carrier-settings .message-box {
+    &.success {
+      background: rgba(16, 185, 129, 0.1) !important;
+      border-color: #10b981 !important;
+      color: #10b981 !important;
+    }
+
+    &.error {
+      background: rgba(220, 53, 69, 0.1) !important;
+      border-color: #dc3545 !important;
+      color: #dc3545 !important;
+    }
+  }
+
+  .carrier-settings .loading-state {
+    color: #999999 !important;
+
+    .spinner {
+      border-color: #2a2a2a !important;
+      border-top-color: #f97316 !important;
+    }
+  }
+
+  .carrier-settings .btn-outline {
+    border-color: #2a2a2a !important;
+    color: #999999 !important;
+
+    &:hover {
+      background: #252525 !important;
+    }
+  }
+
+  /* Settings sections - main white blocks */
+  .carrier-settings .settings-section {
+    background: #0f0f0f !important;
+    border-color: #2a2a2a !important;
+  }
+
+  .carrier-settings .section-header {
+    background: #1a1a1a !important;
+    border-color: #2a2a2a !important;
+
+    h2 {
+      color: #f5f5f5 !important;
+    }
+
+    svg {
+      color: #f97316 !important;
+    }
+  }
+
+  .carrier-settings .section-body {
+    background: #0f0f0f !important;
+  }
+
+  .carrier-settings .section-description {
+    color: #999999 !important;
+  }
+
+  /* Form inputs */
+  .carrier-settings .form-group {
+    label {
+      color: #f5f5f5 !important;
+    }
+
+    input, select {
+      background: #1a1a1a !important;
+      border-color: #2a2a2a !important;
+      color: #f5f5f5 !important;
+
+      &:focus {
+        border-color: #f97316 !important;
+      }
+
+      option {
+        background: #1a1a1a !important;
+        color: #f5f5f5 !important;
+      }
+    }
+
+    .hint {
+      color: #666666 !important;
+    }
+  }
+
+  /* Input groups */
+  .carrier-settings .input-group {
+    .input-prefix,
+    .input-suffix {
+      background: #252525 !important;
+      border-color: #2a2a2a !important;
+      color: #999999 !important;
+    }
+  }
+
+  /* Transport toggles */
+  .carrier-settings .transport-toggle {
+    background: #1a1a1a !important;
+    border-color: #2a2a2a !important;
+
+    &:hover {
+      border-color: #3a3a3a !important;
+    }
+
+    &.active {
+      border-color: #f97316 !important;
+      background: rgba(249, 115, 22, 0.1) !important;
+    }
+
+    .toggle-label {
+      color: #f5f5f5 !important;
+    }
+
+    .toggle-desc {
+      color: #999999 !important;
+    }
+
+    .toggle-icon {
+      background: #252525 !important;
+
+      svg {
+        color: #999999 !important;
+      }
+    }
+
+    &.active .toggle-icon {
+      background: rgba(249, 115, 22, 0.15) !important;
+
+      svg {
+        color: #f97316 !important;
+      }
+    }
+
+    .toggle-switch {
+      color: #666666 !important;
+
+      &.active {
+        color: #f97316 !important;
+      }
+    }
+  }
+
+  /* Working hours */
+  .carrier-settings .time-row {
+    .time-label {
+      color: #999999 !important;
+    }
+
+    input[type="time"] {
+      background: #1a1a1a !important;
+      border-color: #2a2a2a !important;
+      color: #f5f5f5 !important;
+    }
+  }
+
+  /* Weekdays */
+  .carrier-settings .weekday-btn {
+    background: #1a1a1a !important;
+    border-color: #2a2a2a !important;
+    color: #999999 !important;
+
+    &.active {
+      background: #f97316 !important;
+      border-color: #f97316 !important;
+      color: #ffffff !important;
+    }
+  }
+
+  /* Notification items */
+  .carrier-settings .notification-toggle {
+    background: #1a1a1a !important;
+    border-color: #2a2a2a !important;
+
+    .notification-info {
+      h4 {
+        color: #f5f5f5 !important;
+      }
+
+      p {
+        color: #999999 !important;
+      }
+    }
+
+    .toggle-switch {
+      color: #666666 !important;
+
+      &.active {
+        color: #f97316 !important;
+      }
+    }
+  }
+
+  /* Limit inputs */
+  .carrier-settings .limit-group {
+    label {
+      color: #999999 !important;
+    }
+
+    .limit-input {
+      background: #1a1a1a !important;
+      border-color: #2a2a2a !important;
+      color: #f5f5f5 !important;
+    }
+
+    .limit-suffix {
+      background: #252525 !important;
+      border-color: #2a2a2a !important;
+      color: #999999 !important;
+    }
+  }
+}
+</style>

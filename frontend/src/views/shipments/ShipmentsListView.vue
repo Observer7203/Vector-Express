@@ -1,8 +1,13 @@
 <script setup>
-import { onMounted } from 'vue'
+import { onMounted, computed } from 'vue'
 import { RouterLink } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import { useShipmentsStore } from '@/stores/shipments'
 import { ArrowLeft, Plus, ArrowRight, FileText, Truck, Scale, Calendar } from 'lucide-vue-next'
+import ThemeToggle from '@/components/ThemeToggle.vue'
+import LanguageSwitcher from '@/components/LanguageSwitcher.vue'
+
+const { t, locale } = useI18n()
 
 const iconStrokeWidth = 1.2
 
@@ -13,24 +18,25 @@ onMounted(() => {
 })
 
 function formatDate(dateString) {
-  return new Date(dateString).toLocaleDateString('ru-RU')
+  const localeMap = { ru: 'ru-RU', en: 'en-US', kk: 'kk-KZ' }
+  return new Date(dateString).toLocaleDateString(localeMap[locale.value] || 'ru-RU')
 }
 
-const statusLabels = {
-  draft: 'Черновик',
-  calculating: 'Расчет...',
-  quoted: 'Есть предложения',
-  ordered: 'Заказано',
-  expired: 'Истекло'
-}
+const statusLabels = computed(() => ({
+  draft: t('shipmentsList.statuses.draft'),
+  calculating: t('shipmentsList.statuses.calculating'),
+  quoted: t('shipmentsList.statuses.quoted'),
+  ordered: t('shipmentsList.statuses.ordered'),
+  expired: t('shipmentsList.statuses.expired')
+}))
 
-const transportLabels = {
-  air: 'Авиа',
-  sea: 'Морской',
-  rail: 'ЖД',
-  road: 'Авто',
-  multimodal: 'Мультимодальный'
-}
+const transportLabels = computed(() => ({
+  air: t('shipmentsList.transport.air'),
+  sea: t('shipmentsList.transport.sea'),
+  rail: t('shipmentsList.transport.rail'),
+  road: t('shipmentsList.transport.road'),
+  multimodal: t('shipmentsList.transport.multimodal')
+}))
 </script>
 
 <template>
@@ -42,12 +48,16 @@ const transportLabels = {
             <RouterLink to="/dashboard" class="back-link">
               <ArrowLeft :size="20" :stroke-width="iconStrokeWidth" />
             </RouterLink>
-            <h1>Мои заявки</h1>
+            <h1>{{ t('shipmentsList.title') }}</h1>
           </div>
-          <RouterLink to="/shipments/new" class="btn btn-primary">
-            <Plus :size="18" :stroke-width="iconStrokeWidth" />
-            Новая заявка
-          </RouterLink>
+          <div class="header-right">
+            <ThemeToggle />
+            <LanguageSwitcher />
+            <RouterLink to="/shipments/new" class="btn btn-primary">
+              <Plus :size="18" :stroke-width="iconStrokeWidth" />
+              {{ t('shipmentsList.newShipment') }}
+            </RouterLink>
+          </div>
         </div>
       </div>
     </header>
@@ -56,16 +66,16 @@ const transportLabels = {
       <div class="container">
         <div v-if="shipmentsStore.loading" class="loading">
           <div class="spinner"></div>
-          <span>Загрузка заявок...</span>
+          <span>{{ t('shipmentsList.loading') }}</span>
         </div>
 
         <div v-else-if="shipmentsStore.shipments.length === 0" class="empty-state">
           <div class="empty-icon">
             <FileText :size="32" :stroke-width="iconStrokeWidth" />
           </div>
-          <h3>Нет заявок</h3>
-          <p>Создайте первую заявку для расчета стоимости доставки</p>
-          <RouterLink to="/shipments/new" class="btn btn-primary">Создать заявку</RouterLink>
+          <h3>{{ t('shipmentsList.noShipments') }}</h3>
+          <p>{{ t('shipmentsList.createFirst') }}</p>
+          <RouterLink to="/shipments/new" class="btn btn-primary">{{ t('shipmentsList.createShipment') }}</RouterLink>
         </div>
 
         <div v-else class="shipments-list">
@@ -77,14 +87,14 @@ const transportLabels = {
             <div class="shipment-header">
               <div class="shipment-route">
                 <div class="route-point">
-                  <span class="point-label">Откуда</span>
+                  <span class="point-label">{{ t('shipmentsList.from') }}</span>
                   <span class="point-value">{{ shipment.origin_city }}, {{ shipment.origin_country }}</span>
                 </div>
                 <div class="route-arrow">
                   <ArrowRight :size="18" :stroke-width="iconStrokeWidth" />
                 </div>
                 <div class="route-point">
-                  <span class="point-label">Куда</span>
+                  <span class="point-label">{{ t('shipmentsList.to') }}</span>
                   <span class="point-value">{{ shipment.destination_city }}, {{ shipment.destination_country }}</span>
                 </div>
               </div>
@@ -96,11 +106,11 @@ const transportLabels = {
             <div class="shipment-details">
               <div class="detail-item">
                 <Truck :size="16" :stroke-width="iconStrokeWidth" />
-                <span>{{ transportLabels[shipment.transport_type] || 'Любой' }}</span>
+                <span>{{ transportLabels[shipment.transport_type] || t('shipmentsList.anyType') }}</span>
               </div>
               <div class="detail-item">
                 <Scale :size="16" :stroke-width="iconStrokeWidth" />
-                <span>{{ shipment.total_weight || '-' }} кг</span>
+                <span>{{ shipment.total_weight || '-' }} {{ t('shipmentsList.kg') }}</span>
               </div>
               <div class="detail-item">
                 <Calendar :size="16" :stroke-width="iconStrokeWidth" />
@@ -115,10 +125,10 @@ const transportLabels = {
                   :to="`/shipments/${shipment.id}/quotes`"
                   class="btn btn-primary btn-sm"
                 >
-                  Смотреть предложения
+                  {{ t('shipmentsList.viewQuotes') }}
                 </RouterLink>
                 <RouterLink :to="`/shipments/${shipment.id}`" class="btn btn-outline btn-sm">
-                  Подробнее
+                  {{ t('shipmentsList.details') }}
                 </RouterLink>
               </div>
             </div>
@@ -159,6 +169,12 @@ const transportLabels = {
 }
 
 .header-left {
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+}
+
+.header-right {
   display: flex;
   align-items: center;
   gap: $spacing-md;
@@ -457,6 +473,134 @@ h1 {
     padding: $spacing-md 0;
     gap: $spacing-md;
     align-items: flex-start;
+  }
+}
+
+// Dark theme
+[data-theme="dark"] {
+  .page {
+    background: #1a1a1a !important;
+  }
+
+  .page-header {
+    background: #0f0f0f !important;
+    border-bottom-color: #2a2a2a !important;
+  }
+
+  h1 {
+    color: #f5f5f5 !important;
+  }
+
+  .back-link {
+    color: #999999 !important;
+
+    &:hover {
+      background: #252525 !important;
+      color: #f5f5f5 !important;
+    }
+  }
+
+  .shipment-card {
+    background: #0f0f0f !important;
+    border-color: #2a2a2a !important;
+
+    &:hover {
+      border-color: rgba(249, 115, 22, 0.3) !important;
+    }
+  }
+
+  .point-label {
+    color: #999999 !important;
+  }
+
+  .point-value {
+    color: #f5f5f5 !important;
+  }
+
+  .route-arrow {
+    background: rgba(249, 115, 22, 0.15) !important;
+
+    svg {
+      color: #f97316 !important;
+    }
+  }
+
+  .status-quoted {
+    background: rgba(249, 115, 22, 0.15) !important;
+    color: #f97316 !important;
+  }
+
+  .status-draft {
+    background: #252525 !important;
+    color: #999999 !important;
+  }
+
+  .status-ordered {
+    background: rgba(34, 197, 94, 0.15) !important;
+    color: #22c55e !important;
+  }
+
+  .status-expired {
+    background: rgba(239, 68, 68, 0.15) !important;
+    color: #ef4444 !important;
+  }
+
+  .status-calculating {
+    background: rgba(251, 191, 36, 0.15) !important;
+    color: #fbbf24 !important;
+  }
+
+  .shipment-details {
+    border-top-color: #2a2a2a !important;
+    border-bottom-color: #2a2a2a !important;
+  }
+
+  .detail-item {
+    color: #999999 !important;
+
+    svg {
+      color: #f97316 !important;
+    }
+  }
+
+  .btn-outline {
+    border-color: #f97316 !important;
+    color: #f97316 !important;
+
+    &:hover {
+      background: #f97316 !important;
+      color: #ffffff !important;
+    }
+  }
+
+  .empty-state {
+    background: #0f0f0f !important;
+    border-color: #2a2a2a !important;
+
+    h3 {
+      color: #f5f5f5 !important;
+    }
+
+    p {
+      color: #999999 !important;
+    }
+  }
+
+  .empty-icon {
+    background: #252525 !important;
+
+    svg {
+      color: #f97316 !important;
+    }
+  }
+
+  .loading {
+    color: #999999 !important;
+  }
+
+  .spinner {
+    border-color: #2a2a2a !important;
+    border-top-color: #f97316 !important;
   }
 }
 </style>

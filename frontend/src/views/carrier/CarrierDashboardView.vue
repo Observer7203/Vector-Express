@@ -203,29 +203,29 @@ const menuItems = computed(() => [
 
         <!-- Quick Stats -->
         <section class="quick-stats-section">
-          <h2>Конфигурация системы</h2>
+          <h2>{{ t('carrier.systemConfig') }}</h2>
           <div class="config-cards">
             <div class="config-card">
               <div class="config-header">
                 <Settings :size="20" :stroke-width="iconStrokeWidth" />
-                <span>Правила расчета</span>
+                <span>{{ t('carrier.calculationRules') }}</span>
               </div>
               <div class="config-body">
                 <div class="config-item">
-                  <span class="config-label">DIM-фактор</span>
+                  <span class="config-label">{{ t('carrier.dimFactor') }}</span>
                   <span class="config-value">5000</span>
                 </div>
                 <div class="config-item">
-                  <span class="config-label">Мин. тариф</span>
+                  <span class="config-label">{{ t('carrier.minTariff') }}</span>
                   <span class="config-value">$30.00</span>
                 </div>
                 <div class="config-item">
-                  <span class="config-label">Страховка</span>
+                  <span class="config-label">{{ t('carrier.insurance') }}</span>
                   <span class="config-value">0.5%</span>
                 </div>
               </div>
               <RouterLink to="/carrier/settings" class="config-link">
-                Настроить
+                {{ t('carrier.configure') }}
                 <ChevronRight :size="16" :stroke-width="iconStrokeWidth" />
               </RouterLink>
             </div>
@@ -233,18 +233,18 @@ const menuItems = computed(() => [
             <div class="config-card">
               <div class="config-header">
                 <Truck :size="20" :stroke-width="iconStrokeWidth" />
-                <span>Типы перевозок</span>
+                <span>{{ t('carrier.transportTypes') }}</span>
               </div>
               <div class="config-body">
                 <div class="transport-types">
-                  <span class="transport-badge air">Авиа</span>
-                  <span class="transport-badge road">Авто</span>
-                  <span class="transport-badge rail">ЖД</span>
-                  <span class="transport-badge sea inactive">Морские</span>
+                  <span class="transport-badge air">{{ t('carrier.air') }}</span>
+                  <span class="transport-badge road">{{ t('carrier.road') }}</span>
+                  <span class="transport-badge rail">{{ t('carrier.rail') }}</span>
+                  <span class="transport-badge sea inactive">{{ t('carrier.sea') }}</span>
                 </div>
               </div>
               <RouterLink to="/carrier/settings" class="config-link">
-                Настроить
+                {{ t('carrier.configure') }}
                 <ChevronRight :size="16" :stroke-width="iconStrokeWidth" />
               </RouterLink>
             </div>
@@ -252,24 +252,24 @@ const menuItems = computed(() => [
             <div class="config-card">
               <div class="config-header">
                 <AlertCircle :size="20" :stroke-width="iconStrokeWidth" />
-                <span>Надбавки</span>
+                <span>{{ t('carrier.surcharges') }}</span>
               </div>
               <div class="config-body">
                 <div class="config-item">
-                  <span class="config-label">Топливо</span>
+                  <span class="config-label">{{ t('carrier.fuel') }}</span>
                   <span class="config-value">+15.5%</span>
                 </div>
                 <div class="config-item">
-                  <span class="config-label">Удаленный район</span>
+                  <span class="config-label">{{ t('carrier.remoteArea') }}</span>
                   <span class="config-value">+$25.00</span>
                 </div>
                 <div class="config-item">
-                  <span class="config-label">Жилой адрес</span>
+                  <span class="config-label">{{ t('carrier.residentialAddress') }}</span>
                   <span class="config-value">+$8.00</span>
                 </div>
               </div>
               <RouterLink to="/carrier/surcharges" class="config-link">
-                Управлять
+                {{ t('carrier.manage') }}
                 <ChevronRight :size="16" :stroke-width="iconStrokeWidth" />
               </RouterLink>
             </div>
@@ -700,6 +700,158 @@ const menuItems = computed(() => [
   .management-grid,
   .config-cards {
     grid-template-columns: 1fr;
+  }
+}
+
+// Dark theme
+[data-theme="dark"] {
+  .carrier-dashboard {
+    background: #1a1a1a;
+  }
+
+  .page-title {
+    h1 {
+      color: #f5f5f5;
+    }
+
+    .subtitle {
+      color: #999999;
+    }
+  }
+
+  .stat-card {
+    background: #0f0f0f;
+    border-color: #2a2a2a;
+  }
+
+  .stat-icon {
+    background: rgba(249, 115, 22, 0.15) !important;
+
+    svg {
+      color: #f97316 !important;
+    }
+  }
+
+  .stat-number {
+    color: #f5f5f5;
+  }
+
+  .stat-label {
+    color: #999999;
+  }
+
+  .management-section h2,
+  .quick-stats-section h2 {
+    color: #f5f5f5;
+  }
+
+  .management-card {
+    background: #0f0f0f;
+    border-color: #2a2a2a;
+
+    &:hover {
+      border-color: #f97316;
+    }
+  }
+
+  .card-icon {
+    background: rgba(249, 115, 22, 0.15);
+
+    svg {
+      color: #f97316;
+    }
+  }
+
+  .card-content {
+    h3 {
+      color: #f5f5f5;
+    }
+
+    p {
+      color: #999999;
+    }
+  }
+
+  .card-stat .stat-value {
+    color: #f97316;
+  }
+
+  .card-stat .stat-text {
+    color: #999999;
+  }
+
+  .card-arrow {
+    color: #666666;
+  }
+
+  .config-card {
+    background: #0f0f0f;
+    border-color: #2a2a2a;
+  }
+
+  .config-header {
+    background: #1a1a1a;
+    border-bottom-color: #2a2a2a;
+
+    svg {
+      color: #f97316;
+    }
+
+    span {
+      color: #f5f5f5;
+    }
+  }
+
+  .config-body {
+    background: #0f0f0f;
+  }
+
+  .config-item {
+    border-bottom-color: #2a2a2a;
+  }
+
+  .config-label {
+    color: #999999;
+  }
+
+  .config-value {
+    color: #f5f5f5;
+  }
+
+  .config-link {
+    border-top-color: #2a2a2a;
+    color: #f97316;
+
+    &:hover {
+      background: rgba(249, 115, 22, 0.1);
+    }
+  }
+
+  .transport-badge {
+    &.air {
+      background: rgba(249, 115, 22, 0.15);
+      color: #f97316;
+    }
+
+    &.road {
+      background: rgba(34, 197, 94, 0.15);
+      color: #22c55e;
+    }
+
+    &.rail {
+      background: rgba(251, 191, 36, 0.15);
+      color: #fbbf24;
+    }
+
+    &.sea {
+      background: rgba(96, 165, 250, 0.15);
+      color: #60a5fa;
+    }
+
+    &.inactive {
+      background: #252525;
+      color: #666666;
+    }
   }
 }
 </style>

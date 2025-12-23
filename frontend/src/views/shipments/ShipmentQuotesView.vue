@@ -4,9 +4,11 @@ import { RouterLink, useRoute, useRouter } from 'vue-router'
 import { useShipmentsStore } from '@/stores/shipments'
 import { useI18n } from 'vue-i18n'
 import { ArrowLeft, Star, FileText, ChevronDown, ChevronUp, Package, Fuel, Home, MapPin, Shield, FileCheck, Scale, Zap, DollarSign, Award } from 'lucide-vue-next'
+import ThemeToggle from '@/components/ThemeToggle.vue'
+import LanguageSwitcher from '@/components/LanguageSwitcher.vue'
 
 const iconStrokeWidth = 1.2
-const { t } = useI18n()
+const { t, locale } = useI18n()
 
 const route = useRoute()
 const router = useRouter()
@@ -75,20 +77,20 @@ const sortedQuotes = computed(() => {
   return result
 })
 
-const transportTypeLabels = {
-  air: 'Авиа',
-  sea: 'Морской',
-  rail: 'Ж/Д',
-  road: 'Авто'
-}
+const transportTypeLabels = computed(() => ({
+  air: t('shipmentQuotes.transportTypes.air'),
+  sea: t('shipmentQuotes.transportTypes.sea'),
+  rail: t('shipmentQuotes.transportTypes.rail'),
+  road: t('shipmentQuotes.transportTypes.road')
+}))
 
-const serviceLabels = {
-  door_pickup: 'Забор груза',
-  customs: 'Таможня',
-  customs_clearance: 'Таможенное оформление',
-  insurance: 'Страховка',
-  door_delivery: 'Доставка до двери'
-}
+const serviceLabels = computed(() => ({
+  door_pickup: t('shipmentQuotes.services.doorPickup'),
+  customs: t('shipmentQuotes.services.customs'),
+  customs_clearance: t('shipmentQuotes.services.customsClearance'),
+  insurance: t('shipmentQuotes.services.insurance'),
+  door_delivery: t('shipmentQuotes.services.doorDelivery')
+}))
 
 const surchargeIcons = {
   fuel: Fuel,
@@ -99,7 +101,8 @@ const surchargeIcons = {
 
 function formatDate(dateString) {
   if (!dateString) return '-'
-  return new Date(dateString).toLocaleDateString('ru-RU')
+  const localeMap = { ru: 'ru-RU', en: 'en-US', kk: 'kk-KZ' }
+  return new Date(dateString).toLocaleDateString(localeMap[locale.value] || 'ru-RU')
 }
 
 function formatPrice(value) {
@@ -130,16 +133,20 @@ function getSurchargeIcon(type) {
               <ArrowLeft :size="20" :stroke-width="iconStrokeWidth" />
             </RouterLink>
             <div>
-              <h1>Предложения перевозчиков</h1>
+              <h1>{{ t('shipmentQuotes.title') }}</h1>
               <p v-if="shipment" class="route-summary">
                 {{ shipment.origin_city }}, {{ shipment.origin_country }}
                 <span class="arrow">→</span>
                 {{ shipment.destination_city }}, {{ shipment.destination_country }}
                 <span class="weight-info" v-if="shipment.total_weight">
-                  · {{ shipment.total_weight }} кг
+                  · {{ shipment.total_weight }} {{ t('shipment.kg') }}
                 </span>
               </p>
             </div>
+          </div>
+          <div class="header-right">
+            <ThemeToggle />
+            <LanguageSwitcher />
           </div>
         </div>
       </div>
@@ -149,33 +156,33 @@ function getSurchargeIcon(type) {
       <div class="container">
         <div v-if="shipmentsStore.loading" class="loading">
           <div class="spinner"></div>
-          <span>Загрузка предложений...</span>
+          <span>{{ t('shipmentQuotes.loading') }}</span>
         </div>
 
         <template v-else>
           <div class="filters-bar">
             <div class="filter-group">
-              <label>Сортировка</label>
+              <label>{{ t('shipmentQuotes.sorting') }}</label>
               <select v-model="sortBy">
-                <option value="price">По цене</option>
-                <option value="delivery">По сроку</option>
-                <option value="rating">По рейтингу</option>
+                <option value="price">{{ t('shipmentQuotes.sortByPrice') }}</option>
+                <option value="delivery">{{ t('shipmentQuotes.sortByDelivery') }}</option>
+                <option value="rating">{{ t('shipmentQuotes.sortByRating') }}</option>
               </select>
             </div>
 
             <div class="filter-group">
-              <label>Тип перевозки</label>
+              <label>{{ t('shipmentQuotes.transportType') }}</label>
               <select v-model="filterTransport">
-                <option value="">Все типы</option>
-                <option value="air">Авиа</option>
-                <option value="sea">Морской</option>
-                <option value="rail">Ж/Д</option>
-                <option value="road">Автомобильный</option>
+                <option value="">{{ t('shipmentQuotes.allTypes') }}</option>
+                <option value="air">{{ t('shipmentQuotes.transportTypes.air') }}</option>
+                <option value="sea">{{ t('shipmentQuotes.transportTypes.sea') }}</option>
+                <option value="rail">{{ t('shipmentQuotes.transportTypes.rail') }}</option>
+                <option value="road">{{ t('shipmentQuotes.transportTypes.road') }}</option>
               </select>
             </div>
 
             <div class="results-count">
-              Найдено: <strong>{{ sortedQuotes.length }}</strong> предложений
+              {{ t('shipmentQuotes.found') }}: <strong>{{ sortedQuotes.length }}</strong> {{ t('shipmentQuotes.offers') }}
             </div>
           </div>
 
@@ -183,8 +190,8 @@ function getSurchargeIcon(type) {
             <div class="empty-icon">
               <FileText :size="32" :stroke-width="iconStrokeWidth" />
             </div>
-            <h3>Нет предложений</h3>
-            <p>По выбранным критериям предложения не найдены</p>
+            <h3>{{ t('shipmentQuotes.noQuotes') }}</h3>
+            <p>{{ t('shipmentQuotes.noQuotesText') }}</p>
           </div>
 
           <div v-else class="quotes-list">
@@ -211,7 +218,7 @@ function getSurchargeIcon(type) {
                     <span>{{ quote.carrier?.company?.name?.charAt(0) || '?' }}</span>
                   </div>
                   <div class="carrier-info">
-                    <span class="carrier-name">{{ quote.carrier?.company?.name || 'Перевозчик' }}</span>
+                    <span class="carrier-name">{{ quote.carrier?.company?.name || t('shipmentQuotes.carrier') }}</span>
                     <div class="carrier-rating" v-if="quote.carrier?.company?.rating">
                       <Star :size="14" :stroke-width="iconStrokeWidth" />
                       <span>{{ Number(quote.carrier.company.rating).toFixed(1) }}</span>
@@ -221,26 +228,26 @@ function getSurchargeIcon(type) {
 
                 <div class="quote-details">
                   <div class="detail-item">
-                    <span class="detail-label">Тип</span>
+                    <span class="detail-label">{{ t('shipmentQuotes.type') }}</span>
                     <span class="detail-value transport-tag" :class="`transport-${quote.transport_type}`">
                       {{ transportTypeLabels[quote.transport_type] || quote.transport_type }}
                     </span>
                   </div>
                   <div class="detail-item">
-                    <span class="detail-label">Срок</span>
+                    <span class="detail-label">{{ t('shipmentQuotes.term') }}</span>
                     <span class="detail-value">
                       {{ quote.delivery_days_min && quote.delivery_days_min !== quote.delivery_days
                          ? `${quote.delivery_days_min}-${quote.delivery_days}`
-                         : quote.delivery_days }} дн.
+                         : quote.delivery_days }} {{ t('shipmentQuotes.days') }}
                     </span>
                   </div>
                   <div class="detail-item">
-                    <span class="detail-label">Доставка</span>
+                    <span class="detail-label">{{ t('shipmentQuotes.delivery') }}</span>
                     <span class="detail-value">{{ formatDate(quote.estimated_delivery_date) }}</span>
                   </div>
                   <div class="detail-item" v-if="quote.billable_weight">
-                    <span class="detail-label">Тариф. вес</span>
-                    <span class="detail-value">{{ quote.billable_weight }} кг</span>
+                    <span class="detail-label">{{ t('shipmentQuotes.billableWeight') }}</span>
+                    <span class="detail-value">{{ quote.billable_weight }} {{ t('shipment.kg') }}</span>
                   </div>
                 </div>
 
@@ -254,7 +261,7 @@ function getSurchargeIcon(type) {
                     @click="togglePriceBreakdown(quote.id)"
                     :class="{ active: expandedQuote === quote.id }"
                   >
-                    <span>Детали цены</span>
+                    <span>{{ t('shipmentQuotes.priceDetails') }}</span>
                     <ChevronDown v-if="expandedQuote !== quote.id" :size="16" :stroke-width="iconStrokeWidth" />
                     <ChevronUp v-else :size="16" :stroke-width="iconStrokeWidth" />
                   </button>
@@ -269,8 +276,8 @@ function getSurchargeIcon(type) {
                       <Package :size="18" :stroke-width="iconStrokeWidth" />
                     </div>
                     <div class="breakdown-details">
-                      <span class="breakdown-label">Базовая ставка</span>
-                      <span class="breakdown-desc">Перевозка груза</span>
+                      <span class="breakdown-label">{{ t('shipmentQuotes.baseRate') }}</span>
+                      <span class="breakdown-desc">{{ t('shipmentQuotes.cargoTransportation') }}</span>
                     </div>
                     <span class="breakdown-value">{{ formatPrice(quote.base_rate) }} {{ quote.currency }}</span>
                   </div>
@@ -287,7 +294,7 @@ function getSurchargeIcon(type) {
                       </div>
                       <div class="breakdown-details">
                         <span class="breakdown-label">{{ surcharge.name }}</span>
-                        <span class="breakdown-desc">Надбавка</span>
+                        <span class="breakdown-desc">{{ t('shipmentQuotes.surcharge') }}</span>
                       </div>
                       <span class="breakdown-value">+{{ formatPrice(surcharge.amount) }} {{ quote.currency }}</span>
                     </div>
@@ -299,8 +306,8 @@ function getSurchargeIcon(type) {
                       <Shield :size="18" :stroke-width="iconStrokeWidth" />
                     </div>
                     <div class="breakdown-details">
-                      <span class="breakdown-label">Страхование груза</span>
-                      <span class="breakdown-desc">0.5% от стоимости</span>
+                      <span class="breakdown-label">{{ t('shipmentQuotes.cargoInsurance') }}</span>
+                      <span class="breakdown-desc">{{ t('shipmentQuotes.insurancePercent') }}</span>
                     </div>
                     <span class="breakdown-value">+{{ formatPrice(quote.insurance_cost) }} {{ quote.currency }}</span>
                   </div>
@@ -311,8 +318,8 @@ function getSurchargeIcon(type) {
                       <FileCheck :size="18" :stroke-width="iconStrokeWidth" />
                     </div>
                     <div class="breakdown-details">
-                      <span class="breakdown-label">Таможенное оформление</span>
-                      <span class="breakdown-desc">Фиксированная плата</span>
+                      <span class="breakdown-label">{{ t('shipmentQuotes.customsClearance') }}</span>
+                      <span class="breakdown-desc">{{ t('shipmentQuotes.fixedFee') }}</span>
                     </div>
                     <span class="breakdown-value">+{{ formatPrice(quote.customs_fee) }} {{ quote.currency }}</span>
                   </div>
@@ -323,15 +330,15 @@ function getSurchargeIcon(type) {
                       <Scale :size="18" :stroke-width="iconStrokeWidth" />
                     </div>
                     <div class="breakdown-details">
-                      <span class="breakdown-label">Тарифицируемый вес</span>
-                      <span class="breakdown-desc">Макс. из фактического и объемного</span>
+                      <span class="breakdown-label">{{ t('shipmentQuotes.billableWeightLabel') }}</span>
+                      <span class="breakdown-desc">{{ t('shipmentQuotes.maxOfActualAndVolumetric') }}</span>
                     </div>
-                    <span class="breakdown-value">{{ quote.billable_weight }} кг</span>
+                    <span class="breakdown-value">{{ quote.billable_weight }} {{ t('shipment.kg') }}</span>
                   </div>
                 </div>
 
                 <div class="breakdown-total">
-                  <span>Итого к оплате</span>
+                  <span>{{ t('shipmentQuotes.totalPayable') }}</span>
                   <span class="total-value">{{ formatPrice(quote.price) }} {{ quote.currency }}</span>
                 </div>
               </div>
@@ -344,13 +351,13 @@ function getSurchargeIcon(type) {
                 </div>
                 <div class="quote-actions">
                   <span class="valid-until" v-if="quote.valid_until">
-                    Действует до {{ formatDate(quote.valid_until) }}
+                    {{ t('shipmentQuotes.validUntil') }} {{ formatDate(quote.valid_until) }}
                   </span>
                   <button
                     @click="selectQuote(quote)"
                     class="btn btn-primary"
                   >
-                    Выбрать
+                    {{ t('shipmentQuotes.select') }}
                   </button>
                 </div>
               </div>
@@ -384,12 +391,19 @@ function getSurchargeIcon(type) {
 .header-content {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   padding: $spacing-lg 0;
 }
 
 .header-left {
   display: flex;
   align-items: flex-start;
+  gap: $spacing-md;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
   gap: $spacing-md;
 }
 
@@ -959,209 +973,268 @@ h1 {
     margin-top: $spacing-xs;
   }
 }
+</style>
 
-// Dark theme overrides
+<style lang="scss">
+// Dark theme overrides (non-scoped for [data-theme="dark"] selector)
 [data-theme="dark"] {
   .page {
-    background: var(--bg-light);
+    background: #1a1a1a !important;
   }
 
   .page-header {
-    background: var(--bg-white);
-    border-bottom-color: var(--border-color);
+    background: #0f0f0f !important;
+    border-bottom-color: #2a2a2a !important;
   }
 
   h1 {
-    color: var(--text-primary);
+    color: #f5f5f5 !important;
   }
 
   .route-summary {
-    color: var(--text-secondary);
+    color: #999999 !important;
 
     .arrow {
-      color: var(--color-primary);
+      color: #f97316 !important;
     }
 
     .weight-info {
-      color: var(--text-muted);
+      color: #666666 !important;
     }
   }
 
   .back-link {
-    color: var(--text-secondary);
+    color: #999999 !important;
 
     &:hover {
-      background: var(--bg-hover);
-      color: var(--text-primary);
+      background: #252525 !important;
+      color: #f5f5f5 !important;
     }
   }
 
   .loading {
-    color: var(--text-secondary);
+    color: #999999 !important;
   }
 
   .spinner {
-    border-color: var(--border-color);
-    border-top-color: var(--color-primary);
+    border-color: #2a2a2a !important;
+    border-top-color: #f97316 !important;
   }
 
   .filters-bar {
-    background: var(--bg-white);
-    border-color: var(--border-color);
+    background: #0f0f0f !important;
+    border-color: #2a2a2a !important;
   }
 
   .filter-group {
     label {
-      color: var(--text-muted);
+      color: #666666 !important;
     }
 
     select {
-      background-color: var(--bg-white);
-      border-color: var(--border-color);
-      color: var(--text-primary);
+      background-color: #1a1a1a !important;
+      border-color: #2a2a2a !important;
+      color: #f5f5f5 !important;
 
       &:focus {
-        border-color: var(--color-primary);
+        border-color: #f97316 !important;
       }
     }
   }
 
   .results-count {
-    color: var(--text-secondary);
+    color: #999999 !important;
   }
 
   .empty-state {
-    background: var(--bg-white);
-    border-color: var(--border-color);
+    background: #0f0f0f !important;
+    border-color: #2a2a2a !important;
   }
 
   .empty-icon {
-    background: var(--bg-light);
+    background: #252525 !important;
 
     svg {
-      color: var(--text-muted);
+      color: #f97316 !important;
     }
   }
 
   .empty-state h3 {
-    color: var(--text-primary);
+    color: #f5f5f5 !important;
   }
 
   .empty-state p {
-    color: var(--text-secondary);
+    color: #999999 !important;
   }
 
   .quote-card {
-    background: var(--bg-white);
-    border-color: var(--border-color);
+    background: #0f0f0f !important;
+    border-color: #2a2a2a !important;
 
     &:hover {
-      border-color: rgba(249, 115, 22, 0.3);
+      border-color: rgba(249, 115, 22, 0.3) !important;
     }
 
     &.expanded {
-      border-color: var(--color-primary);
+      border-color: #f97316 !important;
     }
   }
 
   .carrier-logo {
-    background-color: var(--color-primary);
+    background-color: #f97316 !important;
   }
 
   .carrier-name {
-    color: var(--text-primary);
+    color: #f5f5f5 !important;
   }
 
   .carrier-rating {
-    color: var(--text-secondary);
+    color: #999999 !important;
   }
 
   .detail-label {
-    color: var(--text-muted);
+    color: #666666 !important;
   }
 
   .detail-value {
-    color: var(--text-primary);
+    color: #f5f5f5 !important;
+  }
+
+  .transport-tag {
+    background: #252525 !important;
+  }
+
+  .transport-air {
+    background: rgba(59, 130, 246, 0.15) !important;
+    color: #3b82f6 !important;
+  }
+
+  .transport-sea {
+    background: rgba(6, 182, 212, 0.15) !important;
+    color: #06b6d4 !important;
+  }
+
+  .transport-rail {
+    background: rgba(139, 92, 246, 0.15) !important;
+    color: #8b5cf6 !important;
+  }
+
+  .transport-road {
+    background: rgba(34, 197, 94, 0.15) !important;
+    color: #22c55e !important;
   }
 
   .price-value {
-    color: var(--text-primary);
+    color: #f5f5f5 !important;
   }
 
   .price-currency {
-    color: var(--text-secondary);
+    color: #999999 !important;
   }
 
   .breakdown-toggle {
-    border-color: var(--border-color);
-    color: var(--text-secondary);
+    border-color: #2a2a2a !important;
+    color: #999999 !important;
 
     &:hover, &.active {
-      background: var(--bg-light);
-      color: var(--color-primary);
-      border-color: var(--color-primary);
+      background: #252525 !important;
+      color: #f97316 !important;
+      border-color: #f97316 !important;
     }
   }
 
   .price-breakdown {
-    background: var(--bg-light);
-    border-top-color: var(--border-color);
+    background: #1a1a1a !important;
+    border-top-color: #2a2a2a !important;
   }
 
   .breakdown-item {
-    background: var(--bg-white);
-    border-color: var(--border-color);
+    background: #0f0f0f !important;
+    border-color: #2a2a2a !important;
   }
 
   .breakdown-icon {
-    background: rgba(249, 115, 22, 0.15);
-    color: var(--color-primary);
+    background: rgba(249, 115, 22, 0.15) !important;
+    color: #f97316 !important;
 
     &.surcharge {
-      background: rgba(251, 191, 36, 0.15);
+      background: rgba(251, 191, 36, 0.15) !important;
+      color: #fbbf24 !important;
+    }
+
+    &.insurance {
+      background: rgba(59, 130, 246, 0.15) !important;
+      color: #3b82f6 !important;
+    }
+
+    &.customs {
+      background: rgba(139, 92, 246, 0.15) !important;
+      color: #8b5cf6 !important;
+    }
+
+    &.weight {
+      background: rgba(102, 102, 102, 0.15) !important;
+      color: #999999 !important;
     }
   }
 
   .breakdown-label {
-    color: var(--text-primary);
+    color: #f5f5f5 !important;
   }
 
   .breakdown-desc {
-    color: var(--text-muted);
+    color: #666666 !important;
   }
 
   .breakdown-value {
-    color: var(--text-primary);
+    color: #f5f5f5 !important;
   }
 
   .weight-info-row {
-    background: var(--bg-light);
+    background: #1a1a1a !important;
   }
 
   .breakdown-total {
-    border-top-color: var(--border-color);
-    color: var(--text-primary);
+    border-top-color: #2a2a2a !important;
+    color: #f5f5f5 !important;
 
     .total-value {
-      color: var(--color-primary);
+      color: #f97316 !important;
     }
   }
 
   .quote-footer {
-    background: var(--bg-white);
-    border-top-color: var(--border-color);
+    background: #0f0f0f !important;
+    border-top-color: #2a2a2a !important;
+  }
+
+  .services-list .service-tag {
+    background: rgba(34, 197, 94, 0.15) !important;
+    color: #22c55e !important;
   }
 
   .valid-until {
-    color: var(--text-muted);
+    color: #666666 !important;
   }
 
   .btn-primary {
-    background: var(--color-primary);
+    background: #f97316 !important;
 
     &:hover:not(:disabled) {
-      background: var(--color-primary-dark);
+      background: #ea580c !important;
     }
+  }
+
+  .badge-cheapest {
+    background: #22c55e !important;
+  }
+
+  .badge-fastest {
+    background: #8b5cf6 !important;
+  }
+
+  .badge-best {
+    background: #fbbf24 !important;
   }
 }
 </style>

@@ -1,9 +1,13 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { RouterLink, useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import { useShipmentsStore } from '@/stores/shipments'
 import { ArrowLeft, ArrowRight, Check, MapPin, Trash2, Plus, Shield, FileText, Home } from 'lucide-vue-next'
+import ThemeToggle from '@/components/ThemeToggle.vue'
+import LanguageSwitcher from '@/components/LanguageSwitcher.vue'
 
+const { t } = useI18n()
 const iconStrokeWidth = 1.2
 
 const router = useRouter()
@@ -55,7 +59,12 @@ const totalWeight = computed(() => {
   return form.value.items.reduce((sum, i) => sum + (i.weight || 0) * (i.quantity || 1), 0)
 })
 
-const stepTitles = ['Направление', 'Груз', 'Услуги', 'Проверка']
+const stepTitles = computed(() => [
+  t('shipmentCreate.steps.direction'),
+  t('shipmentCreate.steps.cargo'),
+  t('shipmentCreate.steps.services'),
+  t('shipmentCreate.steps.review')
+])
 
 function addItem() {
   form.value.items.push({
@@ -113,7 +122,7 @@ async function handleSubmit() {
     if (e.response?.data?.errors) {
       errors.value = e.response.data.errors
     }
-    errorMessage.value = e.response?.data?.message || 'Произошла ошибка при создании заявки'
+    errorMessage.value = e.response?.data?.message || t('shipmentCreate.errors.createError')
   } finally {
     submitting.value = false
   }
@@ -129,7 +138,11 @@ async function handleSubmit() {
             <RouterLink to="/shipments" class="back-link">
               <ArrowLeft :size="20" :stroke-width="iconStrokeWidth" />
             </RouterLink>
-            <h1>Создание заявки</h1>
+            <h1>{{ t('shipmentCreate.title') }}</h1>
+          </div>
+          <div class="header-right">
+            <ThemeToggle />
+            <LanguageSwitcher />
           </div>
         </div>
 
@@ -154,8 +167,8 @@ async function handleSubmit() {
         <form @submit.prevent="handleSubmit" class="shipment-form">
           <!-- Step 1: Route -->
           <div v-if="step === 1" class="form-step">
-            <h2>Укажите направление доставки</h2>
-            <p class="step-desc">Откуда и куда нужно доставить груз</p>
+            <h2>{{ t('shipmentCreate.step1.title') }}</h2>
+            <p class="step-desc">{{ t('shipmentCreate.step1.subtitle') }}</p>
 
             <div class="route-form">
               <div class="route-section">
@@ -163,19 +176,19 @@ async function handleSubmit() {
                   <div class="section-icon">
                     <MapPin :size="18" :stroke-width="iconStrokeWidth" />
                   </div>
-                  <h3>Откуда</h3>
+                  <h3>{{ t('shipmentCreate.step1.from') }}</h3>
                 </div>
                 <div class="form-group">
-                  <label>Страна *</label>
-                  <input v-model="form.origin_country" type="text" required placeholder="Китай" />
+                  <label>{{ t('shipmentCreate.step1.country') }} *</label>
+                  <input v-model="form.origin_country" type="text" required :placeholder="t('shipmentCreate.step1.countryPlaceholderFrom')" />
                 </div>
                 <div class="form-group">
-                  <label>Город *</label>
-                  <input v-model="form.origin_city" type="text" required placeholder="Гуанчжоу" />
+                  <label>{{ t('shipmentCreate.step1.city') }} *</label>
+                  <input v-model="form.origin_city" type="text" required :placeholder="t('shipmentCreate.step1.cityPlaceholderFrom')" />
                 </div>
                 <div class="form-group">
-                  <label>Адрес (опционально)</label>
-                  <input v-model="form.origin_address" type="text" placeholder="Улица, дом" />
+                  <label>{{ t('shipmentCreate.step1.address') }}</label>
+                  <input v-model="form.origin_address" type="text" :placeholder="t('shipmentCreate.step1.addressPlaceholder')" />
                 </div>
               </div>
 
@@ -188,19 +201,19 @@ async function handleSubmit() {
                   <div class="section-icon destination">
                     <MapPin :size="18" :stroke-width="iconStrokeWidth" />
                   </div>
-                  <h3>Куда</h3>
+                  <h3>{{ t('shipmentCreate.step1.to') }}</h3>
                 </div>
                 <div class="form-group">
-                  <label>Страна *</label>
-                  <input v-model="form.destination_country" type="text" required placeholder="Казахстан" />
+                  <label>{{ t('shipmentCreate.step1.country') }} *</label>
+                  <input v-model="form.destination_country" type="text" required :placeholder="t('shipmentCreate.step1.countryPlaceholderTo')" />
                 </div>
                 <div class="form-group">
-                  <label>Город *</label>
-                  <input v-model="form.destination_city" type="text" required placeholder="Алматы" />
+                  <label>{{ t('shipmentCreate.step1.city') }} *</label>
+                  <input v-model="form.destination_city" type="text" required :placeholder="t('shipmentCreate.step1.cityPlaceholderTo')" />
                 </div>
                 <div class="form-group">
-                  <label>Адрес (опционально)</label>
-                  <input v-model="form.destination_address" type="text" placeholder="Улица, дом" />
+                  <label>{{ t('shipmentCreate.step1.address') }}</label>
+                  <input v-model="form.destination_address" type="text" :placeholder="t('shipmentCreate.step1.addressPlaceholder')" />
                 </div>
               </div>
             </div>
@@ -208,13 +221,13 @@ async function handleSubmit() {
 
           <!-- Step 2: Cargo -->
           <div v-if="step === 2" class="form-step">
-            <h2>Параметры груза</h2>
-            <p class="step-desc">Укажите габариты и вес каждого места</p>
+            <h2>{{ t('shipmentCreate.step2.title') }}</h2>
+            <p class="step-desc">{{ t('shipmentCreate.step2.subtitle') }}</p>
 
             <div class="cargo-list">
               <div v-for="(item, index) in form.items" :key="index" class="cargo-item">
                 <div class="cargo-header">
-                  <span class="cargo-title">Место {{ index + 1 }}</span>
+                  <span class="cargo-title">{{ t('shipmentCreate.step2.place') }} {{ index + 1 }}</span>
                   <button
                     v-if="form.items.length > 1"
                     type="button"
@@ -227,100 +240,100 @@ async function handleSubmit() {
 
                 <div class="cargo-fields">
                   <div class="form-group">
-                    <label>Длина (см)</label>
+                    <label>{{ t('shipmentCreate.step2.length') }}</label>
                     <input v-model.number="item.length" type="number" min="0" placeholder="100" />
                   </div>
                   <div class="form-group">
-                    <label>Ширина (см)</label>
+                    <label>{{ t('shipmentCreate.step2.width') }}</label>
                     <input v-model.number="item.width" type="number" min="0" placeholder="50" />
                   </div>
                   <div class="form-group">
-                    <label>Высота (см)</label>
+                    <label>{{ t('shipmentCreate.step2.height') }}</label>
                     <input v-model.number="item.height" type="number" min="0" placeholder="50" />
                   </div>
                   <div class="form-group">
-                    <label>Вес (кг) *</label>
+                    <label>{{ t('shipmentCreate.step2.weight') }} *</label>
                     <input v-model.number="item.weight" type="number" min="0" required placeholder="25" />
                   </div>
                   <div class="form-group">
-                    <label>Кол-во</label>
+                    <label>{{ t('shipmentCreate.step2.quantity') }}</label>
                     <input v-model.number="item.quantity" type="number" min="1" placeholder="1" />
                   </div>
                 </div>
 
                 <div class="form-group">
-                  <label>Описание содержимого</label>
-                  <input v-model="item.description" type="text" placeholder="Электроника, одежда и т.д." />
+                  <label>{{ t('shipmentCreate.step2.description') }}</label>
+                  <input v-model="item.description" type="text" :placeholder="t('shipmentCreate.step2.descriptionPlaceholder')" />
                 </div>
               </div>
             </div>
 
             <button type="button" @click="addItem" class="btn btn-outline btn-add">
               <Plus :size="18" :stroke-width="iconStrokeWidth" />
-              Добавить место
+              {{ t('shipmentCreate.step2.addPlace') }}
             </button>
           </div>
 
           <!-- Step 3: Options -->
           <div v-if="step === 3" class="form-step">
-            <h2>Дополнительные услуги</h2>
-            <p class="step-desc">Выберите тип перевозки и дополнительные опции</p>
+            <h2>{{ t('shipmentCreate.step3.title') }}</h2>
+            <p class="step-desc">{{ t('shipmentCreate.step3.subtitle') }}</p>
 
             <div class="options-grid">
               <div class="form-group">
-                <label>Тип перевозки</label>
+                <label>{{ t('shipmentCreate.step3.transportType') }}</label>
                 <select v-model="form.transport_type">
-                  <option value="">Любой (подобрать лучший)</option>
-                  <option value="air">Авиа</option>
-                  <option value="sea">Морской</option>
-                  <option value="rail">Ж/Д</option>
-                  <option value="road">Автомобильный</option>
+                  <option value="">{{ t('shipmentCreate.step3.transportAny') }}</option>
+                  <option value="air">{{ t('shipmentCreate.step3.transportAir') }}</option>
+                  <option value="sea">{{ t('shipmentCreate.step3.transportSea') }}</option>
+                  <option value="rail">{{ t('shipmentCreate.step3.transportRail') }}</option>
+                  <option value="road">{{ t('shipmentCreate.step3.transportRoad') }}</option>
                 </select>
               </div>
 
               <div class="form-group">
-                <label>Тип груза</label>
+                <label>{{ t('shipmentCreate.step3.cargoType') }}</label>
                 <select v-model="form.cargo_type">
-                  <option value="general">Обычный</option>
-                  <option value="dangerous">Опасный</option>
-                  <option value="fragile">Хрупкий</option>
-                  <option value="perishable">Скоропортящийся</option>
+                  <option value="general">{{ t('shipmentCreate.step3.cargoGeneral') }}</option>
+                  <option value="dangerous">{{ t('shipmentCreate.step3.cargoDangerous') }}</option>
+                  <option value="fragile">{{ t('shipmentCreate.step3.cargoFragile') }}</option>
+                  <option value="perishable">{{ t('shipmentCreate.step3.cargoPerishable') }}</option>
                 </select>
               </div>
 
               <div class="form-group">
-                <label>Объявленная стоимость (USD)</label>
+                <label>{{ t('shipmentCreate.step3.declaredValue') }}</label>
                 <input v-model.number="form.declared_value" type="number" min="0" placeholder="5000" />
               </div>
 
               <div class="form-group">
-                <label>Желаемая дата забора</label>
+                <label>{{ t('shipmentCreate.step3.pickupDate') }}</label>
                 <input v-model="form.pickup_date" type="date" />
               </div>
             </div>
 
             <div class="services-section">
-              <h3>Дополнительные услуги</h3>
+              <h3>{{ t('shipmentCreate.step3.additionalServices') }}</h3>
               <div class="checkbox-group">
                 <label class="checkbox-card" :class="{ checked: form.insurance_required }">
                   <input v-model="form.insurance_required" type="checkbox" />
                   <div class="checkbox-content">
                     <Shield :size="24" :stroke-width="iconStrokeWidth" />
-                    <span>Страхование груза</span>
+                    <span>{{ t('shipmentCreate.step3.insurance') }}</span>
                   </div>
                 </label>
                 <label class="checkbox-card" :class="{ checked: form.customs_clearance }">
                   <input v-model="form.customs_clearance" type="checkbox" />
                   <div class="checkbox-content">
                     <FileText :size="24" :stroke-width="iconStrokeWidth" />
-                    <span>Таможня</span>
+                    <span>{{ t('shipmentCreate.step3.customs') }}</span>
                   </div>
                 </label>
                 <label class="checkbox-card" :class="{ checked: form.door_to_door }">
                   <input v-model="form.door_to_door" type="checkbox" />
                   <div class="checkbox-content">
                     <Home :size="24" :stroke-width="iconStrokeWidth" />
-                    <span>Доставка до двери</span>
+                    <span>{{ t('shipmentCreate.step3.doorToDoor') }}</span>
                   </div>
                 </label>
               </div>
@@ -329,58 +342,58 @@ async function handleSubmit() {
 
           <!-- Step 4: Review -->
           <div v-if="step === 4" class="form-step">
-            <h2>Проверьте данные</h2>
-            <p class="step-desc">Убедитесь, что все данные заполнены верно</p>
+            <h2>{{ t('shipmentCreate.step4.title') }}</h2>
+            <p class="step-desc">{{ t('shipmentCreate.step4.subtitle') }}</p>
 
             <div class="summary-card">
               <div class="summary-section">
-                <h3>Маршрут</h3>
+                <h3>{{ t('shipmentCreate.step4.route') }}</h3>
                 <div class="summary-route">
                   <div class="route-point">
-                    <span class="point-label">Откуда</span>
+                    <span class="point-label">{{ t('shipmentCreate.step4.from') }}</span>
                     <span class="point-value">{{ form.origin_city }}, {{ form.origin_country }}</span>
                   </div>
                   <div class="route-arrow-small">
                     <ArrowRight :size="18" :stroke-width="iconStrokeWidth" />
                   </div>
                   <div class="route-point">
-                    <span class="point-label">Куда</span>
+                    <span class="point-label">{{ t('shipmentCreate.step4.to') }}</span>
                     <span class="point-value">{{ form.destination_city }}, {{ form.destination_country }}</span>
                   </div>
                 </div>
               </div>
 
               <div class="summary-section">
-                <h3>Груз</h3>
+                <h3>{{ t('shipmentCreate.step4.cargo') }}</h3>
                 <div class="summary-details">
                   <div class="detail-item">
-                    <span class="detail-label">Мест</span>
+                    <span class="detail-label">{{ t('shipmentCreate.step4.places') }}</span>
                     <span class="detail-value">{{ form.items.length }}</span>
                   </div>
                   <div class="detail-item">
-                    <span class="detail-label">Общий вес</span>
-                    <span class="detail-value">{{ totalWeight }} кг</span>
+                    <span class="detail-label">{{ t('shipmentCreate.step4.totalWeight') }}</span>
+                    <span class="detail-value">{{ totalWeight }} {{ t('shipmentCreate.units.kg') }}</span>
                   </div>
                 </div>
               </div>
 
               <div class="summary-section">
-                <h3>Услуги</h3>
+                <h3>{{ t('shipmentCreate.step4.services') }}</h3>
                 <div class="services-list">
-                  <span v-if="form.insurance_required" class="service-tag">Страхование</span>
-                  <span v-if="form.customs_clearance" class="service-tag">Таможня</span>
-                  <span v-if="form.door_to_door" class="service-tag">До двери</span>
-                  <span v-if="!form.insurance_required && !form.customs_clearance && !form.door_to_door" class="no-services">Не выбраны</span>
+                  <span v-if="form.insurance_required" class="service-tag">{{ t('shipmentCreate.step4.insuranceTag') }}</span>
+                  <span v-if="form.customs_clearance" class="service-tag">{{ t('shipmentCreate.step4.customsTag') }}</span>
+                  <span v-if="form.door_to_door" class="service-tag">{{ t('shipmentCreate.step4.doorToDoorTag') }}</span>
+                  <span v-if="!form.insurance_required && !form.customs_clearance && !form.door_to_door" class="no-services">{{ t('shipmentCreate.step4.noServices') }}</span>
                 </div>
               </div>
             </div>
 
             <div class="form-group">
-              <label>Комментарий для перевозчика</label>
+              <label>{{ t('shipmentCreate.step4.comment') }}</label>
               <textarea
                 v-model="form.notes"
                 rows="3"
-                placeholder="Дополнительная информация о грузе или особые требования"
+                :placeholder="t('shipmentCreate.step4.commentPlaceholder')"
               ></textarea>
             </div>
           </div>
@@ -393,7 +406,7 @@ async function handleSubmit() {
           <div class="form-actions">
             <button v-if="step > 1" type="button" @click="prevStep" class="btn btn-outline" :disabled="submitting">
               <ArrowLeft :size="18" :stroke-width="iconStrokeWidth" />
-              Назад
+              {{ t('shipmentCreate.buttons.back') }}
             </button>
             <button
               v-if="step < totalSteps"
@@ -402,7 +415,7 @@ async function handleSubmit() {
               class="btn btn-primary"
               :disabled="!canProceed"
             >
-              Далее
+              {{ t('shipmentCreate.buttons.next') }}
               <ArrowRight :size="18" :stroke-width="iconStrokeWidth" />
             </button>
             <button
@@ -412,7 +425,7 @@ async function handleSubmit() {
               :disabled="submitting"
             >
               <span v-if="submitting" class="btn-loader"></span>
-              {{ submitting ? 'Расчет...' : 'Рассчитать стоимость' }}
+              {{ submitting ? t('shipmentCreate.buttons.calculating') : t('shipmentCreate.buttons.calculate') }}
             </button>
           </div>
         </form>
@@ -1009,6 +1022,357 @@ textarea {
 
   .stepper {
     display: none;
+  }
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+}
+</style>
+
+<style lang="scss">
+/* Dark theme styles for ShipmentCreateView */
+[data-theme="dark"] {
+  .page {
+    background: #1a1a1a !important;
+  }
+
+  .page-header {
+    background: #0f0f0f !important;
+    border-color: #2a2a2a !important;
+
+    h1 {
+      color: #f5f5f5 !important;
+    }
+  }
+
+  .back-link {
+    color: #999999 !important;
+
+    &:hover {
+      color: #f5f5f5 !important;
+    }
+  }
+
+  .stepper .step {
+    .step-number {
+      background: #252525 !important;
+      border-color: #3a3a3a !important;
+      color: #999999 !important;
+    }
+
+    .step-title {
+      color: #666666 !important;
+    }
+
+    &.active {
+      .step-number {
+        background: #f97316 !important;
+        border-color: #f97316 !important;
+        color: #ffffff !important;
+      }
+
+      .step-title {
+        color: #f97316 !important;
+      }
+    }
+
+    &.done {
+      .step-number {
+        background: #22c55e !important;
+        border-color: #22c55e !important;
+        color: #ffffff !important;
+      }
+
+      .step-title {
+        color: #22c55e !important;
+      }
+    }
+  }
+
+  .page-content {
+    background: #1a1a1a !important;
+  }
+
+  .shipment-form {
+    background: #0f0f0f !important;
+    border-color: #2a2a2a !important;
+  }
+
+  .form-step {
+    h2 {
+      color: #f5f5f5 !important;
+    }
+  }
+
+  .step-desc {
+    color: #999999 !important;
+  }
+
+  .route-section {
+    h3 {
+      color: #f5f5f5 !important;
+    }
+  }
+
+  .section-icon {
+    background: rgba(249, 115, 22, 0.15) !important;
+
+    svg {
+      color: #f97316 !important;
+    }
+
+    &.destination {
+      background: rgba(34, 197, 94, 0.15) !important;
+
+      svg {
+        color: #22c55e !important;
+      }
+    }
+  }
+
+  .route-arrow {
+    color: #666666 !important;
+  }
+
+  .form-group {
+    label {
+      color: #f5f5f5 !important;
+    }
+
+    input, select, textarea {
+      background: #1a1a1a !important;
+      border-color: #2a2a2a !important;
+      color: #f5f5f5 !important;
+
+      &::placeholder {
+        color: #666666 !important;
+      }
+
+      &:focus {
+        border-color: #f97316 !important;
+      }
+
+      option {
+        background: #1a1a1a !important;
+        color: #f5f5f5 !important;
+      }
+    }
+  }
+
+  .cargo-item {
+    background: #1a1a1a !important;
+    border-color: #2a2a2a !important;
+
+    h4 {
+      color: #f5f5f5 !important;
+    }
+  }
+
+  .btn-remove-item {
+    color: #999999 !important;
+
+    &:hover {
+      color: #ef4444 !important;
+      background: rgba(239, 68, 68, 0.1) !important;
+    }
+  }
+
+  .btn-add-item {
+    background: transparent !important;
+    border-color: #3a3a3a !important;
+    color: #999999 !important;
+
+    &:hover {
+      border-color: #f97316 !important;
+      color: #f97316 !important;
+    }
+  }
+
+  .transport-options,
+  .packaging-options {
+    .option {
+      background: #1a1a1a !important;
+      border-color: #2a2a2a !important;
+      color: #999999 !important;
+
+      &:hover {
+        border-color: #3a3a3a !important;
+      }
+
+      &.selected {
+        background: rgba(249, 115, 22, 0.1) !important;
+        border-color: #f97316 !important;
+        color: #f5f5f5 !important;
+
+        svg {
+          color: #f97316 !important;
+        }
+      }
+
+      .option-label {
+        color: #f5f5f5 !important;
+      }
+
+      .option-desc {
+        color: #666666 !important;
+      }
+    }
+  }
+
+  .checkbox-group {
+    .checkbox-item {
+      background: #1a1a1a !important;
+      border-color: #2a2a2a !important;
+
+      &.checked {
+        border-color: #f97316 !important;
+        background: rgba(249, 115, 22, 0.1) !important;
+      }
+
+      .checkbox-label {
+        color: #f5f5f5 !important;
+      }
+
+      .checkbox-desc {
+        color: #666666 !important;
+      }
+    }
+
+    /* Checkbox cards (services step) */
+    .checkbox-card {
+      .checkbox-content {
+        background: #1a1a1a !important;
+        border-color: #2a2a2a !important;
+
+        svg {
+          color: #666666 !important;
+        }
+
+        span {
+          color: #999999 !important;
+        }
+      }
+
+      &:hover .checkbox-content {
+        border-color: #f97316 !important;
+      }
+
+      &.checked .checkbox-content {
+        border-color: #f97316 !important;
+        background: rgba(249, 115, 22, 0.1) !important;
+
+        svg {
+          color: #f97316 !important;
+        }
+
+        span {
+          color: #f97316 !important;
+        }
+      }
+    }
+  }
+
+  /* Summary card on step 4 */
+  .summary-card {
+    background: #1a1a1a !important;
+    border-color: #2a2a2a !important;
+  }
+
+  .summary-section {
+    background: transparent !important;
+    border-color: #2a2a2a !important;
+
+    h3 {
+      color: #999999 !important;
+    }
+  }
+
+  .summary-route {
+    .route-point {
+      .point-label {
+        color: #999999 !important;
+      }
+
+      .point-value {
+        color: #f5f5f5 !important;
+      }
+    }
+
+    .route-arrow-small svg {
+      color: #666666 !important;
+    }
+  }
+
+  .summary-details {
+    .detail-item {
+      .detail-label {
+        color: #999999 !important;
+      }
+
+      .detail-value {
+        color: #f5f5f5 !important;
+      }
+    }
+  }
+
+  .services-list {
+    .service-tag {
+      background: rgba(249, 115, 22, 0.15) !important;
+      color: #f97316 !important;
+    }
+
+    .no-services {
+      color: #666666 !important;
+    }
+  }
+
+  .summary-item {
+    border-color: #2a2a2a !important;
+
+    .summary-label {
+      color: #999999 !important;
+    }
+
+    .summary-value {
+      color: #f5f5f5 !important;
+    }
+  }
+
+  .form-actions {
+    border-color: #2a2a2a !important;
+  }
+
+  .btn-secondary {
+    background: #1a1a1a !important;
+    border-color: #2a2a2a !important;
+    color: #f5f5f5 !important;
+
+    &:hover {
+      background: #252525 !important;
+    }
+  }
+
+  .btn-primary {
+    background: #f97316 !important;
+    border-color: #f97316 !important;
+    color: #ffffff !important;
+
+    &:hover {
+      background: #ea580c !important;
+    }
+
+    &:disabled {
+      opacity: 0.6;
+    }
+  }
+
+  .error-message {
+    background: rgba(239, 68, 68, 0.1) !important;
+    border-color: #ef4444 !important;
+    color: #ef4444 !important;
   }
 }
 </style>

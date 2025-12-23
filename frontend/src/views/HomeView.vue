@@ -672,7 +672,20 @@ const { t } = useI18n()
   }
 
   .cta {
-    background: var(--color-primary);
+    background: #0f0f0f;
+  }
+
+  .cta-content {
+    color: #ffffff;
+
+    h2 {
+      color: #ffffff;
+    }
+
+    p {
+      color: #ffffff;
+      opacity: 1;
+    }
   }
 
   .footer {

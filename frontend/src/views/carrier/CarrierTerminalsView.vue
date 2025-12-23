@@ -1435,3 +1435,253 @@ async function handleImport() {
   }
 }
 </style>
+
+<style lang="scss">
+/* Dark theme styles for CarrierTerminalsView */
+[data-theme="dark"] {
+  .carrier-terminals {
+    background: #1a1a1a !important;
+  }
+
+  .carrier-terminals .dashboard-main {
+    background: #1a1a1a !important;
+  }
+
+  .carrier-terminals .page-title h1 {
+    color: #f5f5f5 !important;
+  }
+
+  .carrier-terminals .page-title .subtitle {
+    color: #999999 !important;
+  }
+
+  .carrier-terminals .search-bar {
+    background: transparent !important;
+  }
+
+  .carrier-terminals .search-input {
+    background: #0f0f0f !important;
+    border-color: #2a2a2a !important;
+    color: #f5f5f5 !important;
+
+    &::placeholder {
+      color: #666666 !important;
+    }
+  }
+
+  .carrier-terminals .search-icon {
+    color: #666666 !important;
+  }
+
+  /* Terminal cards */
+  .carrier-terminals .terminal-card {
+    background: #0f0f0f !important;
+    border-color: #2a2a2a !important;
+
+    &:hover {
+      border-color: #f97316 !important;
+    }
+
+    &.inactive {
+      background: #151515 !important;
+      opacity: 0.7;
+    }
+  }
+
+  .carrier-terminals .terminal-header {
+    background: #1a1a1a !important;
+    border-color: #2a2a2a !important;
+  }
+
+  .carrier-terminals .terminal-icon {
+    background: rgba(249, 115, 22, 0.1) !important;
+
+    svg {
+      color: #f97316 !important;
+    }
+  }
+
+  .carrier-terminals .terminal-code {
+    color: #999999 !important;
+  }
+
+  .carrier-terminals .terminal-name {
+    color: #f5f5f5 !important;
+  }
+
+  .carrier-terminals .terminal-type,
+  .carrier-terminals .terminal-location,
+  .carrier-terminals .terminal-hours {
+    color: #cccccc !important;
+
+    svg {
+      color: #666666 !important;
+    }
+  }
+
+  .carrier-terminals .terminal-address {
+    color: #999999 !important;
+  }
+
+  .carrier-terminals .terminal-contacts {
+    border-color: #2a2a2a !important;
+  }
+
+  .carrier-terminals .contact-item {
+    color: #999999 !important;
+
+    svg {
+      color: #666666 !important;
+    }
+  }
+
+  .carrier-terminals .terminal-actions {
+    background: #1a1a1a !important;
+    border-color: #2a2a2a !important;
+  }
+
+  .carrier-terminals .btn-action {
+    background: #0f0f0f !important;
+    border-color: #2a2a2a !important;
+    color: #999999 !important;
+
+    &:hover {
+      border-color: #f97316 !important;
+      color: #f97316 !important;
+    }
+
+    &.btn-action-danger:hover {
+      border-color: #dc3545 !important;
+      color: #dc3545 !important;
+    }
+  }
+
+  .carrier-terminals .empty-state {
+    background: #0f0f0f !important;
+    border-color: #2a2a2a !important;
+
+    svg {
+      color: #666666 !important;
+    }
+
+    h3 {
+      color: #f5f5f5 !important;
+    }
+
+    p {
+      color: #999999 !important;
+    }
+  }
+
+  .carrier-terminals .loading-state {
+    p {
+      color: #999999 !important;
+    }
+
+    .spinner {
+      border-color: #2a2a2a !important;
+      border-top-color: #f97316 !important;
+    }
+  }
+
+  /* Modal dark theme */
+  .carrier-terminals .modal {
+    background: #0f0f0f !important;
+    border: 1px solid #2a2a2a !important;
+  }
+
+  .carrier-terminals .modal-header {
+    border-color: #2a2a2a !important;
+
+    h2 {
+      color: #f5f5f5 !important;
+    }
+  }
+
+  .carrier-terminals .modal-footer {
+    border-color: #2a2a2a !important;
+  }
+
+  .carrier-terminals .btn-close {
+    color: #999999 !important;
+
+    &:hover {
+      background: #252525 !important;
+    }
+  }
+
+  .carrier-terminals .form-section {
+    border-color: #2a2a2a !important;
+
+    h4 {
+      color: #f5f5f5 !important;
+    }
+  }
+
+  .carrier-terminals .form-group label {
+    color: #f5f5f5 !important;
+  }
+
+  .carrier-terminals .form-input {
+    background: #1a1a1a !important;
+    border-color: #2a2a2a !important;
+    color: #f5f5f5 !important;
+
+    option {
+      background: #1a1a1a !important;
+      color: #f5f5f5 !important;
+    }
+  }
+
+  .carrier-terminals .checkbox-label-inline {
+    color: #f5f5f5 !important;
+  }
+
+  .carrier-terminals .working-hours-row label {
+    color: #999999 !important;
+  }
+
+  .carrier-terminals .import-info {
+    background: rgba(249, 115, 22, 0.1) !important;
+
+    svg {
+      color: #f97316 !important;
+    }
+
+    p {
+      color: #f5f5f5 !important;
+    }
+
+    .import-hint {
+      color: #999999 !important;
+    }
+  }
+
+  .carrier-terminals .columns-info {
+    background: #1a1a1a !important;
+
+    h4 {
+      color: #f5f5f5 !important;
+    }
+
+    li {
+      color: #cccccc !important;
+    }
+
+    code {
+      background: rgba(249, 115, 22, 0.2) !important;
+      color: #f97316 !important;
+    }
+  }
+
+  .carrier-terminals .btn-outline {
+    border-color: #f97316 !important;
+    color: #f97316 !important;
+
+    &:hover {
+      background: #f97316 !important;
+      color: #ffffff !important;
+    }
+  }
+}
+</style>

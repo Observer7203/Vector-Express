@@ -1033,4 +1033,292 @@ const stats = computed(() => {
     flex-direction: column;
   }
 }
+
+// Dark theme
+[data-theme="dark"] {
+  .carrier-orders-page {
+    background: #1a1a1a !important;
+  }
+
+  .page-header h1 {
+    color: #f5f5f5;
+  }
+
+  .page-header .subtitle {
+    color: #999999;
+  }
+
+  .stat-card {
+    background: #0f0f0f;
+    border-color: #2a2a2a;
+  }
+
+  .stat-icon {
+    background: rgba(249, 115, 22, 0.15) !important;
+
+    svg {
+      color: #f97316 !important;
+    }
+  }
+
+  .stat-value {
+    color: #f5f5f5;
+  }
+
+  .stat-label {
+    color: #999999;
+  }
+
+  .filters-bar {
+    background: transparent;
+  }
+
+  .search-box input,
+  .filter-group select {
+    background: #1a1a1a;
+    border-color: #2a2a2a;
+    color: #f5f5f5;
+
+    &::placeholder {
+      color: #666666;
+    }
+  }
+
+  .order-card {
+    background: #0f0f0f;
+    border-color: #2a2a2a;
+  }
+
+  .order-number {
+    color: #f97316;
+  }
+
+  .order-route {
+    border-bottom-color: #2a2a2a;
+  }
+
+  .route-point {
+    color: #999999;
+
+    svg {
+      color: #666666;
+    }
+  }
+
+  .route-arrow {
+    color: #666666;
+  }
+
+  .detail-label {
+    color: #999999 !important;
+  }
+
+  .detail-value {
+    color: #f5f5f5 !important;
+
+    &.price {
+      color: #22c55e !important;
+    }
+  }
+
+  .order-meta span {
+    color: #999999;
+  }
+
+  .view-btn {
+    color: #f97316;
+    border-color: #f97316;
+
+    &:hover {
+      background: rgba(249, 115, 22, 0.1);
+    }
+  }
+
+  .empty-state {
+    background: #0f0f0f;
+    border-color: #2a2a2a;
+
+    h3 {
+      color: #f5f5f5;
+    }
+
+    p {
+      color: #999999;
+    }
+  }
+
+  .empty-icon {
+    background: #1a1a1a;
+
+    svg {
+      color: #666666;
+    }
+  }
+
+  .modal-content {
+    background: #0f0f0f;
+    border-color: #2a2a2a;
+  }
+
+  .modal-header {
+    border-bottom-color: #2a2a2a;
+
+    h2 {
+      color: #f5f5f5;
+    }
+  }
+
+  .detail-section h3 {
+    color: #f5f5f5;
+  }
+
+  .detail-row span:first-child {
+    color: #999999;
+  }
+
+  .detail-row span:last-child {
+    color: #f5f5f5;
+  }
+
+  .modal-footer {
+    border-top-color: #2a2a2a;
+  }
+
+  .loading {
+    color: #999999;
+  }
+
+  .spinner {
+    border-color: #2a2a2a;
+    border-top-color: #f97316;
+  }
+
+  // Modal styles
+  .modal-overlay {
+    background: rgba(0, 0, 0, 0.7);
+  }
+
+  .modal {
+    background: #0f0f0f !important;
+    border: 1px solid #2a2a2a;
+  }
+
+  .modal-header {
+    background: #0f0f0f;
+    border-bottom-color: #2a2a2a !important;
+
+    h2 {
+      color: #f5f5f5 !important;
+    }
+  }
+
+  .close-btn {
+    background: #1a1a1a;
+    color: #999999;
+
+    &:hover {
+      background: #252525;
+      color: #f5f5f5;
+    }
+  }
+
+  .modal-body {
+    background: #0f0f0f;
+  }
+
+  .order-date {
+    color: #999999;
+  }
+
+  .detail-section {
+    background: #1a1a1a !important;
+    border: 1px solid #2a2a2a;
+
+    h3 {
+      color: #f5f5f5 !important;
+    }
+  }
+
+  .route-label {
+    color: #999999 !important;
+  }
+
+  .route-value {
+    color: #f5f5f5 !important;
+  }
+
+  .route-address {
+    color: #999999 !important;
+  }
+
+  .route-arrow-lg {
+    color: #666666;
+  }
+
+  .cargo-label {
+    color: #999999 !important;
+  }
+
+  .cargo-value {
+    color: #f5f5f5 !important;
+  }
+
+  .customer-name {
+    color: #f5f5f5 !important;
+  }
+
+  .contact-item {
+    color: #999999 !important;
+
+    svg {
+      color: #666666 !important;
+    }
+  }
+
+  .contact-label {
+    color: #999999 !important;
+  }
+
+  .contact-value {
+    color: #f5f5f5 !important;
+  }
+
+  .contact-detail {
+    color: #999999 !important;
+  }
+
+  .financial-section {
+    background: rgba(34, 197, 94, 0.1) !important;
+    border-color: rgba(34, 197, 94, 0.3) !important;
+  }
+
+  .total-amount {
+    color: #22c55e !important;
+  }
+
+  .commission-note {
+    color: #999999 !important;
+  }
+
+  .tracking-label {
+    color: #999999 !important;
+  }
+
+  .tracking-code {
+    color: #f97316 !important;
+    background: #1a1a1a;
+    padding: 4px 8px;
+    border-radius: 4px;
+  }
+
+  .quick-action .btn-primary {
+    background: #f97316 !important;
+    border-color: #f97316 !important;
+    color: #ffffff !important;
+
+    &:hover {
+      background: #ea580c !important;
+    }
+  }
+}
 </style>

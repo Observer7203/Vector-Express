@@ -1291,3 +1291,238 @@ async function handleLogout() {
   }
 }
 </style>
+
+<style lang="scss">
+/* Dark theme styles for CarrierRatesView */
+[data-theme="dark"] {
+  .carrier-rates {
+    background: #1a1a1a !important;
+  }
+
+  .carrier-rates .dashboard-main {
+    background: #1a1a1a !important;
+  }
+
+  .carrier-rates .page-title h1 {
+    color: #f5f5f5 !important;
+  }
+
+  .carrier-rates .page-title .subtitle {
+    color: #999999 !important;
+  }
+
+  .carrier-rates .filters-bar {
+    background: transparent !important;
+  }
+
+  .carrier-rates .search-input {
+    background: #0f0f0f !important;
+    border-color: #2a2a2a !important;
+    color: #f5f5f5 !important;
+
+    &::placeholder {
+      color: #666666 !important;
+    }
+  }
+
+  .carrier-rates .search-icon {
+    color: #666666 !important;
+  }
+
+  .carrier-rates .filter-select {
+    background: #0f0f0f !important;
+    border-color: #2a2a2a !important;
+    color: #f5f5f5 !important;
+
+    option {
+      background: #0f0f0f !important;
+      color: #f5f5f5 !important;
+    }
+  }
+
+  .carrier-rates .btn-clear-filters {
+    background: #0f0f0f !important;
+    border-color: #2a2a2a !important;
+    color: #999999 !important;
+
+    &:hover {
+      border-color: #dc3545 !important;
+      color: #dc3545 !important;
+    }
+  }
+
+  .carrier-rates .rates-table-wrapper {
+    background: #0f0f0f !important;
+    border-color: #2a2a2a !important;
+  }
+
+  .carrier-rates .rates-table {
+    th {
+      background: #1a1a1a !important;
+      color: #999999 !important;
+      border-color: #2a2a2a !important;
+    }
+
+    td {
+      border-color: #2a2a2a !important;
+      color: #f5f5f5 !important;
+    }
+
+    tr:hover td {
+      background: #1a1a1a !important;
+    }
+  }
+
+  .carrier-rates .zone-code {
+    color: #999999 !important;
+  }
+
+  .carrier-rates .zone-name {
+    color: #f5f5f5 !important;
+  }
+
+  .carrier-rates .weight-cell {
+    color: #cccccc !important;
+  }
+
+  .carrier-rates .rate-cell {
+    strong {
+      color: #f97316 !important;
+    }
+
+    .rate-unit {
+      color: #999999 !important;
+    }
+  }
+
+  .carrier-rates .transit-cell {
+    color: #cccccc !important;
+  }
+
+  .carrier-rates .actions-cell .btn-icon {
+    color: #999999 !important;
+
+    &:hover {
+      background: #252525 !important;
+      color: #f5f5f5 !important;
+    }
+
+    &.btn-icon-danger:hover {
+      background: rgba(220, 53, 69, 0.2) !important;
+      color: #dc3545 !important;
+    }
+  }
+
+  .carrier-rates .empty-state {
+    background: #0f0f0f !important;
+    border-color: #2a2a2a !important;
+
+    svg {
+      color: #666666 !important;
+    }
+
+    h3 {
+      color: #f5f5f5 !important;
+    }
+
+    p {
+      color: #999999 !important;
+    }
+  }
+
+  .carrier-rates .loading-state {
+    p {
+      color: #999999 !important;
+    }
+
+    .spinner {
+      border-color: #2a2a2a !important;
+      border-top-color: #f97316 !important;
+    }
+  }
+
+  /* Modal dark theme */
+  .carrier-rates .modal {
+    background: #0f0f0f !important;
+    border: 1px solid #2a2a2a !important;
+  }
+
+  .carrier-rates .modal-header {
+    border-color: #2a2a2a !important;
+
+    h2 {
+      color: #f5f5f5 !important;
+    }
+  }
+
+  .carrier-rates .modal-footer {
+    border-color: #2a2a2a !important;
+  }
+
+  .carrier-rates .btn-close {
+    color: #999999 !important;
+
+    &:hover {
+      background: #252525 !important;
+    }
+  }
+
+  .carrier-rates .form-group label {
+    color: #f5f5f5 !important;
+  }
+
+  .carrier-rates .form-input {
+    background: #1a1a1a !important;
+    border-color: #2a2a2a !important;
+    color: #f5f5f5 !important;
+
+    option {
+      background: #1a1a1a !important;
+      color: #f5f5f5 !important;
+    }
+  }
+
+  .carrier-rates .import-info {
+    background: rgba(249, 115, 22, 0.1) !important;
+
+    svg {
+      color: #f97316 !important;
+    }
+
+    p {
+      color: #f5f5f5 !important;
+    }
+
+    .import-hint {
+      color: #999999 !important;
+    }
+  }
+
+  .carrier-rates .columns-info {
+    background: #1a1a1a !important;
+
+    h4 {
+      color: #f5f5f5 !important;
+    }
+
+    li {
+      color: #cccccc !important;
+    }
+
+    code {
+      background: rgba(249, 115, 22, 0.2) !important;
+      color: #f97316 !important;
+    }
+  }
+
+  .carrier-rates .btn-outline {
+    border-color: #f97316 !important;
+    color: #f97316 !important;
+
+    &:hover {
+      background: #f97316 !important;
+      color: #ffffff !important;
+    }
+  }
+}
+</style>

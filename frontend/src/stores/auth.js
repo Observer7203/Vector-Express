@@ -16,13 +16,21 @@ export const useAuthStore = defineStore('auth', () => {
   async function login(data) {
     loading.value = true
     error.value = null
+    console.log('=== LOGIN REQUEST ===')
+    console.log('Sending data:', { email: data.email, password: '***' })
     try {
       const response = await authApi.login(data)
+      console.log('=== LOGIN SUCCESS ===')
+      console.log('Response:', response)
       token.value = response.token
       user.value = response.user
       localStorage.setItem('token', response.token)
       return response
     } catch (e) {
+      console.log('=== LOGIN ERROR ===')
+      console.log('Error status:', e.response?.status)
+      console.log('Error data:', e.response?.data)
+      console.log('Full error:', e)
       error.value = e.response?.data?.message || 'Ошибка входа'
       throw e
     } finally {

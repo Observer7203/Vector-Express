@@ -1,8 +1,13 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import { useShipmentsStore } from '@/stores/shipments'
 import { ArrowLeft, ArrowRight, Package, MapPin, Truck, Calendar, Shield, FileCheck, Home, Calculator, Eye } from 'lucide-vue-next'
+import ThemeToggle from '@/components/ThemeToggle.vue'
+import LanguageSwitcher from '@/components/LanguageSwitcher.vue'
+
+const { t, locale } = useI18n()
 
 const iconStrokeWidth = 1.2
 
@@ -30,32 +35,33 @@ const totalVolume = computed(() => {
   }, 0).toFixed(3)
 })
 
-const transportTypeLabels = {
-  air: 'Авиа',
-  sea: 'Морской',
-  rail: 'Ж/Д',
-  road: 'Автомобильный',
-  multimodal: 'Мультимодальный'
-}
+const transportTypeLabels = computed(() => ({
+  air: t('shipmentDetail.transportTypes.air'),
+  sea: t('shipmentDetail.transportTypes.sea'),
+  rail: t('shipmentDetail.transportTypes.rail'),
+  road: t('shipmentDetail.transportTypes.road'),
+  multimodal: t('shipmentDetail.transportTypes.multimodal')
+}))
 
-const cargoTypeLabels = {
-  general: 'Обычный',
-  dangerous: 'Опасный',
-  fragile: 'Хрупкий',
-  perishable: 'Скоропортящийся'
-}
+const cargoTypeLabels = computed(() => ({
+  general: t('shipmentDetail.cargoTypes.general'),
+  dangerous: t('shipmentDetail.cargoTypes.dangerous'),
+  fragile: t('shipmentDetail.cargoTypes.fragile'),
+  perishable: t('shipmentDetail.cargoTypes.perishable')
+}))
 
-const statusLabels = {
-  draft: 'Черновик',
-  calculating: 'Расчет...',
-  quoted: 'Есть предложения',
-  ordered: 'Заказано',
-  expired: 'Истекло'
-}
+const statusLabels = computed(() => ({
+  draft: t('shipmentDetail.statuses.draft'),
+  calculating: t('shipmentDetail.statuses.calculating'),
+  quoted: t('shipmentDetail.statuses.quoted'),
+  ordered: t('shipmentDetail.statuses.ordered'),
+  expired: t('shipmentDetail.statuses.expired')
+}))
 
 function formatDate(dateString) {
   if (!dateString) return '-'
-  return new Date(dateString).toLocaleDateString('ru-RU')
+  const localeMap = { ru: 'ru-RU', en: 'en-US', kk: 'kk-KZ' }
+  return new Date(dateString).toLocaleDateString(localeMap[locale.value] || 'ru-RU')
 }
 
 async function recalculate() {
@@ -68,18 +74,26 @@ async function recalculate() {
   <div class="page">
     <header class="page-header">
       <div class="container">
-        <RouterLink to="/shipments" class="back-link">
-          <ArrowLeft :size="16" :stroke-width="iconStrokeWidth" />
-          Назад к заявкам
-        </RouterLink>
-        <h1>Заявка #{{ shipment?.id }}</h1>
+        <div class="header-content">
+          <div class="header-left">
+            <RouterLink to="/shipments" class="back-link">
+              <ArrowLeft :size="16" :stroke-width="iconStrokeWidth" />
+              {{ t('shipmentDetail.backToShipments') }}
+            </RouterLink>
+            <h1>{{ t('shipmentDetail.shipment') }} #{{ shipment?.id }}</h1>
+          </div>
+          <div class="header-right">
+            <ThemeToggle />
+            <LanguageSwitcher />
+          </div>
+        </div>
       </div>
     </header>
 
     <main class="container">
       <div v-if="shipmentsStore.loading" class="loading">
         <div class="spinner"></div>
-        <span>Загрузка...</span>
+        <span>{{ t('shipmentDetail.loading') }}</span>
       </div>
 
       <div v-else-if="shipment" class="shipment-details">
@@ -87,18 +101,18 @@ async function recalculate() {
           <span :class="['status', `status-${shipment.status}`]">
             {{ statusLabels[shipment.status] }}
           </span>
-          <span class="date">Создано: {{ formatDate(shipment.created_at) }}</span>
+          <span class="date">{{ t('shipmentDetail.created') }}: {{ formatDate(shipment.created_at) }}</span>
         </div>
 
         <div class="details-grid">
           <div class="detail-card">
             <h3>
               <MapPin :size="18" :stroke-width="iconStrokeWidth" />
-              Маршрут
+              {{ t('shipmentDetail.route') }}
             </h3>
             <div class="route">
               <div class="location">
-                <span class="label">Откуда</span>
+                <span class="label">{{ t('shipmentDetail.from') }}</span>
                 <span class="city">{{ shipment.origin_city }}, {{ shipment.origin_country }}</span>
                 <span v-if="shipment.origin_address" class="address">{{ shipment.origin_address }}</span>
               </div>
@@ -106,7 +120,7 @@ async function recalculate() {
                 <ArrowRight :size="20" :stroke-width="iconStrokeWidth" />
               </div>
               <div class="location">
-                <span class="label">Куда</span>
+                <span class="label">{{ t('shipmentDetail.to') }}</span>
                 <span class="city">{{ shipment.destination_city }}, {{ shipment.destination_country }}</span>
                 <span v-if="shipment.destination_address" class="address">{{ shipment.destination_address }}</span>
               </div>
@@ -116,35 +130,35 @@ async function recalculate() {
           <div class="detail-card">
             <h3>
               <Package :size="18" :stroke-width="iconStrokeWidth" />
-              Параметры груза
+              {{ t('shipmentDetail.cargoParams') }}
             </h3>
             <div class="params-grid">
               <div class="param">
-                <span class="label">Общий вес</span>
-                <span class="value">{{ totalWeight }} кг</span>
+                <span class="label">{{ t('shipmentDetail.totalWeight') }}</span>
+                <span class="value">{{ totalWeight }} {{ t('shipmentDetail.kg') }}</span>
               </div>
               <div class="param">
-                <span class="label">Объем</span>
-                <span class="value">{{ totalVolume }} м³</span>
+                <span class="label">{{ t('shipmentDetail.volume') }}</span>
+                <span class="value">{{ totalVolume }} {{ t('shipmentDetail.cbm') }}</span>
               </div>
               <div class="param">
-                <span class="label">Мест</span>
+                <span class="label">{{ t('shipmentDetail.pieces') }}</span>
                 <span class="value">{{ shipment.items?.length || 0 }}</span>
               </div>
               <div class="param">
-                <span class="label">Тип груза</span>
+                <span class="label">{{ t('shipmentDetail.cargoType') }}</span>
                 <span class="value">{{ cargoTypeLabels[shipment.cargo_type] || '-' }}</span>
               </div>
             </div>
 
             <div v-if="shipment.items?.length" class="items-list">
-              <h4>Места</h4>
+              <h4>{{ t('shipmentDetail.places') }}</h4>
               <div v-for="(item, index) in shipment.items" :key="index" class="item">
                 <span class="item-number">{{ index + 1 }}</span>
                 <span class="item-dims">
-                  {{ item.length }}×{{ item.width }}×{{ item.height }} см
+                  {{ item.length }}×{{ item.width }}×{{ item.height }} {{ t('shipmentDetail.cm') }}
                 </span>
-                <span class="item-weight">{{ item.weight }} кг</span>
+                <span class="item-weight">{{ item.weight }} {{ t('shipmentDetail.kg') }}</span>
                 <span class="item-qty">× {{ item.quantity }}</span>
               </div>
             </div>
@@ -153,19 +167,19 @@ async function recalculate() {
           <div class="detail-card">
             <h3>
               <Truck :size="18" :stroke-width="iconStrokeWidth" />
-              Параметры перевозки
+              {{ t('shipmentDetail.transportParams') }}
             </h3>
             <div class="params-list">
               <div class="param-row">
-                <span class="label">Тип перевозки</span>
-                <span class="value">{{ transportTypeLabels[shipment.transport_type] || 'Любой' }}</span>
+                <span class="label">{{ t('shipmentDetail.transportType') }}</span>
+                <span class="value">{{ transportTypeLabels[shipment.transport_type] || t('shipmentDetail.anyType') }}</span>
               </div>
               <div class="param-row">
-                <span class="label">Объявленная стоимость</span>
+                <span class="label">{{ t('shipmentDetail.declaredValue') }}</span>
                 <span class="value">{{ shipment.declared_value ? `${shipment.declared_value} ${shipment.currency}` : '-' }}</span>
               </div>
               <div class="param-row">
-                <span class="label">Дата забора</span>
+                <span class="label">{{ t('shipmentDetail.pickupDate') }}</span>
                 <span class="value">{{ formatDate(shipment.pickup_date) }}</span>
               </div>
             </div>
@@ -174,27 +188,27 @@ async function recalculate() {
           <div class="detail-card">
             <h3>
               <FileCheck :size="18" :stroke-width="iconStrokeWidth" />
-              Дополнительные услуги
+              {{ t('shipmentDetail.additionalServices') }}
             </h3>
             <div class="services-list">
               <div :class="['service', { active: shipment.insurance_required }]">
                 <Shield :size="16" :stroke-width="iconStrokeWidth" />
-                Страхование груза
+                {{ t('shipmentDetail.cargoInsurance') }}
               </div>
               <div :class="['service', { active: shipment.customs_clearance }]">
                 <FileCheck :size="16" :stroke-width="iconStrokeWidth" />
-                Таможенное оформление
+                {{ t('shipmentDetail.customsClearance') }}
               </div>
               <div :class="['service', { active: shipment.door_to_door }]">
                 <Home :size="16" :stroke-width="iconStrokeWidth" />
-                Доставка до двери
+                {{ t('shipmentDetail.doorToDoor') }}
               </div>
             </div>
           </div>
         </div>
 
         <div v-if="shipment.notes" class="notes-card">
-          <h3>Комментарий</h3>
+          <h3>{{ t('shipmentDetail.comment') }}</h3>
           <p>{{ shipment.notes }}</p>
         </div>
 
@@ -205,7 +219,7 @@ async function recalculate() {
             class="btn btn-primary"
           >
             <Eye :size="18" :stroke-width="iconStrokeWidth" />
-            Смотреть предложения
+            {{ t('shipmentDetail.viewQuotes') }}
           </RouterLink>
           <button
             v-if="['draft', 'expired'].includes(shipment.status)"
@@ -214,7 +228,7 @@ async function recalculate() {
             :disabled="shipmentsStore.calculating"
           >
             <Calculator :size="18" :stroke-width="iconStrokeWidth" />
-            {{ shipmentsStore.calculating ? 'Расчет...' : 'Рассчитать стоимость' }}
+            {{ shipmentsStore.calculating ? t('shipmentDetail.calculating') : t('shipmentDetail.calculateCost') }}
           </button>
         </div>
       </div>
@@ -547,6 +561,18 @@ h1 {
   }
 }
 
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+}
+
 @media (max-width: $breakpoint-md) {
   .details-grid {
     grid-template-columns: 1fr;
@@ -559,6 +585,160 @@ h1 {
 
   .arrow {
     transform: rotate(90deg);
+  }
+}
+
+// Dark theme
+[data-theme="dark"] {
+  .page {
+    background: #1a1a1a !important;
+  }
+
+  .page-header {
+    background: #0f0f0f !important;
+    border-bottom-color: #2a2a2a !important;
+  }
+
+  h1 {
+    color: #f5f5f5 !important;
+  }
+
+  .back-link {
+    color: #f97316 !important;
+
+    &:hover {
+      color: #fb923c !important;
+    }
+  }
+
+  .status-bar .date {
+    color: #999999 !important;
+  }
+
+  .status-quoted {
+    background: rgba(249, 115, 22, 0.15) !important;
+    color: #f97316 !important;
+  }
+
+  .status-draft {
+    background: #252525 !important;
+    color: #999999 !important;
+  }
+
+  .status-ordered {
+    background: rgba(34, 197, 94, 0.15) !important;
+    color: #22c55e !important;
+  }
+
+  .status-expired {
+    background: rgba(239, 68, 68, 0.15) !important;
+    color: #ef4444 !important;
+  }
+
+  .status-calculating {
+    background: rgba(251, 191, 36, 0.15) !important;
+    color: #fbbf24 !important;
+  }
+
+  .detail-card {
+    background: #0f0f0f !important;
+    border-color: #2a2a2a !important;
+
+    h3 {
+      color: #f5f5f5 !important;
+
+      svg {
+        color: #f97316 !important;
+      }
+    }
+  }
+
+  .location .label {
+    color: #999999 !important;
+  }
+
+  .location .city {
+    color: #f5f5f5 !important;
+  }
+
+  .location .address {
+    color: #999999 !important;
+  }
+
+  .arrow {
+    color: #f97316 !important;
+  }
+
+  .param .label {
+    color: #999999 !important;
+  }
+
+  .param .value {
+    color: #f5f5f5 !important;
+  }
+
+  .items-list {
+    border-top-color: #2a2a2a !important;
+
+    h4 {
+      color: #999999 !important;
+    }
+  }
+
+  .item {
+    border-bottom-color: #2a2a2a !important;
+  }
+
+  .item-number {
+    background: #f97316 !important;
+    color: #ffffff !important;
+  }
+
+  .item-dims,
+  .item-weight {
+    color: #f5f5f5 !important;
+  }
+
+  .item-qty {
+    color: #999999 !important;
+  }
+
+  .param-row .label {
+    color: #999999 !important;
+  }
+
+  .param-row .value {
+    color: #f5f5f5 !important;
+  }
+
+  .service {
+    color: #666666 !important;
+
+    &.active {
+      color: #22c55e !important;
+    }
+  }
+
+  .notes-card {
+    background: #0f0f0f !important;
+    border-color: #2a2a2a !important;
+
+    h3 {
+      color: #f5f5f5 !important;
+    }
+
+    p {
+      color: #999999 !important;
+    }
+  }
+
+  .loading {
+    color: #999999 !important;
+  }
+
+  .spinner {
+    border-color: #2a2a2a !important;
+    border-top-color: #f97316 !important;
   }
 }
 </style>

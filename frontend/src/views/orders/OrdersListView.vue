@@ -749,3 +749,207 @@ function getStatusIcon(status) {
   }
 }
 </style>
+
+<style lang="scss">
+// Dark theme overrides (non-scoped for [data-theme="dark"] selector)
+[data-theme="dark"] {
+  .page {
+    background: #1a1a1a !important;
+  }
+
+  .page-header {
+    background: #0f0f0f !important;
+    border-bottom-color: #2a2a2a !important;
+  }
+
+  .header-left h1 {
+    color: #f5f5f5 !important;
+  }
+
+  .header-left .subtitle {
+    color: #999999 !important;
+  }
+
+  .page-content {
+    background: transparent !important;
+  }
+
+  .filters-bar {
+    background: transparent !important;
+  }
+
+  .filters-bar .search-box input {
+    background: #1a1a1a !important;
+    border-color: #2a2a2a !important;
+    color: #f5f5f5 !important;
+
+    &::placeholder {
+      color: #666666 !important;
+    }
+
+    &:focus {
+      border-color: #f97316 !important;
+    }
+  }
+
+  .filters-bar .search-icon {
+    color: #666666 !important;
+  }
+
+  .filters-bar .filter-group {
+    color: #999999 !important;
+
+    select {
+      background: #1a1a1a !important;
+      border-color: #2a2a2a !important;
+      color: #f5f5f5 !important;
+
+      &:focus {
+        border-color: #f97316 !important;
+      }
+
+      option {
+        background: #1a1a1a !important;
+        color: #f5f5f5 !important;
+      }
+    }
+  }
+
+  .order-card {
+    background: #0f0f0f !important;
+    border-color: #2a2a2a !important;
+
+    &:hover {
+      border-color: rgba(249, 115, 22, 0.3) !important;
+    }
+  }
+
+  .order-number {
+    color: #f5f5f5 !important;
+  }
+
+  .order-date {
+    color: #666666 !important;
+  }
+
+  .point-city {
+    color: #f5f5f5 !important;
+  }
+
+  .point-country {
+    color: #999999 !important;
+  }
+
+  .route-line {
+    background: rgba(249, 115, 22, 0.15) !important;
+    color: #f97316 !important;
+  }
+
+  .order-route {
+    border-bottom-color: #2a2a2a !important;
+  }
+
+  .meta-item {
+    color: #999999 !important;
+
+    svg {
+      color: #f97316 !important;
+    }
+
+    .price {
+      color: #f5f5f5 !important;
+    }
+
+    .tracking {
+      background: #252525 !important;
+      color: #f5f5f5 !important;
+    }
+  }
+
+  .order-footer {
+    border-top-color: #2a2a2a !important;
+  }
+
+  .view-details {
+    color: #f97316 !important;
+  }
+
+  .status-warning {
+    background: rgba(251, 191, 36, 0.15) !important;
+    color: #fbbf24 !important;
+  }
+
+  .status-info {
+    background: rgba(59, 130, 246, 0.15) !important;
+    color: #3b82f6 !important;
+  }
+
+  .status-primary {
+    background: rgba(249, 115, 22, 0.15) !important;
+    color: #f97316 !important;
+  }
+
+  .status-success {
+    background: rgba(34, 197, 94, 0.15) !important;
+    color: #22c55e !important;
+  }
+
+  .status-danger {
+    background: rgba(239, 68, 68, 0.15) !important;
+    color: #ef4444 !important;
+  }
+
+  .empty-state {
+    background: #0f0f0f !important;
+    border-color: #2a2a2a !important;
+
+    h3 {
+      color: #f5f5f5 !important;
+    }
+
+    p {
+      color: #999999 !important;
+    }
+  }
+
+  .empty-icon {
+    background: #252525 !important;
+
+    svg {
+      color: #f97316 !important;
+    }
+  }
+
+  .loading-state {
+    color: #999999 !important;
+  }
+
+  .spinner {
+    border-color: #2a2a2a !important;
+    border-top-color: #f97316 !important;
+  }
+
+  .pagination {
+    .page-info {
+      color: #999999 !important;
+    }
+
+    .btn-outline {
+      background: #0f0f0f !important;
+      border-color: #f97316 !important;
+      color: #f97316 !important;
+
+      &:hover:not(:disabled) {
+        background: #f97316 !important;
+        color: #ffffff !important;
+      }
+
+      &:disabled {
+        opacity: 0.5 !important;
+        border-color: #2a2a2a !important;
+        color: #666666 !important;
+      }
+    }
+  }
+}
+</style>

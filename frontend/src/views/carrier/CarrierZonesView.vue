@@ -1495,4 +1495,295 @@ textarea.form-input {
     grid-template-columns: 1fr;
   }
 }
+
+// Dark theme
+[data-theme="dark"] {
+  .carrier-zones {
+    background: #1a1a1a !important;
+  }
+
+  .page-header h1 {
+    color: #f5f5f5;
+  }
+
+  .page-header p {
+    color: #999999;
+  }
+
+  .search-box {
+    background: #1a1a1a;
+    border-color: #2a2a2a;
+
+    input {
+      background: transparent;
+      color: #f5f5f5;
+
+      &::placeholder {
+        color: #666666;
+      }
+    }
+
+    svg {
+      color: #666666;
+    }
+  }
+
+  .zone-card {
+    background: #0f0f0f;
+    border-color: #2a2a2a;
+
+    &:hover {
+      border-color: #3a3a3a;
+    }
+
+    &.expanded {
+      border-color: #f97316;
+    }
+  }
+
+  .zone-header:hover {
+    background: #1a1a1a;
+  }
+
+  .zone-icon {
+    background: rgba(249, 115, 22, 0.15);
+
+    svg {
+      color: #f97316;
+    }
+  }
+
+  .zone-code {
+    background: #1a1a1a;
+    color: #999999;
+  }
+
+  .zone-name {
+    color: #f5f5f5;
+  }
+
+  .zone-meta {
+    color: #999999;
+  }
+
+  .country-badge {
+    background: rgba(249, 115, 22, 0.15);
+    color: #f97316;
+  }
+
+  .expand-icon {
+    color: #666666;
+  }
+
+  .zone-details {
+    background: #1a1a1a;
+    border-top-color: #2a2a2a;
+  }
+
+  .zone-description {
+    color: #999999;
+  }
+
+  .postal-codes-section h4 {
+    color: #f5f5f5;
+  }
+
+  .postal-code-item {
+    background: #0f0f0f;
+    border-color: #2a2a2a;
+
+    &.remote-area {
+      border-color: #fbbf24;
+      background: rgba(251, 191, 36, 0.1);
+    }
+  }
+
+  .postal-prefix {
+    color: #f97316;
+  }
+
+  .postal-city {
+    color: #f5f5f5;
+  }
+
+  .postal-region {
+    color: #999999;
+  }
+
+  .empty-state {
+    background: #0f0f0f;
+    border-color: #2a2a2a;
+
+    svg {
+      color: #666666;
+    }
+
+    h3 {
+      color: #f5f5f5;
+    }
+
+    p {
+      color: #999999;
+    }
+  }
+
+  .modal-content {
+    background: #0f0f0f;
+    border-color: #2a2a2a;
+  }
+
+  .modal-header {
+    border-bottom-color: #2a2a2a;
+
+    h2 {
+      color: #f5f5f5;
+    }
+  }
+
+  .close-btn {
+    color: #999999;
+
+    &:hover {
+      color: #f5f5f5;
+    }
+  }
+
+  .form-group label {
+    color: #999999;
+  }
+
+  .form-group input,
+  .form-group textarea {
+    background: #1a1a1a;
+    border-color: #2a2a2a;
+    color: #f5f5f5;
+
+    &::placeholder {
+      color: #666666;
+    }
+  }
+
+  .modal-footer {
+    border-top-color: #2a2a2a;
+  }
+
+  .country-dropdown {
+    background: #0f0f0f;
+    border-color: #2a2a2a;
+  }
+
+  .country-option {
+    &:hover {
+      background: #1a1a1a;
+    }
+
+    .country-code {
+      background: rgba(249, 115, 22, 0.15);
+      color: #f97316;
+    }
+
+    .country-name {
+      color: #f5f5f5;
+    }
+  }
+
+  .postal-codes-form {
+    border-top-color: #2a2a2a;
+
+    h4 {
+      color: #f5f5f5;
+    }
+  }
+
+  .postal-item {
+    background: #1a1a1a;
+
+    .postal-prefix {
+      color: #f97316;
+    }
+
+    .postal-city {
+      color: #f5f5f5;
+    }
+
+    .postal-region {
+      color: #999999;
+    }
+  }
+
+  .columns-list {
+    background: #1a1a1a;
+
+    li {
+      color: #999999;
+
+      strong {
+        color: #f5f5f5;
+      }
+    }
+  }
+
+  .file-label {
+    border-color: #2a2a2a;
+    color: #999999;
+
+    &:hover {
+      border-color: #f97316;
+      background: rgba(249, 115, 22, 0.1);
+    }
+  }
+
+  .import-info {
+    .import-icon {
+      color: #f97316;
+    }
+
+    h3 {
+      color: #f5f5f5;
+    }
+
+    p {
+      color: #999999;
+    }
+  }
+
+  .btn-outline {
+    background: #1a1a1a;
+    border-color: #2a2a2a;
+    color: #f5f5f5;
+
+    &:hover:not(:disabled) {
+      border-color: #f97316;
+      color: #f97316;
+    }
+  }
+
+  .action-btn {
+    background: #1a1a1a;
+    color: #f97316;
+    border-color: #2a2a2a;
+
+    &:hover {
+      background: #f97316;
+      color: white;
+    }
+
+    &.danger:hover {
+      background: #ef4444;
+    }
+  }
+
+  .checkbox-label {
+    color: #999999;
+  }
+
+  .loading {
+    color: #999999;
+  }
+
+  .spinner {
+    border-color: #2a2a2a;
+    border-top-color: #f97316;
+  }
+}
 </style>

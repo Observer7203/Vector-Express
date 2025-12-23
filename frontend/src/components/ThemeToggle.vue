@@ -50,18 +50,27 @@ onMounted(() => {
     color: $text-secondary;
   }
 }
+</style>
 
-// Dark theme overrides
-[data-theme="dark"] .theme-toggle {
-  color: var(--text-secondary);
+<style lang="scss">
+/* Dark theme styles for ThemeToggle */
+[data-theme="dark"] {
+  .theme-toggle {
+    color: #999999 !important;
+    background: transparent !important;
 
-  &:hover {
-    background: var(--bg-hover);
-    color: var(--text-primary);
-  }
+    &:hover {
+      background: #252525 !important;
+      color: #f5f5f5 !important;
+    }
 
-  .icon-sun {
-    color: #fbbf24;
+    .icon-sun {
+      color: #fbbf24 !important;
+    }
+
+    .icon-moon {
+      color: #999999 !important;
+    }
   }
 }
 </style>

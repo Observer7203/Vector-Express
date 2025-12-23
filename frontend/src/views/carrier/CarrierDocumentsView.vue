@@ -679,19 +679,25 @@ onMounted(loadDocuments)
 .btn-upload {
   display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
-  padding: 0.625rem 1rem;
+  gap: 0.25rem;
+  padding: 0.375rem 0.75rem;
+  margin-top: 0.75rem;
   background: $color-primary;
   color: white;
   border: none;
-  border-radius: 8px;
-  font-size: 0.875rem;
+  border-radius: 5px;
+  font-size: 0.75rem;
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s;
 
   &:hover {
     background: $color-primary-dark;
+  }
+
+  svg {
+    width: 14px;
+    height: 14px;
   }
 }
 
@@ -1021,6 +1027,386 @@ onMounted(loadDocuments)
 
     &:hover {
       background: $bg-light;
+    }
+  }
+}
+</style>
+
+<style lang="scss">
+/* Dark theme styles for CarrierDocumentsView */
+[data-theme="dark"] {
+  .carrier-documents {
+    background: #1a1a1a !important;
+  }
+
+  .carrier-documents .dashboard-main {
+    background: #1a1a1a !important;
+  }
+
+  .carrier-documents .page-title h1 {
+    color: #f5f5f5 !important;
+  }
+
+  .carrier-documents .page-title .subtitle {
+    color: #999999 !important;
+  }
+
+  /* Verification status card */
+  .carrier-documents .verification-status {
+    background: #0f0f0f !important;
+    border-color: #2a2a2a !important;
+  }
+
+  .carrier-documents .verification-status h3 {
+    color: #f5f5f5 !important;
+  }
+
+  .carrier-documents .verification-status p {
+    color: #999999 !important;
+  }
+
+  /* Documents section */
+  .carrier-documents .documents-section {
+    background: #0f0f0f !important;
+    border-color: #2a2a2a !important;
+  }
+
+  .carrier-documents .section-title {
+    color: #f5f5f5 !important;
+    border-color: #2a2a2a !important;
+  }
+
+  .carrier-documents .document-card {
+    background: #1a1a1a !important;
+    border-color: #2a2a2a !important;
+
+    &:hover {
+      border-color: #f97316 !important;
+    }
+  }
+
+  .carrier-documents .document-icon {
+    background: rgba(249, 115, 22, 0.1) !important;
+
+    svg {
+      color: #f97316 !important;
+    }
+  }
+
+  .carrier-documents .document-name {
+    color: #f5f5f5 !important;
+  }
+
+  .carrier-documents .document-date {
+    color: #999999 !important;
+  }
+
+  .carrier-documents .document-actions .btn-icon {
+    color: #999999 !important;
+
+    &:hover {
+      background: #252525 !important;
+      color: #f5f5f5 !important;
+    }
+
+    &.btn-icon-danger:hover {
+      background: rgba(220, 53, 69, 0.2) !important;
+      color: #dc3545 !important;
+    }
+  }
+
+  /* Missing documents */
+  .carrier-documents .missing-documents {
+    background: #0f0f0f !important;
+    border-color: #2a2a2a !important;
+  }
+
+  .carrier-documents .missing-doc {
+    background: #1a1a1a !important;
+    border-color: #2a2a2a !important;
+
+    span {
+      color: #f5f5f5 !important;
+    }
+  }
+
+  .carrier-documents .empty-state {
+    background: #0f0f0f !important;
+    border-color: #2a2a2a !important;
+
+    svg {
+      color: #666666 !important;
+    }
+
+    h3 {
+      color: #f5f5f5 !important;
+    }
+
+    p {
+      color: #999999 !important;
+    }
+  }
+
+  .carrier-documents .loading-state {
+    color: #999999 !important;
+
+    .spinner {
+      border-color: #2a2a2a !important;
+      border-top-color: #f97316 !important;
+    }
+  }
+
+  /* Modal dark theme */
+  .carrier-documents .modal {
+    background: #0f0f0f !important;
+    border: 1px solid #2a2a2a !important;
+  }
+
+  .carrier-documents .modal-header {
+    border-color: #2a2a2a !important;
+
+    h2 {
+      color: #f5f5f5 !important;
+    }
+  }
+
+  .carrier-documents .modal-footer {
+    border-color: #2a2a2a !important;
+  }
+
+  .carrier-documents .btn-close {
+    color: #999999 !important;
+
+    &:hover {
+      background: #252525 !important;
+    }
+  }
+
+  .carrier-documents .form-group label {
+    color: #f5f5f5 !important;
+  }
+
+  .carrier-documents .form-input,
+  .carrier-documents .form-textarea {
+    background: #1a1a1a !important;
+    border-color: #2a2a2a !important;
+    color: #f5f5f5 !important;
+
+    option {
+      background: #1a1a1a !important;
+      color: #f5f5f5 !important;
+    }
+  }
+
+  .carrier-documents .upload-zone {
+    background: #1a1a1a !important;
+    border-color: #2a2a2a !important;
+    color: #999999 !important;
+
+    &:hover {
+      border-color: #f97316 !important;
+    }
+  }
+
+  /* File upload drag and drop area */
+  .carrier-documents .file-upload {
+    background: #1a1a1a !important;
+    border-color: #3a3a3a !important;
+
+    &:hover {
+      border-color: #f97316 !important;
+      background: rgba(249, 115, 22, 0.05) !important;
+    }
+
+    .file-placeholder,
+    .file-selected {
+      color: #999999 !important;
+
+      svg {
+        color: #666666 !important;
+      }
+
+      span {
+        color: #999999 !important;
+      }
+
+      small {
+        color: #666666 !important;
+      }
+    }
+
+    .file-selected {
+      color: #f97316 !important;
+
+      svg {
+        color: #f97316 !important;
+      }
+    }
+  }
+
+  /* Modal primary button - white text */
+  .carrier-documents .modal .btn-primary,
+  .carrier-documents .modal-footer .btn-primary,
+  .carrier-documents .modal .btn.btn-primary,
+  .carrier-documents .modal-footer .btn.btn-primary {
+    background: #f97316 !important;
+    border-color: #f97316 !important;
+    color: #ffffff !important;
+
+    span {
+      color: #ffffff !important;
+    }
+
+    &:hover {
+      background: #ea580c !important;
+      border-color: #ea580c !important;
+    }
+
+    &:disabled {
+      background: #f97316 !important;
+      opacity: 0.6;
+      color: #ffffff !important;
+
+      span {
+        color: #ffffff !important;
+      }
+    }
+  }
+
+  .carrier-documents .file-info {
+    background: #1a1a1a !important;
+    border-color: #2a2a2a !important;
+    color: #f5f5f5 !important;
+  }
+
+  .carrier-documents .error-message {
+    background: rgba(220, 53, 69, 0.1) !important;
+    color: #dc3545 !important;
+  }
+
+  .carrier-documents .btn-secondary {
+    background: #1a1a1a !important;
+    border-color: #2a2a2a !important;
+    color: #f5f5f5 !important;
+
+    &:hover {
+      background: #252525 !important;
+    }
+  }
+
+  /* Verification banner dark theme */
+  .carrier-documents .verification-banner {
+    background: linear-gradient(135deg, #1a1a1a 0%, #252525 100%) !important;
+    border-color: #f97316 !important;
+
+    &.verified {
+      background: linear-gradient(135deg, #0f2318 0%, #14532d 100%) !important;
+      border-color: #22c55e !important;
+
+      .banner-icon {
+        color: #22c55e !important;
+      }
+    }
+
+    .banner-icon {
+      color: #f97316 !important;
+    }
+
+    .banner-content h3 {
+      color: #f5f5f5 !important;
+    }
+
+    .banner-content p {
+      color: #999999 !important;
+    }
+  }
+
+  /* Document icon - remove background, only color svg */
+  .carrier-documents .document-icon {
+    background: transparent !important;
+
+    svg {
+      color: #f97316 !important;
+    }
+  }
+
+  .carrier-documents .document-card.has-document .document-icon svg {
+    color: #f97316 !important;
+  }
+
+  /* Document info text */
+  .carrier-documents .document-info h3 {
+    color: #f5f5f5 !important;
+  }
+
+  .carrier-documents .document-details span {
+    color: #999999 !important;
+  }
+
+  /* Btn-icon in document cards */
+  .carrier-documents .document-actions .btn-icon {
+    background: #252525 !important;
+    border: 1px solid #2a2a2a !important;
+    color: #999999 !important;
+
+    &:hover {
+      background: #333333 !important;
+      border-color: #f97316 !important;
+      color: #f97316 !important;
+    }
+
+    &.btn-danger {
+      &:hover {
+        background: rgba(220, 53, 69, 0.2) !important;
+        border-color: #dc3545 !important;
+        color: #dc3545 !important;
+      }
+    }
+  }
+
+  /* Modal footer dark theme */
+  .carrier-documents .modal-footer {
+    background: #1a1a1a !important;
+    border-color: #2a2a2a !important;
+  }
+
+  /* Section header in documents */
+  .carrier-documents .section-header h2 {
+    color: #f5f5f5 !important;
+  }
+
+  .carrier-documents .section-header p {
+    color: #999999 !important;
+  }
+
+  /* Btn-add button */
+  .carrier-documents .btn-add {
+    background: transparent !important;
+    border-color: #f97316 !important;
+    color: #f97316 !important;
+
+    &:hover {
+      background: rgba(249, 115, 22, 0.1) !important;
+    }
+  }
+
+  /* Btn-upload button in dark theme - orange with white text */
+  .carrier-documents .btn-upload,
+  .carrier-documents .document-card .btn-upload {
+    background: #f97316 !important;
+    color: #ffffff !important;
+    margin-left: 0.5rem !important;
+
+    span {
+      color: #ffffff !important;
+    }
+
+    svg {
+      color: #ffffff !important;
+    }
+
+    &:hover {
+      background: #ea580c !important;
     }
   }
 }

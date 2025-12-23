@@ -3,6 +3,8 @@ import { ref, onMounted, computed } from 'vue'
 import { useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { useOrdersStore } from '@/stores/orders'
+import ThemeToggle from '@/components/ThemeToggle.vue'
+import LanguageSwitcher from '@/components/LanguageSwitcher.vue'
 
 const route = useRoute()
 const ordersStore = useOrdersStore()
@@ -76,7 +78,13 @@ async function cancelOrder() {
   <div class="page">
     <header class="page-header">
       <div class="container">
-        <RouterLink to="/orders" class="back-link">← {{ t('orderDetail.backToOrders') }}</RouterLink>
+        <div class="header-top">
+          <RouterLink to="/orders" class="back-link">← {{ t('orderDetail.backToOrders') }}</RouterLink>
+          <div class="header-controls">
+            <ThemeToggle />
+            <LanguageSwitcher />
+          </div>
+        </div>
         <div class="header-content">
           <div>
             <h1>{{ t('orderDetail.order') }} {{ order?.order_number }}</h1>
@@ -267,12 +275,24 @@ async function cancelOrder() {
   padding: 0 20px;
 }
 
+.header-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.header-controls {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
 .back-link {
   color: #667eea;
   text-decoration: none;
   font-size: 0.9rem;
   display: inline-block;
-  margin-bottom: 10px;
 }
 
 .header-content {
@@ -568,5 +588,156 @@ h1 {
     flex-wrap: wrap;
     gap: 15px;
   }
+}
+
+</style>
+
+<style>
+/* Dark theme - global styles for OrderDetailView */
+[data-theme="dark"] .page {
+  background: #1a1a1a !important;
+}
+
+[data-theme="dark"] .page-header {
+  background: #0f0f0f !important;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3) !important;
+}
+
+[data-theme="dark"] .page-header h1 {
+  color: #f5f5f5 !important;
+}
+
+[data-theme="dark"] .page-header .route {
+  color: #999999 !important;
+}
+
+[data-theme="dark"] .page-header .back-link {
+  color: #f97316 !important;
+}
+
+[data-theme="dark"] .progress-card,
+[data-theme="dark"] .detail-card,
+[data-theme="dark"] .timeline-card,
+[data-theme="dark"] .notes-card {
+  background: #0f0f0f !important;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3) !important;
+}
+
+[data-theme="dark"] .progress-card h3,
+[data-theme="dark"] .detail-card h3,
+[data-theme="dark"] .timeline-card h3,
+[data-theme="dark"] .notes-card h3 {
+  color: #f5f5f5 !important;
+}
+
+[data-theme="dark"] .progress-bar::before {
+  background: #2a2a2a !important;
+}
+
+[data-theme="dark"] .step-dot {
+  background: #2a2a2a !important;
+}
+
+[data-theme="dark"] .progress-step.active .step-dot {
+  background: #f97316 !important;
+}
+
+[data-theme="dark"] .progress-step.current .step-dot {
+  box-shadow: 0 0 0 4px rgba(249, 115, 22, 0.3) !important;
+}
+
+[data-theme="dark"] .step-label {
+  color: #999999 !important;
+}
+
+[data-theme="dark"] .progress-step.active .step-label {
+  color: #f5f5f5 !important;
+}
+
+[data-theme="dark"] .price-value {
+  color: #f5f5f5 !important;
+}
+
+[data-theme="dark"] .price-currency {
+  color: #999999 !important;
+}
+
+[data-theme="dark"] .info-row .label {
+  color: #999999 !important;
+}
+
+[data-theme="dark"] .info-row .value {
+  color: #f5f5f5 !important;
+}
+
+[data-theme="dark"] .info-row .value.track {
+  background: #252525 !important;
+  color: #f97316 !important;
+}
+
+[data-theme="dark"] .order-details .loading {
+  color: #999999 !important;
+}
+
+[data-theme="dark"] .timeline::before {
+  background: #2a2a2a !important;
+}
+
+[data-theme="dark"] .timeline-dot {
+  background: #f97316 !important;
+}
+
+[data-theme="dark"] .timeline-content .time {
+  color: #999999 !important;
+}
+
+[data-theme="dark"] .timeline-content .status {
+  color: #f5f5f5 !important;
+}
+
+[data-theme="dark"] .timeline-content .location {
+  color: #f97316 !important;
+}
+
+[data-theme="dark"] .timeline-content .description {
+  color: #999999 !important;
+}
+
+[data-theme="dark"] .notes-card p {
+  color: #999999 !important;
+}
+
+[data-theme="dark"] .status-warning {
+  background: rgba(251, 191, 36, 0.15) !important;
+  color: #fbbf24 !important;
+}
+
+[data-theme="dark"] .status-info {
+  background: rgba(59, 130, 246, 0.15) !important;
+  color: #3b82f6 !important;
+}
+
+[data-theme="dark"] .status-primary {
+  background: rgba(249, 115, 22, 0.15) !important;
+  color: #f97316 !important;
+}
+
+[data-theme="dark"] .status-success {
+  background: rgba(34, 197, 94, 0.15) !important;
+  color: #22c55e !important;
+}
+
+[data-theme="dark"] .status-danger {
+  background: rgba(239, 68, 68, 0.15) !important;
+  color: #ef4444 !important;
+}
+
+[data-theme="dark"] .order-details .btn-primary {
+  background: #f97316 !important;
+  color: #ffffff !important;
+}
+
+[data-theme="dark"] .order-details .btn-primary:hover {
+  background: #ea580c !important;
 }
 </style>

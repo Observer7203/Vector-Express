@@ -1169,3 +1169,306 @@ function formatPrice(amount, currency = 'USD') {
   }
 }
 </style>
+
+<style lang="scss">
+/* Dark theme styles for OrdersView */
+[data-theme="dark"] {
+  .orders-page {
+    h1 {
+      color: #f5f5f5 !important;
+    }
+
+    .subtitle {
+      color: #999999 !important;
+    }
+
+    .stat-card {
+      background: #0f0f0f !important;
+      border-color: #2a2a2a !important;
+    }
+
+    .stat-value {
+      color: #f5f5f5 !important;
+    }
+
+    .stat-label {
+      color: #999999 !important;
+    }
+
+    .table-container {
+      background: #0f0f0f !important;
+      border-color: #2a2a2a !important;
+    }
+
+    .data-table {
+      th {
+        background: #1a1a1a !important;
+        color: #999999 !important;
+        border-color: #2a2a2a !important;
+      }
+
+      td {
+        border-color: #2a2a2a !important;
+        color: #f5f5f5 !important;
+      }
+
+      tbody tr:hover {
+        background: #1a1a1a !important;
+      }
+    }
+
+    .order-number {
+      color: #f97316 !important;
+    }
+
+    .tracking-number {
+      color: #666666 !important;
+    }
+
+    .customer-name {
+      color: #f5f5f5 !important;
+    }
+
+    .customer-company {
+      color: #666666 !important;
+    }
+
+    .carrier-name {
+      color: #999999 !important;
+    }
+
+    .route-from, .route-to {
+      color: #999999 !important;
+
+      svg {
+        color: #666666 !important;
+      }
+    }
+
+    .price {
+      color: #f97316 !important;
+    }
+
+    .commission {
+      color: #666666 !important;
+    }
+
+    .date {
+      color: #999999 !important;
+    }
+
+    .search-box input {
+      background: #1a1a1a !important;
+      border-color: #2a2a2a !important;
+      color: #f5f5f5 !important;
+
+      &::placeholder {
+        color: #666666 !important;
+      }
+    }
+
+    .search-icon {
+      color: #666666 !important;
+    }
+
+    .filter-group {
+      select, input {
+        background: #1a1a1a !important;
+        border-color: #2a2a2a !important;
+        color: #f5f5f5 !important;
+      }
+    }
+
+    .action-btn {
+      background: #1a1a1a !important;
+      color: #f97316 !important;
+      border: 1px solid #2a2a2a !important;
+
+      &:hover {
+        background: #f97316 !important;
+        color: white !important;
+        border-color: #f97316 !important;
+      }
+
+      &.success:hover {
+        background: #22c55e !important;
+        border-color: #22c55e !important;
+      }
+    }
+
+    .empty-row {
+      color: #666666 !important;
+    }
+
+    .page-info {
+      color: #999999 !important;
+    }
+
+    .btn-primary {
+      background: #f97316 !important;
+      color: #ffffff !important;
+
+      span {
+        color: #ffffff !important;
+      }
+    }
+
+    .btn-outline {
+      background: #1a1a1a !important;
+      border-color: #2a2a2a !important;
+      color: #f5f5f5 !important;
+
+      &:hover:not(:disabled) {
+        background: #2a2a2a !important;
+      }
+    }
+
+    .modal {
+      background: #0f0f0f !important;
+      border: 1px solid #2a2a2a !important;
+    }
+
+    .modal-header {
+      border-color: #2a2a2a !important;
+
+      h2 {
+        color: #f5f5f5 !important;
+      }
+    }
+
+    .modal-footer {
+      border-color: #2a2a2a !important;
+    }
+
+    .close-btn {
+      background: #1a1a1a !important;
+      color: #999999 !important;
+
+      &:hover {
+        background: #2a2a2a !important;
+      }
+    }
+
+    .order-date {
+      color: #999999 !important;
+    }
+
+    .detail-section {
+      background: #1a1a1a !important;
+
+      h3 {
+        color: #f97316 !important;
+      }
+    }
+
+    .route-label {
+      color: #666666 !important;
+    }
+
+    .route-value {
+      color: #f5f5f5 !important;
+    }
+
+    .route-address {
+      color: #999999 !important;
+    }
+
+    .route-arrow {
+      color: #666666 !important;
+    }
+
+    .cargo-label {
+      color: #666666 !important;
+    }
+
+    .cargo-value {
+      color: #f5f5f5 !important;
+    }
+
+    .parties-section {
+      background: transparent !important;
+    }
+
+    .party-block {
+      background: #1a1a1a !important;
+
+      h3 {
+        color: #f97316 !important;
+      }
+    }
+
+    .party-name {
+      color: #f5f5f5 !important;
+    }
+
+    .party-detail {
+      color: #999999 !important;
+    }
+
+    .contact-label {
+      color: #666666 !important;
+    }
+
+    .contact-value {
+      color: #f5f5f5 !important;
+    }
+
+    .contact-detail {
+      color: #999999 !important;
+    }
+
+    .financial-section {
+      background: rgba(249, 115, 22, 0.1) !important;
+    }
+
+    .total-amount {
+      color: #f97316 !important;
+    }
+
+    .commission-info {
+      color: #999999 !important;
+    }
+
+    .tracking-label {
+      color: #999999 !important;
+    }
+
+    .tracking-code {
+      color: #f97316 !important;
+
+      &.secondary {
+        color: #666666 !important;
+      }
+    }
+
+    .status-order-info {
+      color: #999999 !important;
+
+      strong {
+        color: #f5f5f5 !important;
+      }
+    }
+
+    .form-group {
+      label {
+        color: #f5f5f5 !important;
+      }
+
+      select {
+        background: #1a1a1a !important;
+        border-color: #2a2a2a !important;
+        color: #f5f5f5 !important;
+      }
+    }
+
+    .loading {
+      color: #999999 !important;
+    }
+
+    .spinner {
+      border-color: #2a2a2a !important;
+      border-top-color: #f97316 !important;
+    }
+  }
+}
+</style>

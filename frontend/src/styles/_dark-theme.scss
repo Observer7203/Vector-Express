@@ -1,6 +1,7 @@
 // Dark Theme - Vector Express
 // Orange/Peach accent on black background
 
+html[data-theme="dark"],
 [data-theme="dark"] {
   // Background colors
   --bg-white: #0f0f0f;
@@ -36,8 +37,416 @@
   --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.4);
   --shadow-md: 0 10px 15px -3px rgba(0, 0, 0, 0.4);
   --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
+}
 
-  // Body styles
-  background-color: #0f0f0f;
-  color: #f5f5f5;
+html[data-theme="dark"] body,
+[data-theme="dark"] body {
+  background-color: #0f0f0f !important;
+  color: #f5f5f5 !important;
+}
+
+// Dark theme input/select styles
+[data-theme="dark"] input,
+[data-theme="dark"] select,
+[data-theme="dark"] textarea {
+  background-color: #1a1a1a !important;
+  border-color: #2a2a2a !important;
+  color: #f5f5f5 !important;
+
+  &::placeholder {
+    color: #707070;
+  }
+
+  &:focus {
+    border-color: #f97316 !important;
+    outline: none;
+  }
+}
+
+// Global dark theme styles for all pages
+[data-theme="dark"] {
+  // Page backgrounds
+  .page,
+  .dashboard,
+  .admin-page,
+  .carrier-page,
+  .profile-page,
+  .tracking-page,
+  .auth-page,
+  .carrier-rates,
+  .carrier-terminals,
+  .carrier-surcharges,
+  .carrier-documents,
+  .carrier-settings,
+  .carrier-zones,
+  .carrier-orders,
+  .carrier-dashboard {
+    background: #1a1a1a !important;
+  }
+
+  // Dashboard main area
+  .dashboard-main {
+    background: #1a1a1a !important;
+  }
+
+  // Headers
+  .dashboard-header,
+  .section-header {
+    background: #0f0f0f !important;
+    border-color: #2a2a2a !important;
+  }
+
+  .page-header {
+    background: transparent !important;
+  }
+
+  // Cards
+  .card,
+  .stat-card,
+  .info-card,
+  .action-card,
+  .quote-card,
+  .order-card,
+  .shipment-card,
+  .form-card {
+    background: #0f0f0f !important;
+    border-color: #2a2a2a !important;
+  }
+
+  // Tables
+  table,
+  .table {
+    background: #0f0f0f !important;
+
+    th {
+      background: #1a1a1a !important;
+      color: #a0a0a0 !important;
+      border-color: #2a2a2a !important;
+    }
+
+    td {
+      background: #0f0f0f !important;
+      color: #f5f5f5 !important;
+      border-color: #2a2a2a !important;
+    }
+
+    tr:hover td {
+      background: #1a1a1a !important;
+    }
+  }
+
+  // Headings
+  h1, h2, h3, h4, h5, h6 {
+    color: #f5f5f5 !important;
+  }
+
+  // Text
+  p, span, label, .text-secondary {
+    color: #a0a0a0;
+  }
+
+  .text-muted {
+    color: #707070 !important;
+  }
+
+  // Links
+  a:not(.btn) {
+    color: #f97316;
+
+    &:hover {
+      color: #fb923c;
+    }
+  }
+
+  // Buttons
+  .btn-primary {
+    background: #f97316 !important;
+    border-color: #f97316 !important;
+    color: #ffffff !important;
+
+    &:hover {
+      background: #ea580c !important;
+      border-color: #ea580c !important;
+    }
+  }
+
+  .btn-outline,
+  .btn-secondary {
+    background: transparent !important;
+    border-color: #3a3a3a !important;
+    color: #f5f5f5 !important;
+
+    &:hover {
+      background: #252525 !important;
+      border-color: #f97316 !important;
+      color: #f97316 !important;
+    }
+  }
+
+  .btn-text {
+    color: #a0a0a0 !important;
+
+    &:hover {
+      color: #f5f5f5 !important;
+    }
+  }
+
+  .btn-danger {
+    background: #ef4444 !important;
+    border-color: #ef4444 !important;
+  }
+
+  // Modals
+  .modal,
+  .modal-content,
+  .dialog {
+    background: #0f0f0f !important;
+    border-color: #2a2a2a !important;
+  }
+
+  .modal-header,
+  .modal-footer {
+    border-color: #2a2a2a !important;
+  }
+
+  // Dropdowns
+  .dropdown,
+  .dropdown-menu,
+  .user-dropdown,
+  .language-dropdown {
+    background: #0f0f0f !important;
+    border-color: #2a2a2a !important;
+  }
+
+  .dropdown-item {
+    color: #f5f5f5 !important;
+
+    &:hover {
+      background: #1a1a1a !important;
+    }
+  }
+
+  // Sidebar
+  .sidebar,
+  .admin-sidebar,
+  .carrier-sidebar {
+    background: #0f0f0f !important;
+    border-color: #2a2a2a !important;
+  }
+
+  .sidebar-item,
+  .nav-item {
+    color: #a0a0a0 !important;
+
+    &:hover,
+    &.active {
+      background: #1a1a1a !important;
+      color: #f97316 !important;
+    }
+  }
+
+  // Forms
+  .form-group label {
+    color: #a0a0a0 !important;
+  }
+
+  .form-control,
+  .input-group {
+    background: #1a1a1a !important;
+    border-color: #2a2a2a !important;
+    color: #f5f5f5 !important;
+  }
+
+  // Tabs
+  .tabs,
+  .tab-list {
+    border-color: #2a2a2a !important;
+  }
+
+  .tab {
+    color: #a0a0a0 !important;
+
+    &.active {
+      color: #f97316 !important;
+      border-color: #f97316 !important;
+    }
+  }
+
+  // Badges & Tags
+  .badge,
+  .tag {
+    background: #252525 !important;
+    color: #f5f5f5 !important;
+  }
+
+  // Alerts
+  .alert {
+    border-color: #2a2a2a !important;
+  }
+
+  // Dividers
+  hr,
+  .divider {
+    border-color: #2a2a2a !important;
+  }
+
+  // Empty states
+  .empty-state,
+  .no-data {
+    background: #0f0f0f !important;
+    border-color: #2a2a2a !important;
+  }
+
+  // Loading
+  .spinner,
+  .loader {
+    border-color: #2a2a2a !important;
+    border-top-color: #f97316 !important;
+  }
+
+  // Scrollbar
+  &::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: #1a1a1a;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: #3a3a3a;
+    border-radius: 4px;
+
+    &:hover {
+      background: #4a4a4a;
+    }
+  }
+
+  // Pagination
+  .pagination {
+    .page-item {
+      .page-link {
+        background: #0f0f0f !important;
+        border-color: #2a2a2a !important;
+        color: #a0a0a0 !important;
+
+        &:hover {
+          background: #1a1a1a !important;
+          color: #f97316 !important;
+        }
+      }
+
+      &.active .page-link {
+        background: #f97316 !important;
+        border-color: #f97316 !important;
+        color: #ffffff !important;
+      }
+    }
+  }
+
+  // Status badges
+  .status-pending {
+    background: rgba(251, 191, 36, 0.2) !important;
+    color: #fbbf24 !important;
+  }
+
+  .status-active,
+  .status-success,
+  .status-delivered {
+    background: rgba(34, 197, 94, 0.2) !important;
+    color: #22c55e !important;
+  }
+
+  .status-cancelled,
+  .status-error {
+    background: rgba(239, 68, 68, 0.2) !important;
+    color: #ef4444 !important;
+  }
+
+  .status-processing,
+  .status-in-transit {
+    background: rgba(96, 165, 250, 0.2) !important;
+    color: #60a5fa !important;
+  }
+
+  // Icons in cards
+  .stat-icon,
+  .card-icon,
+  .feature-icon {
+    background: rgba(249, 115, 22, 0.15) !important;
+    color: #f97316 !important;
+  }
+
+  // Filters bar
+  .filters-bar,
+  .filter-group {
+    border-color: #2a2a2a !important;
+  }
+
+  // Quick actions
+  .quick-action,
+  .action-card {
+    border-color: #2a2a2a !important;
+
+    &:hover {
+      border-color: #f97316 !important;
+    }
+  }
+
+  // Stats grid
+  .stats-grid .stat-card,
+  .dashboard-stats .stat {
+    background: #0f0f0f !important;
+    border-color: #2a2a2a !important;
+  }
+
+  // Recent orders/shipments
+  .recent-orders,
+  .recent-shipments,
+  .orders-table,
+  .shipments-table {
+    background: #0f0f0f !important;
+    border-color: #2a2a2a !important;
+  }
+
+  // Admin layout specific
+  .admin-layout,
+  .carrier-layout {
+    background: #1a1a1a !important;
+  }
+
+  .admin-content,
+  .carrier-content,
+  .main-content {
+    background: #1a1a1a !important;
+  }
+
+  // Auth pages
+  .auth-container,
+  .login-container,
+  .register-container {
+    background: #1a1a1a !important;
+  }
+
+  .auth-card,
+  .login-card,
+  .register-card {
+    background: #0f0f0f !important;
+    border-color: #2a2a2a !important;
+  }
+
+  // Profile page
+  .profile-section,
+  .profile-card {
+    background: #0f0f0f !important;
+    border-color: #2a2a2a !important;
+  }
+
+  // Select dropdown arrows (fix for dark bg)
+  select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23a0a0a0' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E") !important;
+    background-repeat: no-repeat !important;
+    background-position: right 12px center !important;
+  }
 }

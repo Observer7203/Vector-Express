@@ -600,3 +600,154 @@ select.form-input {
   }
 }
 </style>
+
+<style lang="scss">
+/* Dark theme styles for SettingsView */
+[data-theme="dark"] {
+  .settings-page {
+    h1 {
+      color: #f5f5f5 !important;
+    }
+
+    .subtitle {
+      color: #999999 !important;
+    }
+
+    .btn-primary {
+      background: #f97316 !important;
+      color: #ffffff !important;
+
+      &:hover:not(:disabled) {
+        background: #ea580c !important;
+      }
+    }
+
+    .btn-secondary {
+      background: #1a1a1a !important;
+      border-color: #2a2a2a !important;
+      color: #f5f5f5 !important;
+
+      &:hover:not(:disabled) {
+        background: #2a2a2a !important;
+      }
+    }
+
+    .settings-container {
+      background: #0f0f0f !important;
+      border-color: #2a2a2a !important;
+    }
+
+    .settings-sidebar {
+      background: #0f0f0f !important;
+      border-color: #2a2a2a !important;
+    }
+
+    .nav-item {
+      color: #999999 !important;
+
+      &:hover {
+        background: #1a1a1a !important;
+        color: #f5f5f5 !important;
+      }
+
+      &.active {
+        background: rgba(249, 115, 22, 0.1) !important;
+        color: #f97316 !important;
+      }
+    }
+
+    .settings-content {
+      background: #0f0f0f !important;
+    }
+
+    .settings-section {
+      h2 {
+        color: #f97316 !important;
+      }
+
+      .section-description {
+        color: #999999 !important;
+      }
+    }
+
+    .form-group {
+      label {
+        color: #f5f5f5 !important;
+      }
+    }
+
+    .form-input {
+      background: #1a1a1a !important;
+      border-color: #2a2a2a !important;
+      color: #f5f5f5 !important;
+
+      &::placeholder {
+        color: #666666 !important;
+      }
+
+      &:focus {
+        border-color: #f97316 !important;
+        box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.1) !important;
+      }
+    }
+
+    .toggle-item {
+      background: #1a1a1a !important;
+    }
+
+    .toggle-label {
+      color: #f5f5f5 !important;
+    }
+
+    .toggle-description {
+      color: #999999 !important;
+    }
+
+    .toggle-slider {
+      background: #2a2a2a !important;
+
+      &:before {
+        background: #666666 !important;
+      }
+    }
+
+    .toggle input:checked + .toggle-slider {
+      background: #f97316 !important;
+
+      &:before {
+        background: #ffffff !important;
+      }
+    }
+
+    .info-card {
+      background: rgba(249, 115, 22, 0.1) !important;
+      border-color: rgba(249, 115, 22, 0.2) !important;
+      color: #f97316 !important;
+
+      h4 {
+        color: #f97316 !important;
+      }
+
+      p {
+        color: #f5f5f5 !important;
+      }
+    }
+
+    .system-info {
+      background: #1a1a1a !important;
+    }
+
+    .info-row {
+      border-color: #2a2a2a !important;
+    }
+
+    .info-label {
+      color: #999999 !important;
+    }
+
+    .info-value {
+      color: #f5f5f5 !important;
+    }
+  }
+}
+</style>

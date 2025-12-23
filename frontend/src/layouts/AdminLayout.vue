@@ -15,6 +15,7 @@ import {
   ChevronRight
 } from 'lucide-vue-next'
 import LanguageSwitcher from '@/components/LanguageSwitcher.vue'
+import ThemeToggle from '@/components/ThemeToggle.vue'
 
 const { t } = useI18n()
 const route = useRoute()
@@ -98,6 +99,7 @@ async function handleLogout() {
           </template>
         </div>
         <div class="header-actions">
+          <ThemeToggle />
           <LanguageSwitcher />
         </div>
       </header>
@@ -345,6 +347,69 @@ async function handleLogout() {
 
   .main-content {
     margin-left: 80px;
+  }
+}
+
+// Dark theme
+[data-theme="dark"] {
+  .admin-layout {
+    background: #1a1a1a;
+  }
+
+  .sidebar {
+    background: #0f0f0f;
+    border-right: 1px solid #2a2a2a;
+  }
+
+  .sidebar-header {
+    border-bottom-color: #2a2a2a;
+  }
+
+  .logo-icon {
+    background: #f97316;
+  }
+
+  .sidebar-footer {
+    border-top-color: #2a2a2a;
+  }
+
+  .nav-item.active {
+    background: #f97316;
+  }
+
+  .user-avatar {
+    background: #f97316;
+  }
+
+  .main-content {
+    background: #1a1a1a;
+  }
+
+  .main-header {
+    background: #0f0f0f;
+    border-bottom-color: #2a2a2a;
+  }
+
+  .breadcrumb {
+    a {
+      color: #999999;
+
+      &:hover {
+        color: #f97316;
+      }
+    }
+
+    span {
+      color: #f5f5f5;
+    }
+
+    svg {
+      color: #666666;
+    }
+  }
+
+  .page-content {
+    background: #1a1a1a;
   }
 }
 </style>

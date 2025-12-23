@@ -500,4 +500,114 @@ function formatCurrency(value) {
     grid-template-columns: 1fr;
   }
 }
+
+// Dark theme
+[data-theme="dark"] {
+  .dashboard h1 {
+    color: #f5f5f5;
+  }
+
+  .stat-card {
+    background: #0f0f0f;
+    border-color: #2a2a2a;
+  }
+
+  .stat-icon {
+    &.users {
+      background: rgba(249, 115, 22, 0.15);
+      color: #f97316;
+    }
+
+    &.companies {
+      background: rgba(96, 165, 250, 0.15);
+      color: #60a5fa;
+    }
+
+    &.orders {
+      background: rgba(251, 191, 36, 0.15);
+      color: #fbbf24;
+    }
+
+    &.revenue {
+      background: rgba(34, 197, 94, 0.15);
+      color: #22c55e;
+    }
+  }
+
+  .stat-value {
+    color: #f5f5f5;
+  }
+
+  .stat-label {
+    color: #999999;
+  }
+
+  .stat-meta {
+    color: #666666;
+  }
+
+  .stat-change.positive {
+    color: #22c55e;
+  }
+
+  .chart-card {
+    background: #0f0f0f;
+    border-color: #2a2a2a;
+
+    h3 {
+      color: #f5f5f5;
+    }
+  }
+
+  .chart-bar {
+    background: #f97316;
+  }
+
+  .chart-label {
+    color: #666666;
+  }
+
+  .chart-value {
+    color: #f5f5f5;
+  }
+
+  .status-name {
+    color: #999999;
+  }
+
+  .status-count {
+    color: #f5f5f5;
+  }
+
+  .top-rank {
+    background: #1a1a1a;
+    color: #999999;
+  }
+
+  .top-icon {
+    background: rgba(249, 115, 22, 0.15);
+    color: #f97316;
+  }
+
+  .top-name {
+    color: #f5f5f5;
+  }
+
+  .top-value {
+    color: #666666;
+  }
+
+  .empty-list {
+    color: #666666;
+  }
+
+  .loading {
+    color: #999999;
+  }
+
+  .spinner {
+    border-color: #2a2a2a;
+    border-top-color: #f97316;
+  }
+}
 </style>

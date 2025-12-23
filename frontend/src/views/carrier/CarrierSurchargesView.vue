@@ -886,3 +886,190 @@ async function handleLogout() {
   }
 }
 </style>
+
+<style lang="scss">
+/* Dark theme styles for CarrierSurchargesView */
+[data-theme="dark"] {
+  .carrier-surcharges {
+    background: #1a1a1a !important;
+  }
+
+  .carrier-surcharges .dashboard-main {
+    background: #1a1a1a !important;
+  }
+
+  .carrier-surcharges .page-title h1 {
+    color: #f5f5f5 !important;
+  }
+
+  .carrier-surcharges .page-title .subtitle {
+    color: #999999 !important;
+  }
+
+  .carrier-surcharges .search-bar {
+    background: transparent !important;
+  }
+
+  .carrier-surcharges .search-input {
+    background: #0f0f0f !important;
+    border-color: #2a2a2a !important;
+    color: #f5f5f5 !important;
+
+    &::placeholder {
+      color: #666666 !important;
+    }
+  }
+
+  .carrier-surcharges .search-icon {
+    color: #666666 !important;
+  }
+
+  /* Surcharge cards */
+  .carrier-surcharges .surcharge-card {
+    background: #0f0f0f !important;
+    border-color: #2a2a2a !important;
+
+    &:hover {
+      border-color: #f97316 !important;
+    }
+
+    &.inactive {
+      background: #151515 !important;
+      opacity: 0.7;
+    }
+  }
+
+  .carrier-surcharges .surcharge-header {
+    background: #1a1a1a !important;
+    border-color: #2a2a2a !important;
+  }
+
+  .carrier-surcharges .surcharge-icon {
+    background: rgba(249, 115, 22, 0.1) !important;
+
+    svg {
+      color: #f97316 !important;
+    }
+  }
+
+  .carrier-surcharges .surcharge-type {
+    color: #999999 !important;
+  }
+
+  .carrier-surcharges .surcharge-name {
+    color: #f5f5f5 !important;
+  }
+
+  .carrier-surcharges .surcharge-value {
+    color: #f97316 !important;
+  }
+
+  .carrier-surcharges .value-type {
+    color: #999999 !important;
+  }
+
+  .carrier-surcharges .surcharge-actions {
+    background: #1a1a1a !important;
+    border-color: #2a2a2a !important;
+  }
+
+  .carrier-surcharges .btn-action {
+    background: #0f0f0f !important;
+    border-color: #2a2a2a !important;
+    color: #999999 !important;
+
+    &:hover {
+      border-color: #f97316 !important;
+      color: #f97316 !important;
+    }
+
+    &.btn-action-danger:hover {
+      border-color: #dc3545 !important;
+      color: #dc3545 !important;
+    }
+  }
+
+  .carrier-surcharges .empty-state {
+    background: #0f0f0f !important;
+    border-color: #2a2a2a !important;
+
+    svg {
+      color: #666666 !important;
+    }
+
+    h3 {
+      color: #f5f5f5 !important;
+    }
+
+    p {
+      color: #999999 !important;
+    }
+  }
+
+  .carrier-surcharges .loading-state {
+    p {
+      color: #999999 !important;
+    }
+
+    .spinner {
+      border-color: #2a2a2a !important;
+      border-top-color: #f97316 !important;
+    }
+  }
+
+  /* Modal dark theme */
+  .carrier-surcharges .modal {
+    background: #0f0f0f !important;
+    border: 1px solid #2a2a2a !important;
+  }
+
+  .carrier-surcharges .modal-header {
+    border-color: #2a2a2a !important;
+
+    h2 {
+      color: #f5f5f5 !important;
+    }
+  }
+
+  .carrier-surcharges .modal-footer {
+    border-color: #2a2a2a !important;
+  }
+
+  .carrier-surcharges .btn-close {
+    color: #999999 !important;
+
+    &:hover {
+      background: #252525 !important;
+    }
+  }
+
+  .carrier-surcharges .form-group label {
+    color: #f5f5f5 !important;
+  }
+
+  .carrier-surcharges .form-input {
+    background: #1a1a1a !important;
+    border-color: #2a2a2a !important;
+    color: #f5f5f5 !important;
+
+    option {
+      background: #1a1a1a !important;
+      color: #f5f5f5 !important;
+    }
+  }
+
+  .carrier-surcharges .checkbox-label {
+    color: #f5f5f5 !important;
+  }
+
+  .carrier-surcharges .btn-outline {
+    border-color: #f97316 !important;
+    color: #f97316 !important;
+
+    &:hover {
+      background: #f97316 !important;
+      color: #ffffff !important;
+    }
+  }
+}
+</style>

@@ -1171,3 +1171,201 @@ async function handleLogout() {
   }
 }
 </style>
+
+<style lang="scss">
+/* Dark theme styles for ProfileView */
+[data-theme="dark"] {
+  .profile-page {
+    background: #1a1a1a !important;
+  }
+
+  .page-header {
+    h1 {
+      color: #f5f5f5 !important;
+    }
+
+    .subtitle {
+      color: #999999 !important;
+    }
+  }
+
+  .user-card {
+    background: #0f0f0f !important;
+    border-color: #2a2a2a !important;
+  }
+
+  .avatar {
+    background: #1a1a1a !important;
+
+    svg {
+      color: #666666 !important;
+    }
+  }
+
+  .avatar-upload {
+    background: #f97316 !important;
+    border-color: #0f0f0f !important;
+
+    &:hover {
+      background: #ea580c !important;
+    }
+  }
+
+  .user-info {
+    h3 {
+      color: #f5f5f5 !important;
+    }
+
+    p {
+      color: #999999 !important;
+    }
+  }
+
+  .role-badge {
+    background: rgba(249, 115, 22, 0.15) !important;
+    color: #f97316 !important;
+  }
+
+  .profile-nav {
+    background: #0f0f0f !important;
+    border-color: #2a2a2a !important;
+  }
+
+  .nav-item {
+    color: #999999 !important;
+    border-color: #2a2a2a !important;
+
+    &:hover {
+      background: #1a1a1a !important;
+      color: #f5f5f5 !important;
+    }
+
+    &.active {
+      background: rgba(249, 115, 22, 0.1) !important;
+      color: #f97316 !important;
+    }
+  }
+
+  .profile-content {
+    background: #0f0f0f !important;
+    border-color: #2a2a2a !important;
+  }
+
+  .content-header {
+    h2 {
+      color: #f5f5f5 !important;
+    }
+
+    p {
+      color: #999999 !important;
+    }
+  }
+
+  .verification-badge {
+    &.success {
+      background: rgba(34, 197, 94, 0.15) !important;
+      color: #22c55e !important;
+    }
+
+    &.warning {
+      background: rgba(234, 179, 8, 0.15) !important;
+      color: #eab308 !important;
+    }
+  }
+
+  .form-group {
+    label {
+      color: #f5f5f5 !important;
+
+      svg {
+        color: #666666 !important;
+      }
+    }
+  }
+
+  .form-input {
+    background: #1a1a1a !important;
+    border-color: #2a2a2a !important;
+    color: #f5f5f5 !important;
+
+    &::placeholder {
+      color: #666666 !important;
+    }
+
+    &:focus {
+      border-color: #f97316 !important;
+    }
+  }
+
+  .password-toggle {
+    color: #666666 !important;
+
+    &:hover {
+      color: #f5f5f5 !important;
+    }
+  }
+
+  .form-actions {
+    border-color: #2a2a2a !important;
+  }
+
+  .btn-primary {
+    background: #f97316 !important;
+    color: #ffffff !important;
+
+    &:hover:not(:disabled) {
+      background: #ea580c !important;
+    }
+  }
+
+  .notification-section {
+    h4 {
+      color: #f5f5f5 !important;
+
+      svg {
+        color: #f97316 !important;
+      }
+    }
+  }
+
+  .toggle-item {
+    border-color: #2a2a2a !important;
+  }
+
+  .toggle-title {
+    color: #f5f5f5 !important;
+  }
+
+  .toggle-desc {
+    color: #666666 !important;
+  }
+
+  .toggle {
+    background: #2a2a2a !important;
+
+    &::before {
+      background: #666666 !important;
+    }
+
+    &:checked {
+      background: #f97316 !important;
+
+      &::before {
+        background: #ffffff !important;
+      }
+    }
+  }
+
+  .message {
+    &.success {
+      background: rgba(34, 197, 94, 0.15) !important;
+      color: #22c55e !important;
+    }
+
+    &.error {
+      background: rgba(239, 68, 68, 0.15) !important;
+      color: #ef4444 !important;
+    }
+  }
+}
+</style>

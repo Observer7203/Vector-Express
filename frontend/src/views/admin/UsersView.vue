@@ -239,7 +239,7 @@ function formatDate(dateString) {
             </td>
             <td>
               <span class="role-badge" :class="user.role">
-                {{ roleLabels.value[user.role] }}
+                {{ roleLabels[user.role] }}
               </span>
             </td>
             <td>
@@ -904,5 +904,193 @@ function formatDate(dateString) {
   padding: 6px 12px;
   height: 32px;
   font-size: $font-size-xs;
+}
+</style>
+
+<style lang="scss">
+/* Dark theme styles for UsersView */
+[data-theme="dark"] {
+  .users-page {
+    h1 {
+      color: #f5f5f5 !important;
+    }
+
+    .subtitle {
+      color: #999999 !important;
+    }
+
+    .table-container {
+      background: #0f0f0f !important;
+      border-color: #2a2a2a !important;
+    }
+
+    .data-table {
+      th {
+        background: #1a1a1a !important;
+        color: #999999 !important;
+        border-color: #2a2a2a !important;
+      }
+
+      td {
+        border-color: #2a2a2a !important;
+        color: #f5f5f5 !important;
+      }
+
+      tbody tr:hover {
+        background: #1a1a1a !important;
+      }
+    }
+
+    .user-name {
+      color: #f5f5f5 !important;
+    }
+
+    .user-email {
+      color: #999999 !important;
+    }
+
+    .user-id {
+      color: #666666 !important;
+    }
+
+    .company-name {
+      color: #999999 !important;
+    }
+
+    .date {
+      color: #999999 !important;
+    }
+
+    .no-data {
+      color: #666666 !important;
+    }
+
+    .empty-row {
+      color: #666666 !important;
+    }
+
+    .search-box input {
+      background: #1a1a1a !important;
+      border-color: #2a2a2a !important;
+      color: #f5f5f5 !important;
+
+      &::placeholder {
+        color: #666666 !important;
+      }
+    }
+
+    .search-icon {
+      color: #666666 !important;
+    }
+
+    .filter-group select {
+      background: #1a1a1a !important;
+      border-color: #2a2a2a !important;
+      color: #f5f5f5 !important;
+    }
+
+    .action-btn {
+      background: #1a1a1a !important;
+      color: #999999 !important;
+
+      &:hover {
+        color: #ffffff !important;
+      }
+    }
+
+    .page-info {
+      color: #999999 !important;
+    }
+
+    .btn-primary {
+      background: #f97316 !important;
+      color: #ffffff !important;
+
+      span {
+        color: #ffffff !important;
+      }
+    }
+
+    .btn-outline {
+      background: #1a1a1a !important;
+      border-color: #2a2a2a !important;
+      color: #f5f5f5 !important;
+
+      &:hover {
+        background: #2a2a2a !important;
+      }
+    }
+
+    .modal {
+      background: #0f0f0f !important;
+      border: 1px solid #2a2a2a !important;
+    }
+
+    .modal-header {
+      border-color: #2a2a2a !important;
+
+      h2 {
+        color: #f5f5f5 !important;
+      }
+    }
+
+    .modal-footer {
+      border-color: #2a2a2a !important;
+    }
+
+    .close-btn {
+      background: #1a1a1a !important;
+      color: #999999 !important;
+
+      &:hover {
+        background: #2a2a2a !important;
+      }
+    }
+
+    .form-group {
+      label {
+        color: #f5f5f5 !important;
+      }
+
+      input, select {
+        background: #1a1a1a !important;
+        border-color: #2a2a2a !important;
+        color: #f5f5f5 !important;
+      }
+    }
+
+    .checkbox-label span {
+      color: #f5f5f5 !important;
+    }
+
+    .password-info {
+      color: #999999 !important;
+
+      strong {
+        color: #f5f5f5 !important;
+      }
+    }
+
+    .password-display {
+      background: #1a1a1a !important;
+    }
+
+    .password-label {
+      color: #999999 !important;
+    }
+
+    .password-value {
+      color: #f5f5f5 !important;
+    }
+
+    .loading {
+      color: #999999 !important;
+    }
+
+    .spinner {
+      border-color: #2a2a2a !important;
+      border-top-color: #f97316 !important;
+    }
+  }
 }
 </style>

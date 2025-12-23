@@ -1,8 +1,13 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { RouterLink } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import api from '@/api/client'
 import { ArrowLeft, Search, AlertCircle, ArrowRight, MapPin, Truck, Bookmark, Calendar, History, ClipboardList } from 'lucide-vue-next'
+import ThemeToggle from '@/components/ThemeToggle.vue'
+import LanguageSwitcher from '@/components/LanguageSwitcher.vue'
+
+const { t, locale } = useI18n()
 
 const iconStrokeWidth = 1.2
 
@@ -13,7 +18,7 @@ const error = ref('')
 
 async function searchTracking() {
   if (!trackingNumber.value.trim()) {
-    error.value = 'Введите номер отслеживания'
+    error.value = t('tracking.enterTrackingError')
     return
   }
 
@@ -26,9 +31,9 @@ async function searchTracking() {
     trackingResult.value = response.data.data
   } catch (e) {
     if (e.response?.status === 404) {
-      error.value = 'Заказ с таким номером не найден'
+      error.value = t('tracking.notFound')
     } else {
-      error.value = 'Произошла ошибка при поиске'
+      error.value = t('tracking.searchError')
     }
   } finally {
     loading.value = false
@@ -37,20 +42,21 @@ async function searchTracking() {
 
 function formatDateTime(dateString) {
   if (!dateString) return '-'
-  return new Date(dateString).toLocaleString('ru-RU')
+  const localeMap = { ru: 'ru-RU', en: 'en-US', kk: 'kk-KZ' }
+  return new Date(dateString).toLocaleString(localeMap[locale.value] || 'ru-RU')
 }
 
-const statusLabels = {
-  pending: 'Ожидает подтверждения',
-  confirmed: 'Подтвержден',
-  pickup_scheduled: 'Назначен забор',
-  picked_up: 'Груз забран',
-  in_transit: 'В пути',
-  customs: 'На таможне',
-  out_for_delivery: 'Доставляется',
-  delivered: 'Доставлен',
-  cancelled: 'Отменен'
-}
+const statusLabels = computed(() => ({
+  pending: t('tracking.statusPending'),
+  confirmed: t('tracking.statusConfirmed'),
+  pickup_scheduled: t('tracking.statusPickupScheduled'),
+  picked_up: t('tracking.statusPickedUp'),
+  in_transit: t('tracking.statusInTransit'),
+  customs: t('tracking.statusCustoms'),
+  out_for_delivery: t('tracking.statusOutForDelivery'),
+  delivered: t('tracking.statusDelivered'),
+  cancelled: t('tracking.statusCancelled')
+}))
 </script>
 
 <template>
@@ -62,7 +68,11 @@ const statusLabels = {
             <RouterLink to="/" class="back-link">
               <ArrowLeft :size="20" :stroke-width="iconStrokeWidth" />
             </RouterLink>
-            <h1>Отслеживание груза</h1>
+            <h1>{{ t('tracking.title') }}</h1>
+          </div>
+          <div class="header-right">
+            <ThemeToggle />
+            <LanguageSwitcher />
           </div>
         </div>
       </div>
@@ -72,20 +82,20 @@ const statusLabels = {
       <div class="container">
         <div class="search-section">
           <div class="search-card">
-            <h2>Введите номер заказа или трек-номер</h2>
+            <h2>{{ t('tracking.enterTracking') }}</h2>
             <form @submit.prevent="searchTracking" class="search-form">
               <div class="search-input-wrapper">
                 <Search :size="20" :stroke-width="iconStrokeWidth" class="search-icon" />
                 <input
                   v-model="trackingNumber"
                   type="text"
-                  placeholder="VE-2025-000001 или трек-номер перевозчика"
+                  :placeholder="t('tracking.placeholder')"
                   class="search-input"
                 />
               </div>
               <button type="submit" class="btn btn-primary" :disabled="loading">
                 <span v-if="loading" class="btn-loader"></span>
-                {{ loading ? 'Поиск...' : 'Отследить' }}
+                {{ loading ? t('tracking.searching') : t('tracking.trackBtn') }}
               </button>
             </form>
 
@@ -100,7 +110,7 @@ const statusLabels = {
           <div class="result-header">
             <div class="order-info">
               <div class="order-number-wrapper">
-                <span class="order-label">Номер заказа</span>
+                <span class="order-label">{{ t('tracking.orderNumber') }}</span>
                 <span class="order-number">{{ trackingResult.order_number || trackingResult.tracking_number }}</span>
               </div>
               <span :class="['status', `status-${trackingResult.current_status}`]">
@@ -110,14 +120,14 @@ const statusLabels = {
 
             <div class="route" v-if="trackingResult.origin && trackingResult.destination">
               <div class="route-point">
-                <span class="point-label">Откуда</span>
+                <span class="point-label">{{ t('tracking.from') }}</span>
                 <span class="point-value">{{ trackingResult.origin }}</span>
               </div>
               <div class="route-arrow">
                 <ArrowRight :size="18" :stroke-width="iconStrokeWidth" />
               </div>
               <div class="route-point">
-                <span class="point-label">Куда</span>
+                <span class="point-label">{{ t('tracking.to') }}</span>
                 <span class="point-value">{{ trackingResult.destination }}</span>
               </div>
             </div>
@@ -126,7 +136,7 @@ const statusLabels = {
           <div class="current-location" v-if="trackingResult.current_location">
             <h3>
               <MapPin :size="22" :stroke-width="iconStrokeWidth" />
-              Текущее местоположение
+              {{ t('tracking.currentLocation') }}
             </h3>
             <div class="location-card">
               <div class="location-info">
@@ -140,21 +150,21 @@ const statusLabels = {
             <div class="info-card">
               <Truck :size="24" :stroke-width="iconStrokeWidth" />
               <div class="info-content">
-                <span class="label">Перевозчик</span>
+                <span class="label">{{ t('tracking.carrier') }}</span>
                 <span class="value">{{ trackingResult.carrier || '-' }}</span>
               </div>
             </div>
             <div class="info-card" v-if="trackingResult.carrier_tracking">
               <Bookmark :size="24" :stroke-width="iconStrokeWidth" />
               <div class="info-content">
-                <span class="label">Трек перевозчика</span>
+                <span class="label">{{ t('tracking.carrierTracking') }}</span>
                 <span class="value track">{{ trackingResult.carrier_tracking }}</span>
               </div>
             </div>
             <div class="info-card" v-if="trackingResult.estimated_delivery">
               <Calendar :size="24" :stroke-width="iconStrokeWidth" />
               <div class="info-content">
-                <span class="label">Ожидаемая доставка</span>
+                <span class="label">{{ t('tracking.estimatedDelivery') }}</span>
                 <span class="value">{{ formatDateTime(trackingResult.estimated_delivery) }}</span>
               </div>
             </div>
@@ -163,7 +173,7 @@ const statusLabels = {
           <div class="events-section" v-if="trackingResult.events?.length">
             <h3>
               <History :size="22" :stroke-width="iconStrokeWidth" />
-              История перемещений
+              {{ t('tracking.movementHistory') }}
             </h3>
             <div class="timeline">
               <div
@@ -191,28 +201,28 @@ const statusLabels = {
         </div>
 
         <div v-else-if="!loading && !error" class="help-section">
-          <h3>Как отследить груз?</h3>
+          <h3>{{ t('tracking.howToTrack') }}</h3>
           <div class="help-cards">
             <div class="help-card">
               <div class="help-icon">
                 <ClipboardList :size="28" :stroke-width="iconStrokeWidth" />
               </div>
-              <h4>Найдите номер заказа</h4>
-              <p>Номер заказа указан в письме-подтверждении и начинается с VE-</p>
+              <h4>{{ t('tracking.step1Title') }}</h4>
+              <p>{{ t('tracking.step1Desc') }}</p>
             </div>
             <div class="help-card">
               <div class="help-icon">
                 <Search :size="28" :stroke-width="iconStrokeWidth" />
               </div>
-              <h4>Введите номер</h4>
-              <p>Введите номер заказа или трек-номер перевозчика в поле поиска</p>
+              <h4>{{ t('tracking.step2Title') }}</h4>
+              <p>{{ t('tracking.step2Desc') }}</p>
             </div>
             <div class="help-card">
               <div class="help-icon">
                 <MapPin :size="28" :stroke-width="iconStrokeWidth" />
               </div>
-              <h4>Получите информацию</h4>
-              <p>Увидите текущий статус и историю перемещения вашего груза</p>
+              <h4>{{ t('tracking.step3Title') }}</h4>
+              <p>{{ t('tracking.step3Desc') }}</p>
             </div>
           </div>
         </div>
@@ -254,6 +264,12 @@ const statusLabels = {
   display: flex;
   align-items: center;
   gap: $spacing-md;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
 }
 
 .back-link {
@@ -804,6 +820,207 @@ h1 {
 
   .route-arrow {
     transform: rotate(90deg);
+  }
+}
+
+// Dark theme
+[data-theme="dark"] {
+  .page {
+    background: #1a1a1a !important;
+  }
+
+  .page-header {
+    background: #0f0f0f !important;
+    border-bottom-color: #2a2a2a !important;
+  }
+
+  h1 {
+    color: #f5f5f5 !important;
+  }
+
+  .back-link {
+    color: #999999;
+
+    &:hover {
+      background: #252525;
+      color: #f5f5f5;
+    }
+  }
+
+  .search-card {
+    background: #0f0f0f !important;
+    border-color: #2a2a2a !important;
+
+    h2 {
+      color: #f97316 !important;
+    }
+  }
+
+  .search-input {
+    background: #1a1a1a !important;
+    border-color: #2a2a2a !important;
+    color: #f5f5f5 !important;
+
+    &::placeholder {
+      color: #666666;
+    }
+
+    &:focus {
+      border-color: #f97316 !important;
+    }
+  }
+
+  .search-icon {
+    color: #666666;
+  }
+
+  .help-section h3 {
+    color: #f5f5f5 !important;
+  }
+
+  .help-card {
+    background: #0f0f0f !important;
+    border-color: #2a2a2a !important;
+
+    h4 {
+      color: #f5f5f5 !important;
+    }
+
+    p {
+      color: #999999 !important;
+    }
+  }
+
+  .help-icon {
+    background: rgba(249, 115, 22, 0.15) !important;
+
+    svg {
+      color: #f97316 !important;
+    }
+  }
+
+  // Tracking result styles
+  .result-header {
+    background: #0f0f0f !important;
+    border-color: #2a2a2a !important;
+  }
+
+  .order-label {
+    color: #999999 !important;
+  }
+
+  .order-number {
+    color: #f5f5f5 !important;
+  }
+
+  .route {
+    border-top-color: #2a2a2a !important;
+  }
+
+  .point-label {
+    color: #999999 !important;
+  }
+
+  .point-value {
+    color: #f5f5f5 !important;
+  }
+
+  .route-arrow {
+    background: rgba(249, 115, 22, 0.15) !important;
+
+    svg {
+      color: #f97316 !important;
+    }
+  }
+
+  .current-location {
+    background: #0f0f0f !important;
+    border-color: #2a2a2a !important;
+
+    h3 {
+      color: #f5f5f5 !important;
+
+      svg {
+        color: #f97316 !important;
+      }
+    }
+  }
+
+  .location-card {
+    background: rgba(249, 115, 22, 0.1) !important;
+    border-left-color: #f97316 !important;
+  }
+
+  .location-info .city {
+    color: #f5f5f5 !important;
+  }
+
+  .location-info .country {
+    color: #999999 !important;
+  }
+
+  .info-card {
+    background: #0f0f0f !important;
+    border-color: #2a2a2a !important;
+
+    > svg {
+      color: #f97316 !important;
+    }
+
+    .label {
+      color: #999999 !important;
+    }
+
+    .value {
+      color: #f5f5f5 !important;
+    }
+
+    .value.track {
+      background: #1a1a1a !important;
+      color: #f97316 !important;
+    }
+  }
+
+  .events-section {
+    background: #0f0f0f !important;
+    border-color: #2a2a2a !important;
+
+    h3 {
+      color: #f5f5f5 !important;
+
+      svg {
+        color: #f97316 !important;
+      }
+    }
+  }
+
+  .timeline::before {
+    background: #2a2a2a !important;
+  }
+
+  .timeline-dot {
+    background: #3a3a3a !important;
+  }
+
+  .timeline-item.latest .timeline-dot {
+    background: #f97316 !important;
+    box-shadow: 0 0 0 4px rgba(249, 115, 22, 0.2) !important;
+  }
+
+  .event-status {
+    color: #f5f5f5 !important;
+  }
+
+  .event-time {
+    color: #999999 !important;
+  }
+
+  .event-location {
+    color: #f97316 !important;
+  }
+
+  .event-description {
+    color: #999999 !important;
   }
 }
 </style>
