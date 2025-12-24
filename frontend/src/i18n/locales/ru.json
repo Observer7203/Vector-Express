@@ -1,4 +1,22 @@
 {
+  "address": {
+    "placeholder": "Введите адрес...",
+    "clear": "Очистить",
+    "selectOnMap": "Выбрать на карте",
+    "cantFind": "Не нашли адрес?",
+    "selectOnMapHint": "Выберите точку на карте",
+    "noResults": "Адреса не найдены",
+    "selectOnMapAlt": "Выбрать на карте"
+  },
+  "map": {
+    "title": "Выберите точку на карте",
+    "searchPlaceholder": "Поиск адреса...",
+    "selectedLocation": "Выбранная точка",
+    "loadingAddress": "Загрузка адреса...",
+    "clickToSelect": "Нажмите на карту для выбора точки",
+    "cancel": "Отмена",
+    "confirm": "Подтвердить"
+  },
   "common": {
     "loading": "Загрузка...",
     "save": "Сохранить",

@@ -1,4 +1,22 @@
 {
+  "address": {
+    "placeholder": "Мекенжайды енгізіңіз...",
+    "clear": "Тазалау",
+    "selectOnMap": "Картадан таңдау",
+    "cantFind": "Мекенжай табылмады ма?",
+    "selectOnMapHint": "Картадан нүктені таңдаңыз",
+    "noResults": "Мекенжайлар табылмады",
+    "selectOnMapAlt": "Картадан таңдау"
+  },
+  "map": {
+    "title": "Картадан нүктені таңдаңыз",
+    "searchPlaceholder": "Мекенжайды іздеу...",
+    "selectedLocation": "Таңдалған нүкте",
+    "loadingAddress": "Мекенжай жүктелуде...",
+    "clickToSelect": "Нүктені таңдау үшін картаны басыңыз",
+    "cancel": "Болдырмау",
+    "confirm": "Растау"
+  },
   "common": {
     "loading": "Жүктелуде...",
     "save": "Сақтау",

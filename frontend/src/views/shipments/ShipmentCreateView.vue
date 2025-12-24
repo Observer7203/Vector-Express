@@ -6,6 +6,8 @@ import { useShipmentsStore } from '@/stores/shipments'
 import { ArrowLeft, ArrowRight, Check, MapPin, Trash2, Plus, Shield, FileText, Home } from 'lucide-vue-next'
 import ThemeToggle from '@/components/ThemeToggle.vue'
 import LanguageSwitcher from '@/components/LanguageSwitcher.vue'
+import AddressAutocomplete from '@/components/AddressAutocomplete.vue'
+import MapPicker from '@/components/MapPicker.vue'
 
 const { t } = useI18n()
 const iconStrokeWidth = 1.2
@@ -20,9 +22,15 @@ const form = ref({
   origin_country: '',
   origin_city: '',
   origin_address: '',
+  origin_lat: null,
+  origin_lng: null,
+  origin_postcode: '',
   destination_country: '',
   destination_city: '',
   destination_address: '',
+  destination_lat: null,
+  destination_lng: null,
+  destination_postcode: '',
   transport_type: '',
   cargo_type: 'general',
   packaging_type: '',
@@ -35,6 +43,60 @@ const form = ref({
   notes: '',
   items: [{ length: null, width: null, height: null, weight: null, quantity: 1, description: '' }]
 })
+
+// Address autocomplete state
+const originAddress = ref({
+  address: '',
+  city: '',
+  country: '',
+  lat: null,
+  lng: null
+})
+
+const destinationAddress = ref({
+  address: '',
+  city: '',
+  country: '',
+  lat: null,
+  lng: null
+})
+
+// Map picker state
+const showOriginMap = ref(false)
+const showDestinationMap = ref(false)
+
+// Handle origin address selection
+function onOriginSelect(data) {
+  form.value.origin_address = data.address || data.displayName || ''
+  form.value.origin_city = data.city || ''
+  form.value.origin_country = data.country || ''
+  form.value.origin_lat = data.lat
+  form.value.origin_lng = data.lng
+  form.value.origin_postcode = data.postcode || ''
+  originAddress.value = data
+}
+
+// Handle destination address selection
+function onDestinationSelect(data) {
+  form.value.destination_address = data.address || data.displayName || ''
+  form.value.destination_city = data.city || ''
+  form.value.destination_country = data.country || ''
+  form.value.destination_lat = data.lat
+  form.value.destination_lng = data.lng
+  form.value.destination_postcode = data.postcode || ''
+  destinationAddress.value = data
+}
+
+// Handle map picker selection
+function onOriginMapSelect(data) {
+  onOriginSelect(data)
+  showOriginMap.value = false
+}
+
+function onDestinationMapSelect(data) {
+  onDestinationSelect(data)
+  showDestinationMap.value = false
+}
 
 const errors = ref({})
 const submitting = ref(false)
@@ -178,17 +240,29 @@ async function handleSubmit() {
                   </div>
                   <h3>{{ t('shipmentCreate.step1.from') }}</h3>
                 </div>
+
+                <!-- Origin Address with Autocomplete -->
                 <div class="form-group">
-                  <label>{{ t('shipmentCreate.step1.country') }} *</label>
-                  <input v-model="form.origin_country" type="text" required :placeholder="t('shipmentCreate.step1.countryPlaceholderFrom')" />
+                  <AddressAutocomplete
+                    v-model="originAddress"
+                    :label="t('shipmentCreate.step1.fullAddress', 'Full Address')"
+                    :placeholder="t('shipmentCreate.step1.addressPlaceholderFull', 'Start typing address...')"
+                    :required="true"
+                    @select="onOriginSelect"
+                    @open-map="showOriginMap = true"
+                  />
                 </div>
-                <div class="form-group">
-                  <label>{{ t('shipmentCreate.step1.city') }} *</label>
-                  <input v-model="form.origin_city" type="text" required :placeholder="t('shipmentCreate.step1.cityPlaceholderFrom')" />
-                </div>
-                <div class="form-group">
-                  <label>{{ t('shipmentCreate.step1.address') }}</label>
-                  <input v-model="form.origin_address" type="text" :placeholder="t('shipmentCreate.step1.addressPlaceholder')" />
+
+                <!-- Manual override fields (collapsed by default, show if needed) -->
+                <div v-if="form.origin_city || form.origin_country" class="address-details">
+                  <div class="detail-row">
+                    <span class="detail-label">{{ t('shipmentCreate.step1.city') }}:</span>
+                    <span class="detail-value">{{ form.origin_city || '-' }}</span>
+                  </div>
+                  <div class="detail-row">
+                    <span class="detail-label">{{ t('shipmentCreate.step1.country') }}:</span>
+                    <span class="detail-value">{{ form.origin_country || '-' }}</span>
+                  </div>
                 </div>
               </div>
 
@@ -203,21 +277,50 @@ async function handleSubmit() {
                   </div>
                   <h3>{{ t('shipmentCreate.step1.to') }}</h3>
                 </div>
+
+                <!-- Destination Address with Autocomplete -->
                 <div class="form-group">
-                  <label>{{ t('shipmentCreate.step1.country') }} *</label>
-                  <input v-model="form.destination_country" type="text" required :placeholder="t('shipmentCreate.step1.countryPlaceholderTo')" />
+                  <AddressAutocomplete
+                    v-model="destinationAddress"
+                    :label="t('shipmentCreate.step1.fullAddress', 'Full Address')"
+                    :placeholder="t('shipmentCreate.step1.addressPlaceholderFull', 'Start typing address...')"
+                    :required="true"
+                    @select="onDestinationSelect"
+                    @open-map="showDestinationMap = true"
+                  />
                 </div>
-                <div class="form-group">
-                  <label>{{ t('shipmentCreate.step1.city') }} *</label>
-                  <input v-model="form.destination_city" type="text" required :placeholder="t('shipmentCreate.step1.cityPlaceholderTo')" />
-                </div>
-                <div class="form-group">
-                  <label>{{ t('shipmentCreate.step1.address') }}</label>
-                  <input v-model="form.destination_address" type="text" :placeholder="t('shipmentCreate.step1.addressPlaceholder')" />
+
+                <!-- Manual override fields -->
+                <div v-if="form.destination_city || form.destination_country" class="address-details">
+                  <div class="detail-row">
+                    <span class="detail-label">{{ t('shipmentCreate.step1.city') }}:</span>
+                    <span class="detail-value">{{ form.destination_city || '-' }}</span>
+                  </div>
+                  <div class="detail-row">
+                    <span class="detail-label">{{ t('shipmentCreate.step1.country') }}:</span>
+                    <span class="detail-value">{{ form.destination_country || '-' }}</span>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
+
+          <!-- Map Picker Modals -->
+          <MapPicker
+            :show="showOriginMap"
+            :initial-lat="form.origin_lat"
+            :initial-lng="form.origin_lng"
+            @close="showOriginMap = false"
+            @select="onOriginMapSelect"
+          />
+
+          <MapPicker
+            :show="showDestinationMap"
+            :initial-lat="form.destination_lat"
+            :initial-lng="form.destination_lng"
+            @close="showDestinationMap = false"
+            @select="onDestinationMapSelect"
+          />
 
           <!-- Step 2: Cargo -->
           <div v-if="step === 2" class="form-step">
@@ -613,6 +716,31 @@ h1 {
     font-weight: 600;
     color: $text-primary;
     margin: 0;
+  }
+}
+
+.address-details {
+  margin-top: $spacing-sm;
+  padding: $spacing-sm $spacing-md;
+  background: rgba($color-primary, 0.05);
+  border-radius: $radius-md;
+  border-left: 3px solid $color-primary;
+
+  .detail-row {
+    display: flex;
+    gap: $spacing-sm;
+    font-size: $font-size-sm;
+    padding: 2px 0;
+
+    .detail-label {
+      color: $text-muted;
+      min-width: 60px;
+    }
+
+    .detail-value {
+      color: $text-primary;
+      font-weight: 500;
+    }
   }
 }
 
@@ -1113,6 +1241,19 @@ textarea {
 
   .route-section {
     h3 {
+      color: #f5f5f5 !important;
+    }
+  }
+
+  .address-details {
+    background: rgba(249, 115, 22, 0.1) !important;
+    border-color: #f97316 !important;
+
+    .detail-label {
+      color: #999999 !important;
+    }
+
+    .detail-value {
       color: #f5f5f5 !important;
     }
   }

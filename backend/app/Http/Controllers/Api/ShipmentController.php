@@ -32,9 +32,15 @@ class ShipmentController extends Controller
             'origin_country' => ['required', 'string', 'max:100'],
             'origin_city' => ['required', 'string', 'max:100'],
             'origin_address' => ['nullable', 'string'],
+            'origin_lat' => ['nullable', 'numeric', 'between:-90,90'],
+            'origin_lng' => ['nullable', 'numeric', 'between:-180,180'],
+            'origin_postcode' => ['nullable', 'string', 'max:20'],
             'destination_country' => ['required', 'string', 'max:100'],
             'destination_city' => ['required', 'string', 'max:100'],
             'destination_address' => ['nullable', 'string'],
+            'destination_lat' => ['nullable', 'numeric', 'between:-90,90'],
+            'destination_lng' => ['nullable', 'numeric', 'between:-180,180'],
+            'destination_postcode' => ['nullable', 'string', 'max:20'],
             'transport_type' => ['nullable', 'in:air,sea,rail,road,multimodal'],
             'cargo_type' => ['nullable', 'in:general,dangerous,fragile,perishable'],
             'packaging_type' => ['nullable', 'in:box,pallet,container'],
@@ -43,6 +49,8 @@ class ShipmentController extends Controller
             'insurance_required' => ['boolean'],
             'customs_clearance' => ['boolean'],
             'door_to_door' => ['boolean'],
+            'origin_type' => ['nullable', 'in:door,terminal,port,airport'],
+            'destination_type' => ['nullable', 'in:door,terminal,port,airport'],
             'pickup_date' => ['nullable', 'date', 'after_or_equal:today'],
             'notes' => ['nullable', 'string'],
             'items' => ['required', 'array', 'min:1'],
@@ -64,6 +72,11 @@ class ShipmentController extends Controller
         }
 
         $shipment->calculateTotals();
+
+        // Calculate route info if coordinates are provided
+        if ($shipment->origin_lat && $shipment->destination_lat) {
+            $shipment->updateRouteInfo();
+        }
 
         return response()->json([
             'message' => 'Shipment created successfully',
@@ -94,9 +107,15 @@ class ShipmentController extends Controller
             'origin_country' => ['sometimes', 'string', 'max:100'],
             'origin_city' => ['sometimes', 'string', 'max:100'],
             'origin_address' => ['nullable', 'string'],
+            'origin_lat' => ['nullable', 'numeric', 'between:-90,90'],
+            'origin_lng' => ['nullable', 'numeric', 'between:-180,180'],
+            'origin_postcode' => ['nullable', 'string', 'max:20'],
             'destination_country' => ['sometimes', 'string', 'max:100'],
             'destination_city' => ['sometimes', 'string', 'max:100'],
             'destination_address' => ['nullable', 'string'],
+            'destination_lat' => ['nullable', 'numeric', 'between:-90,90'],
+            'destination_lng' => ['nullable', 'numeric', 'between:-180,180'],
+            'destination_postcode' => ['nullable', 'string', 'max:20'],
             'transport_type' => ['nullable', 'in:air,sea,rail,road,multimodal'],
             'cargo_type' => ['nullable', 'in:general,dangerous,fragile,perishable'],
             'packaging_type' => ['nullable', 'in:box,pallet,container'],
@@ -105,6 +124,8 @@ class ShipmentController extends Controller
             'insurance_required' => ['boolean'],
             'customs_clearance' => ['boolean'],
             'door_to_door' => ['boolean'],
+            'origin_type' => ['nullable', 'in:door,terminal,port,airport'],
+            'destination_type' => ['nullable', 'in:door,terminal,port,airport'],
             'pickup_date' => ['nullable', 'date', 'after_or_equal:today'],
             'notes' => ['nullable', 'string'],
             'items' => ['sometimes', 'array', 'min:1'],
@@ -124,6 +145,14 @@ class ShipmentController extends Controller
                 $shipment->items()->create($item);
             }
             $shipment->calculateTotals();
+        }
+
+        // Recalculate route if coordinates changed
+        $coordsChanged = isset($validated['origin_lat']) || isset($validated['origin_lng'])
+            || isset($validated['destination_lat']) || isset($validated['destination_lng']);
+
+        if ($coordsChanged && $shipment->origin_lat && $shipment->destination_lat) {
+            $shipment->updateRouteInfo();
         }
 
         return response()->json([

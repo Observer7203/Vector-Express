@@ -1,4 +1,22 @@
 {
+  "address": {
+    "placeholder": "Enter address...",
+    "clear": "Clear",
+    "selectOnMap": "Select on map",
+    "cantFind": "Can't find address?",
+    "selectOnMapHint": "Select location on map",
+    "noResults": "No addresses found",
+    "selectOnMapAlt": "Select on map instead"
+  },
+  "map": {
+    "title": "Select Location on Map",
+    "searchPlaceholder": "Search for address...",
+    "selectedLocation": "Selected Location",
+    "loadingAddress": "Loading address...",
+    "clickToSelect": "Click on the map to select a location",
+    "cancel": "Cancel",
+    "confirm": "Confirm Location"
+  },
   "common": {
     "loading": "Loading...",
     "save": "Save",
